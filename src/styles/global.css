@@ -127,6 +127,78 @@
   .no-scrollbar {
     scrollbar-width: none;
   }
+
+  /* Buttons — lift + shadow on hover/press, used everywhere a CTA appears. */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, background-color 0.25s ease, color 0.25s ease;
+  }
+  .btn:hover {
+    transform: translateY(-2px);
+  }
+  .btn:active {
+    transform: translateY(0);
+  }
+  .btn-primary {
+    background-color: var(--color-ink);
+    color: var(--color-paper);
+  }
+  .btn-primary:hover {
+    background-color: var(--color-clay);
+    box-shadow: 0 12px 24px -8px color-mix(in oklab, var(--color-clay) 55%, transparent);
+  }
+  .btn-secondary {
+    border: 1px solid color-mix(in oklab, var(--color-ink) 20%, transparent);
+  }
+  .btn-secondary:hover {
+    background-color: color-mix(in oklab, var(--color-ink) 5%, transparent);
+    box-shadow: 0 10px 20px -10px color-mix(in oklab, var(--color-ink) 30%, transparent);
+  }
+
+  /* Cards — subtle lift on hover so the grid feels alive/clickable. */
+  .card-hover {
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+  }
+  .card-hover:hover {
+    transform: translateY(-4px) rotate(var(--card-tilt, 0deg));
+    box-shadow: var(--shadow-pinned);
+    border-color: color-mix(in oklab, var(--color-clay) 45%, transparent);
+  }
+
+  /* Bird icon — the recurring brand mark. Reused at multiple sizes/rotations
+     instead of a big icon set, like a rubber-stamp motif. */
+  .bird-icon {
+    display: inline-block;
+    filter: brightness(0) saturate(100%);
+  }
+  .bird-icon.is-clay {
+    filter: brightness(0) saturate(100%) invert(45%) sepia(40%) saturate(900%) hue-rotate(335deg) brightness(85%);
+  }
+  .bird-icon.is-moss {
+    filter: brightness(0) saturate(100%) invert(45%) sepia(20%) saturate(500%) hue-rotate(60deg) brightness(80%);
+  }
+
+  .btn:hover .bird-icon {
+    animation: flap 0.5s ease-in-out;
+  }
+
+  /* Scroll reveal — progressive enhancement only. Elements are visible by
+     default; JS adds .js-ready + IntersectionObserver toggles .is-visible. */
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+  .js-ready .reveal {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .js-ready .reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes paper-rise {
@@ -141,4 +213,27 @@
 }
 .animate-paper-rise {
   animation: paper-rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes flap {
+  0%,
+  100% {
+    transform: rotate(0deg) translateY(0);
+  }
+  50% {
+    transform: rotate(-12deg) translateY(-2px);
+  }
+}
+
+@keyframes drift {
+  0%,
+  100% {
+    transform: translateY(0) rotate(var(--drift-rotate, 2deg));
+  }
+  50% {
+    transform: translateY(-6px) rotate(var(--drift-rotate, 2deg));
+  }
+}
+.animate-drift {
+  animation: drift 5s ease-in-out infinite;
 }

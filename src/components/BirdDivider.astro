@@ -1,0 +1,16 @@
+---
+interface Props {
+  flip?: boolean;
+}
+const { flip = false } = Astro.props;
+---
+
+<div class="flex items-center justify-center gap-4 py-2 opacity-70">
+  <span class="h-px w-16 md:w-32 bg-edge"></span>
+  <img
+    src="/images/bird-mark.png"
+    alt=""
+    class:list={["bird-icon w-4 h-4 object-contain", flip && "-scale-x-100"]}
+  />
+  <span class="h-px w-16 md:w-32 bg-edge"></span>
+</div>

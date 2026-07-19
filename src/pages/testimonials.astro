@@ -33,7 +33,10 @@ const testimonials = [
   description="What early Covey testers are saying about hosting and joining real-world plans."
 >
   <div class="max-w-5xl mx-auto px-6 py-24">
-    <div class="eyebrow mb-3">Testimonials</div>
+    <div class="eyebrow mb-3 flex items-center gap-2">
+      <img src="/images/bird-mark.png" alt="" class="bird-icon is-clay w-3.5 h-3.5" />
+      Testimonials
+    </div>
     <h1 class="display text-5xl md:text-6xl mb-6 text-balance">
       Early reactions, before the <span class="italic text-clay">public launch</span>.
     </h1>
@@ -44,8 +47,11 @@ const testimonials = [
 
     <div class="grid md:grid-cols-3 gap-6">
       {
-        testimonials.map((t) => (
-          <div class="paper-edge p-6 relative">
+        testimonials.map((t, i) => (
+          <div
+            class="paper-edge p-6 relative card-hover"
+            style={`--card-tilt: ${i === 0 ? "-1deg" : i === 1 ? "1deg" : "-1deg"}`}
+          >
             <span class="sample-badge absolute top-4 right-5">Sample</span>
             <span class="font-serif italic text-clay text-4xl block mb-4">"</span>
             <p class="font-serif text-lg text-ink leading-relaxed mb-6">{t.quote}</p>

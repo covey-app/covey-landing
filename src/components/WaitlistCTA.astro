@@ -11,21 +11,21 @@ const {
 } = Astro.props;
 ---
 
-<section class="max-w-4xl mx-auto px-6 py-24 text-center border-t border-edge/60">
+<section class="max-w-4xl mx-auto px-6 py-24 text-center border-t border-edge/60 reveal">
   <span class="font-serif italic text-clay text-2xl block mb-4">{eyebrow}</span>
   <h2 class="display text-4xl md:text-5xl mb-6">{heading}</h2>
   <p class="text-warm-gray max-w-xl mx-auto mb-10 leading-relaxed">{body}</p>
   <div class="flex justify-center gap-3 flex-wrap">
-    <a
-      href="/signup"
-      class="px-10 py-4 bg-ink text-paper text-xs uppercase tracking-[0.2em] hover:bg-clay transition-colors"
-    >
+    <a href="/signup" class="btn btn-primary px-10 py-4 text-xs uppercase tracking-[0.2em]">
+      <img
+        src="/images/bird-mark.png"
+        alt=""
+        class="bird-icon w-4 h-4 object-contain"
+        style="filter: brightness(0) invert(1);"
+      />
       Join the waitlist
     </a>
-    <a
-      href="/contact"
-      class="px-10 py-4 border border-ink/20 text-xs uppercase tracking-[0.2em] hover:bg-ink/5 transition-colors"
-    >
+    <a href="/contact" class="btn btn-secondary px-10 py-4 text-xs uppercase tracking-[0.2em]">
       Talk to us
     </a>
   </div>

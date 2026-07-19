@@ -50,5 +50,25 @@ const canonicalURL = new URL(Astro.url.pathname, SITE.url);
       </main>
       <Footer />
     </div>
+
+    <script>
+      // Progressive enhancement only — every .reveal element is already
+      // visible without this script (see the base .reveal rule in
+      // global.css). This just adds a soft fade/slide-up as sections enter
+      // the viewport, so the site still works with JS disabled.
+      document.documentElement.classList.add("js-ready");
+      const observer = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("is-visible");
+              observer.unobserve(entry.target);
+            }
+          }
+        },
+        { threshold: 0.15 },
+      );
+      document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
+    </script>
   </body>
 </html>

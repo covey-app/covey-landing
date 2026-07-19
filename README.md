@@ -20,12 +20,24 @@ This is intentionally a separate, minimal repo from `covey-ios` and
 | `/privacy` | Privacy policy (marketing site scope only) |
 | `/support` | Support contact — required for App Store Connect |
 
+## Visual design
+
+The hero, "Why Covey" section, header/footer mark, and section dividers use
+three AI-generated illustrations in `public/images/` (`hero-flock.png`,
+`bird-mark.png`, `flock-circle.png`), styled as pinned field-note clippings
+to match the existing paper/tape/vellum motif — leaning into "covey" (a
+small flock of birds that moves together) as the actual brand metaphor
+instead of decoration. `src/styles/global.css` has the shared `.btn`,
+`.card-hover`, and `.reveal` utilities used for hover lifts and the
+scroll-in animation (progressive enhancement — everything is visible with
+JS disabled, see the `.reveal` rule and the script in `BaseLayout.astro`).
+
 ## Before you go live
 
 - [ ] Replace placeholder quotes in `src/pages/testimonials.astro` with real ones (has your permission to publish them).
 - [ ] Replace placeholder dates in `src/pages/events.astro` with confirmed events, or leave the empty-state copy as-is.
-- [ ] Drop a real hero screenshot at `public/screenshots/hero.png` and swap the placeholder frame in `src/pages/index.astro`.
-- [ ] Add a real Open Graph share image at `public/og-image.png` (1200×630).
+- [ ] Once you have a real iOS screenshot, drop it at `public/screenshots/hero.png` — see the TODO comment in `src/pages/index.astro` for where to slot it in alongside (or instead of) the bird illustration card.
+- [ ] `public/og-image.png` currently reuses the hero bird illustration — swap for a dedicated 1200×630 share image once you have real app screenshots or branding to show.
 - [ ] Set up inboxes (or forwarding) for every address in `src/config.ts` — `hello@`, `press@`, `support@`, `safety@coveyapp.co`. GoDaddy sells email, or you can forward `@coveyapp.co` to an existing inbox via GoDaddy's free email forwarding.
 - [ ] Once `covey-web` is deployed, set `appUrl`/`appIsLive` in `src/config.ts` so the nav links out to it.
 - [ ] Once iOS is approved, set `appStoreUrl` in `src/config.ts` and add a real badge to `/signup`.

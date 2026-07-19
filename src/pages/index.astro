@@ -1,24 +1,34 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import WaitlistCTA from "../components/WaitlistCTA.astro";
+import WhyCovey from "../components/WhyCovey.astro";
+import BirdDivider from "../components/BirdDivider.astro";
 import { SITE } from "../config";
 
 const features = [
   {
     t: "Real-world plans",
     d: "Wine crawls, hikes, gallery days, dinners. Things that happen at a place, at a time — not another feed to scroll.",
+    tag: "Show up",
+    tone: "clay",
   },
   {
     t: "Small groups",
     d: "Hosts cap each plan between two and ten people. The size keeps every plan human.",
+    tag: "2–10 people",
+    tone: "moss",
   },
   {
     t: "Host-led",
     d: "One person owns the day. They pick the stops, set the tone, choose who joins.",
+    tag: "One host",
+    tone: "clay",
   },
   {
     t: "Local first",
     d: `Launching invite-only in ${SITE.city.split(",")[0]}. Every plan happens somewhere you can actually walk to.`,
+    tag: SITE.city.split(",")[0],
+    tone: "moss",
   },
 ];
 
@@ -27,16 +37,19 @@ const steps = [
     n: "01",
     t: "Sketch or browse",
     d: "Hosts publish a few stops, a date, and a vibe. Everyone else scrolls for a plan that fits their week.",
+    rotate: "-8deg",
   },
   {
     n: "02",
     t: "Claim a spot",
     d: "Plans are open-join, request-to-join, or invite-only. You always know how many seats are left.",
+    rotate: "0deg",
   },
   {
     n: "03",
     t: "Meet at the first stop",
     d: "Once you're in, the details are yours. Show up, introduce yourself, follow the itinerary.",
+    rotate: "8deg",
   },
 ];
 ---
@@ -45,11 +58,14 @@ const steps = [
   title="Make a plan, open a few spots"
   description="Covey is a plan-first social app launching invite-only on iOS. Hosts publish small real-world itineraries and a few seats stay open."
 >
-  <section class="relative">
+  <section class="relative overflow-hidden">
     <div class="max-w-7xl mx-auto px-6 pt-16 md:pt-24 pb-24">
-      <div class="grid grid-cols-12 gap-8 items-end">
+      <div class="grid grid-cols-12 gap-8 items-center">
         <div class="col-span-12 lg:col-span-7 animate-paper-rise">
-          <div class="eyebrow mb-6">{SITE.launchRegion}</div>
+          <div class="eyebrow mb-6 flex items-center gap-2">
+            <img src="/images/bird-mark.png" alt="" class="bird-icon is-clay w-3.5 h-3.5" />
+            {SITE.launchRegion}
+          </div>
           <h1 class="display text-6xl md:text-7xl lg:text-[5.5rem] text-balance mb-8">
             Make a plan.<br />
             Open a few <span class="italic text-clay">spots</span>.<br />
@@ -60,16 +76,11 @@ const steps = [
             itineraries and a few seats stay open for whoever's curious.
           </p>
           <div class="flex flex-wrap gap-3">
-            <a
-              href="/signup"
-              class="px-7 py-4 bg-ink text-paper text-xs uppercase tracking-[0.2em] hover:bg-clay transition-colors"
-            >
+            <a href="/signup" class="btn btn-primary px-7 py-4 text-xs uppercase tracking-[0.2em]">
+              <img src="/images/bird-mark.png" alt="" class="bird-icon w-4 h-4 object-contain" style="filter: brightness(0) invert(1);" />
               Join the waitlist
             </a>
-            <a
-              href="/about"
-              class="px-7 py-4 border border-ink/20 text-xs uppercase tracking-[0.2em] hover:bg-ink/5 transition-colors"
-            >
+            <a href="/about" class="btn btn-secondary px-7 py-4 text-xs uppercase tracking-[0.2em]">
               How it works
             </a>
           </div>
@@ -82,28 +93,25 @@ const steps = [
           </div>
         </div>
 
-        <div class="col-span-12 lg:col-span-5 relative h-[480px] hidden lg:block">
+        <div class="col-span-12 lg:col-span-5 relative h-[520px] hidden lg:block">
           <!--
-            TODO: replace this placeholder mockup with a real iOS screenshot.
-            Drop the file at public/screenshots/hero.png and swap the div
-            below for an <img src="/screenshots/hero.png" ... /> inside the
-            same frame classes.
+            TODO: once you have a real iOS screenshot, drop it at
+            public/screenshots/hero.png and either swap this field-note card
+            for it, or add it as a second, smaller pinned card layered in
+            front — the tape/paper-pinned classes below work for either.
           -->
-          <div
-            class="absolute top-0 right-0 w-72 aspect-[9/19] paper-pinned p-2 rotate-2 z-10 flex items-center justify-center"
-          >
-            <div class="tape -top-2 left-12 -rotate-6"></div>
-            <div class="text-center px-6">
-              <div class="eyebrow mb-3">App screenshot</div>
-              <p class="font-serif italic text-warm-gray text-sm">
-                Drop your hero screenshot at<br /><code class="font-mono text-xs">/public/screenshots/hero.png</code>
-              </p>
-            </div>
+          <div class="absolute top-0 right-0 w-80 paper-pinned p-2 rotate-2 z-10 animate-drift" style="--drift-rotate: 2deg;">
+            <div class="tape -top-2 left-14 -rotate-6"></div>
+            <img
+              src="/images/hero-flock.png"
+              alt="A covey of quail in flight, field-note illustration"
+              class="w-full aspect-[4/3] object-cover"
+            />
           </div>
-          <div class="absolute top-40 left-24 w-40 vellum-panel p-4 rotate-3 z-20">
-            <div class="eyebrow mb-1">Featured</div>
+          <div class="absolute bottom-6 left-0 w-44 vellum-panel p-4 -rotate-3 z-20">
+            <div class="eyebrow mb-1">Field notes</div>
             <p class="font-serif text-sm leading-snug text-ink">
-              "A gallery loop, four seats open."
+              "A covey in flight is coordinated, communal, constant."
             </p>
           </div>
         </div>
@@ -111,7 +119,25 @@ const steps = [
     </div>
   </section>
 
-  <section class="max-w-6xl mx-auto px-6 py-24 grid md:grid-cols-12 gap-16 items-start">
+  <div class="border-y border-edge/60 bg-paper/40">
+    <div class="max-w-7xl mx-auto px-6 py-5 overflow-x-auto no-scrollbar">
+      <div class="flex gap-8 whitespace-nowrap items-center text-sm text-ink/80">
+        <span class="eyebrow shrink-0">Built around</span>
+        {["Small groups", "Real plans", "Host-led days", "One city at a time"].map((c) => (
+          <span class="flex items-center gap-2">
+            <span class="size-1 rounded-full bg-moss/60"></span>
+            {c}
+          </span>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <WhyCovey />
+
+  <BirdDivider />
+
+  <section class="max-w-6xl mx-auto px-6 py-24 grid md:grid-cols-12 gap-16 items-start reveal">
     <div class="md:col-span-5">
       <div class="eyebrow mb-3">What it is</div>
       <h2 class="display text-4xl md:text-5xl mb-6">Not a feed. A corkboard.</h2>
@@ -122,15 +148,26 @@ const steps = [
       </p>
       <a
         href="/about"
-        class="inline-block mt-8 text-xs uppercase tracking-[0.2em] border-b border-ink pb-1 hover:text-clay hover:border-clay"
+        class="inline-block mt-8 text-xs uppercase tracking-[0.2em] border-b border-ink pb-1 hover:text-clay hover:border-clay transition-colors"
       >
         More about Covey →
       </a>
     </div>
     <div class="md:col-span-7 grid sm:grid-cols-2 gap-5">
       {
-        features.map((f) => (
-          <div class="paper-edge p-5">
+        features.map((f, i) => (
+          <div
+            class="paper-edge p-5 card-hover"
+            style={`--card-tilt: ${i % 2 === 0 ? "-1deg" : "1deg"}`}
+          >
+            <div
+              class:list={[
+                "inline-block text-[10px] uppercase tracking-[0.14em] px-2 py-1 mb-3 rounded-full",
+                f.tone === "clay" ? "bg-clay/15 text-clay" : "bg-moss/15 text-moss",
+              ]}
+            >
+              {f.tag}
+            </div>
             <h3 class="font-serif text-xl text-ink mb-2">{f.t}</h3>
             <p class="text-sm text-warm-gray leading-relaxed">{f.d}</p>
           </div>
@@ -139,8 +176,8 @@ const steps = [
     </div>
   </section>
 
-  <section class="bg-ink text-paper py-28">
-    <div class="max-w-6xl mx-auto px-6">
+  <section class="bg-ink text-paper py-28 relative overflow-hidden">
+    <div class="max-w-6xl mx-auto px-6 reveal">
       <div class="grid md:grid-cols-2 gap-20 items-start mb-20">
         <div>
           <div class="eyebrow text-paper/50 mb-6">How it works</div>
@@ -159,7 +196,15 @@ const steps = [
         {
           steps.map((s) => (
             <li class="border-t border-paper/20 pt-6">
-              <span class="font-serif italic text-5xl text-clay block mb-4">{s.n}</span>
+              <div class="flex items-center gap-3 mb-4">
+                <span class="font-serif italic text-5xl text-clay">{s.n}</span>
+                <img
+                  src="/images/bird-mark.png"
+                  alt=""
+                  class="bird-icon w-6 h-6 object-contain opacity-80"
+                  style={`filter: brightness(0) invert(1); transform: rotate(${s.rotate});`}
+                />
+              </div>
               <h4 class="font-serif text-2xl mb-3">{s.t}</h4>
               <p class="text-paper/60 leading-relaxed">{s.d}</p>
             </li>
@@ -169,32 +214,26 @@ const steps = [
     </div>
   </section>
 
-  <section class="max-w-7xl mx-auto px-6 py-24 grid md:grid-cols-2 gap-8">
-    <div class="paper-pinned p-10">
+  <section class="max-w-7xl mx-auto px-6 py-24 grid md:grid-cols-2 gap-8 reveal">
+    <div class="paper-pinned p-10 card-hover" style="--card-tilt: 0deg">
       <div class="eyebrow mb-3">What people are saying</div>
       <h3 class="display text-4xl mb-5">Early access, real reactions.</h3>
       <p class="text-warm-gray leading-relaxed mb-8">
         Hear what early testers have said about hosting and joining their
         first Covey plans.
       </p>
-      <a
-        href="/testimonials"
-        class="inline-block px-6 py-3 border border-ink text-xs uppercase tracking-[0.2em] hover:bg-ink hover:text-paper transition-colors"
-      >
+      <a href="/testimonials" class="btn btn-secondary px-6 py-3 text-xs uppercase tracking-[0.2em]">
         Read testimonials
       </a>
     </div>
-    <div class="paper-pinned p-10 -rotate-1">
+    <div class="paper-pinned p-10 -rotate-1 card-hover" style="--card-tilt: -1deg">
       <div class="eyebrow mb-3">Get involved</div>
       <h3 class="display text-4xl mb-5">See what's coming up.</h3>
       <p class="text-warm-gray leading-relaxed mb-8">
         Launch mixers, host meetups, and city-by-city rollout dates land here
         first.
       </p>
-      <a
-        href="/events"
-        class="inline-block px-6 py-3 border border-ink text-xs uppercase tracking-[0.2em] hover:bg-ink hover:text-paper transition-colors"
-      >
+      <a href="/events" class="btn btn-secondary px-6 py-3 text-xs uppercase tracking-[0.2em]">
         Upcoming events
       </a>
     </div>

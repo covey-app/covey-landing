@@ -24,9 +24,15 @@ const cols = [
 <footer class="mt-32 border-t border-edge/60">
   <div class="max-w-7xl mx-auto px-6 py-16 grid md:grid-cols-12 gap-12">
     <div class="md:col-span-6 space-y-4">
-      <div class="font-serif italic text-3xl text-ink">{SITE.name}</div>
+      <div class="flex items-center gap-2">
+        <img src="/images/bird-mark.png" alt="" class="bird-icon w-7 h-7 object-contain" />
+        <div class="font-serif italic text-3xl text-ink">{SITE.name}</div>
+      </div>
       <p class="text-sm text-warm-gray max-w-sm leading-relaxed">
         {SITE.tagline} Launching invite-only on iOS, {SITE.city} first.
+      </p>
+      <p class="text-xs text-warm-gray max-w-sm leading-relaxed italic font-serif">
+        A "covey" is a small flock of birds that moves together. That's the whole idea.
       </p>
       <a
         href={`mailto:${SITE.emails.hello}`}

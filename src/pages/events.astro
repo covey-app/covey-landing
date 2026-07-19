@@ -27,7 +27,10 @@ const events = [
   description="Covey launch mixers, host meetups, and city rollout events."
 >
   <div class="max-w-5xl mx-auto px-6 py-24">
-    <div class="eyebrow mb-3">Upcoming events</div>
+    <div class="eyebrow mb-3 flex items-center gap-2">
+      <img src="/images/bird-mark.png" alt="" class="bird-icon is-clay w-3.5 h-3.5" />
+      Upcoming events
+    </div>
     <h1 class="display text-5xl md:text-6xl mb-6 text-balance">
       Meet the people building the <span class="italic text-clay">first plans</span>.
     </h1>
@@ -38,8 +41,11 @@ const events = [
 
     <div class="space-y-6">
       {
-        events.map((e) => (
-          <div class="paper-edge p-6 md:p-8 grid md:grid-cols-12 gap-6 items-start relative">
+        events.map((e, i) => (
+          <div
+            class="paper-edge p-6 md:p-8 grid md:grid-cols-12 gap-6 items-start relative card-hover"
+            style={`--card-tilt: ${i % 2 === 0 ? "-1deg" : "1deg"}`}
+          >
             <span class="sample-badge absolute top-4 right-5">Sample</span>
             <div class="md:col-span-2">
               <div class="eyebrow">{e.date}</div>
@@ -54,13 +60,10 @@ const events = [
       }
     </div>
 
-    <div class="mt-10 paper-edge p-8 text-center">
-      <p class="font-serif italic text-warm-gray text-lg mb-2">
-        Nothing confirmed yet.
-      </p>
-      <p class="text-warm-gray">
-        We'll post real dates here as soon as they're locked in.
-      </p>
+    <div class="mt-10 paper-edge p-8 text-center flex flex-col items-center gap-3">
+      <img src="/images/bird-mark.png" alt="" class="bird-icon is-moss w-8 h-8 object-contain -scale-x-100" />
+      <p class="font-serif italic text-warm-gray text-lg">Nothing confirmed yet.</p>
+      <p class="text-warm-gray">We'll post real dates here as soon as they're locked in.</p>
     </div>
   </div>
 

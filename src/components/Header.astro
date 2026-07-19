@@ -13,7 +13,13 @@ const path = new URL(Astro.request.url).pathname;
 
 <header class="sticky top-0 z-40 vellum-panel border-b border-edge/60">
   <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-    <a href="/" class="flex items-baseline gap-2">
+    <a href="/" class="flex items-center gap-2 group">
+      <img
+        src="/images/bird-mark.png"
+        alt=""
+        class="bird-icon w-6 h-6 object-contain group-hover:animate-drift"
+        style="--drift-rotate: -6deg"
+      />
       <span class="font-serif italic text-2xl tracking-tight text-ink">{SITE.name}</span>
       <span class="eyebrow hidden sm:inline">Coming to iOS</span>
     </a>

@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import WaitlistCTA from "../components/WaitlistCTA.astro";
+import BirdDivider from "../components/BirdDivider.astro";
 import { SITE } from "../config";
 
 const principles = [
@@ -38,7 +39,10 @@ const stats = [
   description="Covey is a plan-first social app built around real-world itineraries and small-group meetups, launching invite-only on iOS."
 >
   <div class="max-w-4xl mx-auto px-6 py-24">
-    <div class="eyebrow mb-3">About</div>
+    <div class="eyebrow mb-3 flex items-center gap-2">
+      <img src="/images/bird-mark.png" alt="" class="bird-icon is-clay w-3.5 h-3.5" />
+      About
+    </div>
     <h1 class="display text-5xl md:text-6xl mb-10">A new shape for going out.</h1>
 
     <div class="space-y-8 text-lg text-warm-gray leading-relaxed">
@@ -63,13 +67,31 @@ const stats = [
 
     <div class="mt-20 grid sm:grid-cols-3 gap-8">
       {
-        stats.map((s) => (
-          <div class="paper-edge p-6">
+        stats.map((s, i) => (
+          <div class="paper-edge p-6 card-hover" style={`--card-tilt: ${i === 1 ? "0deg" : i === 0 ? "-1deg" : "1deg"}`}>
             <div class="font-serif text-3xl text-ink">{s.k}</div>
             <div class="eyebrow mt-2">{s.v}</div>
           </div>
         ))
       }
+    </div>
+
+    <BirdDivider flip />
+
+    <div class="paper-pinned p-8 md:p-10 my-4 flex flex-col md:flex-row gap-8 items-center">
+      <img
+        src="/images/bird-mark.png"
+        alt=""
+        class="bird-icon is-moss w-16 h-16 object-contain shrink-0"
+      />
+      <div>
+        <div class="eyebrow mb-2">Where the name comes from</div>
+        <p class="font-serif text-xl text-ink leading-relaxed">
+          A covey is a small flock of quail — never a crowd, always moving
+          together. It's the same shape we're building the app around: a
+          handful of people, one plan, one day.
+        </p>
+      </div>
     </div>
 
     <div class="mt-20">
