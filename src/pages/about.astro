@@ -1,0 +1,99 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import WaitlistCTA from "../components/WaitlistCTA.astro";
+import { SITE } from "../config";
+
+const principles = [
+  {
+    n: "01",
+    t: "Plans, not profiles.",
+    d: "We don't sell you on someone's photos. We show you what the day actually looks like — where, when, with how many.",
+  },
+  {
+    n: "02",
+    t: "Small on purpose.",
+    d: "Two to ten people. Anything bigger and the host stops being a host. We won't ship features that push capacity up for its own sake.",
+  },
+  {
+    n: "03",
+    t: "Real life over feeds.",
+    d: "Covey should feel less like an app and more like a corkboard. Open it, find a plan, close it, go.",
+  },
+  {
+    n: "04",
+    t: "Hosts are the soul.",
+    d: "The best plans come from people with strong taste and a generous instinct. We design every product decision around making their job easier.",
+  },
+];
+
+const stats = [
+  { k: "2025", v: "Founded" },
+  { k: SITE.city.split(",")[0], v: "First city" },
+  { k: "Invite-only", v: "iOS launch" },
+];
+---
+
+<BaseLayout
+  title="About"
+  description="Covey is a plan-first social app built around real-world itineraries and small-group meetups, launching invite-only on iOS."
+>
+  <div class="max-w-4xl mx-auto px-6 py-24">
+    <div class="eyebrow mb-3">About</div>
+    <h1 class="display text-5xl md:text-6xl mb-10">A new shape for going out.</h1>
+
+    <div class="space-y-8 text-lg text-warm-gray leading-relaxed">
+      <p>
+        Covey started with a simple frustration: most ways to meet people
+        online have nothing to do with what you actually want to{" "}
+        <em class="text-ink not-italic font-serif italic">do</em>. Group
+        chats stall. Apps optimize for swipes, not Saturdays. The good plans
+        live in someone's head and never leave it.
+      </p>
+      <p>
+        We're building a plan-first social app. Hosts publish small
+        itineraries — a wine crawl, a bookstore loop, a sunrise hike — and a
+        few seats stay open for whoever's curious.
+      </p>
+      <p>
+        Plans are intentionally small. Two to ten people, a date, a few
+        stops, and a clear vibe. You're not joining a "community." You're
+        showing up at the first stop.
+      </p>
+    </div>
+
+    <div class="mt-20 grid sm:grid-cols-3 gap-8">
+      {
+        stats.map((s) => (
+          <div class="paper-edge p-6">
+            <div class="font-serif text-3xl text-ink">{s.k}</div>
+            <div class="eyebrow mt-2">{s.v}</div>
+          </div>
+        ))
+      }
+    </div>
+
+    <div class="mt-20">
+      <div class="eyebrow mb-3">What we believe</div>
+      <h2 class="display text-4xl mb-10">Four principles we build around.</h2>
+      <ol class="space-y-10">
+        {
+          principles.map((p) => (
+            <li class="grid md:grid-cols-12 gap-8 border-t border-edge pt-10">
+              <span class="md:col-span-2 font-serif italic text-clay text-5xl">{p.n}</span>
+              <div class="md:col-span-10">
+                <h3 class="font-serif text-2xl text-ink mb-3">{p.t}</h3>
+                <p class="text-warm-gray text-lg leading-relaxed max-w-2xl">{p.d}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </div>
+
+  <WaitlistCTA
+    eyebrow="The city is the canvas."
+    heading="Want to be part of it?"
+    body="Join the waitlist and we'll email you the moment invites open in your city."
+  />
+</BaseLayout>

@@ -1,0 +1,204 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import WaitlistCTA from "../components/WaitlistCTA.astro";
+import { SITE } from "../config";
+
+const features = [
+  {
+    t: "Real-world plans",
+    d: "Wine crawls, hikes, gallery days, dinners. Things that happen at a place, at a time — not another feed to scroll.",
+  },
+  {
+    t: "Small groups",
+    d: "Hosts cap each plan between two and ten people. The size keeps every plan human.",
+  },
+  {
+    t: "Host-led",
+    d: "One person owns the day. They pick the stops, set the tone, choose who joins.",
+  },
+  {
+    t: "Local first",
+    d: `Launching invite-only in ${SITE.city.split(",")[0]}. Every plan happens somewhere you can actually walk to.`,
+  },
+];
+
+const steps = [
+  {
+    n: "01",
+    t: "Sketch or browse",
+    d: "Hosts publish a few stops, a date, and a vibe. Everyone else scrolls for a plan that fits their week.",
+  },
+  {
+    n: "02",
+    t: "Claim a spot",
+    d: "Plans are open-join, request-to-join, or invite-only. You always know how many seats are left.",
+  },
+  {
+    n: "03",
+    t: "Meet at the first stop",
+    d: "Once you're in, the details are yours. Show up, introduce yourself, follow the itinerary.",
+  },
+];
+---
+
+<BaseLayout
+  title="Make a plan, open a few spots"
+  description="Covey is a plan-first social app launching invite-only on iOS. Hosts publish small real-world itineraries and a few seats stay open."
+>
+  <section class="relative">
+    <div class="max-w-7xl mx-auto px-6 pt-16 md:pt-24 pb-24">
+      <div class="grid grid-cols-12 gap-8 items-end">
+        <div class="col-span-12 lg:col-span-7 animate-paper-rise">
+          <div class="eyebrow mb-6">{SITE.launchRegion}</div>
+          <h1 class="display text-6xl md:text-7xl lg:text-[5.5rem] text-balance mb-8">
+            Make a plan.<br />
+            Open a few <span class="italic text-clay">spots</span>.<br />
+            Meet people through it.
+          </h1>
+          <p class="max-w-md text-lg text-warm-gray leading-relaxed mb-10">
+            Covey is a plan-first social app. Hosts publish small real-world
+            itineraries and a few seats stay open for whoever's curious.
+          </p>
+          <div class="flex flex-wrap gap-3">
+            <a
+              href="/signup"
+              class="px-7 py-4 bg-ink text-paper text-xs uppercase tracking-[0.2em] hover:bg-clay transition-colors"
+            >
+              Join the waitlist
+            </a>
+            <a
+              href="/about"
+              class="px-7 py-4 border border-ink/20 text-xs uppercase tracking-[0.2em] hover:bg-ink/5 transition-colors"
+            >
+              How it works
+            </a>
+          </div>
+          <div class="mt-8 text-xs uppercase tracking-[0.18em] text-warm-gray flex gap-6 flex-wrap">
+            <span>Free to use</span>
+            <span>·</span>
+            <span>2–10 person plans</span>
+            <span>·</span>
+            <span>iOS first, invite-only</span>
+          </div>
+        </div>
+
+        <div class="col-span-12 lg:col-span-5 relative h-[480px] hidden lg:block">
+          <!--
+            TODO: replace this placeholder mockup with a real iOS screenshot.
+            Drop the file at public/screenshots/hero.png and swap the div
+            below for an <img src="/screenshots/hero.png" ... /> inside the
+            same frame classes.
+          -->
+          <div
+            class="absolute top-0 right-0 w-72 aspect-[9/19] paper-pinned p-2 rotate-2 z-10 flex items-center justify-center"
+          >
+            <div class="tape -top-2 left-12 -rotate-6"></div>
+            <div class="text-center px-6">
+              <div class="eyebrow mb-3">App screenshot</div>
+              <p class="font-serif italic text-warm-gray text-sm">
+                Drop your hero screenshot at<br /><code class="font-mono text-xs">/public/screenshots/hero.png</code>
+              </p>
+            </div>
+          </div>
+          <div class="absolute top-40 left-24 w-40 vellum-panel p-4 rotate-3 z-20">
+            <div class="eyebrow mb-1">Featured</div>
+            <p class="font-serif text-sm leading-snug text-ink">
+              "A gallery loop, four seats open."
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="max-w-6xl mx-auto px-6 py-24 grid md:grid-cols-12 gap-16 items-start">
+    <div class="md:col-span-5">
+      <div class="eyebrow mb-3">What it is</div>
+      <h2 class="display text-4xl md:text-5xl mb-6">Not a feed. A corkboard.</h2>
+      <p class="text-warm-gray leading-relaxed text-lg">
+        Covey isn't trying to be another social network. It's a place where
+        one person sketches an itinerary — a few stops, a date, a mood — and
+        the right two or three people show up.
+      </p>
+      <a
+        href="/about"
+        class="inline-block mt-8 text-xs uppercase tracking-[0.2em] border-b border-ink pb-1 hover:text-clay hover:border-clay"
+      >
+        More about Covey →
+      </a>
+    </div>
+    <div class="md:col-span-7 grid sm:grid-cols-2 gap-5">
+      {
+        features.map((f) => (
+          <div class="paper-edge p-5">
+            <h3 class="font-serif text-xl text-ink mb-2">{f.t}</h3>
+            <p class="text-sm text-warm-gray leading-relaxed">{f.d}</p>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="bg-ink text-paper py-28">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="grid md:grid-cols-2 gap-20 items-start mb-20">
+        <div>
+          <div class="eyebrow text-paper/50 mb-6">How it works</div>
+          <h2 class="display text-5xl md:text-6xl">
+            Three steps, <span class="italic text-clay">no group chat</span>.
+          </h2>
+        </div>
+        <p class="text-paper/70 leading-relaxed text-lg">
+          Whether you're hosting your first plan or joining one, the flow is
+          the same shape: find or sketch the day, lock in your seat, show up
+          at the first stop.
+        </p>
+      </div>
+
+      <ol class="grid md:grid-cols-3 gap-10">
+        {
+          steps.map((s) => (
+            <li class="border-t border-paper/20 pt-6">
+              <span class="font-serif italic text-5xl text-clay block mb-4">{s.n}</span>
+              <h4 class="font-serif text-2xl mb-3">{s.t}</h4>
+              <p class="text-paper/60 leading-relaxed">{s.d}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="max-w-7xl mx-auto px-6 py-24 grid md:grid-cols-2 gap-8">
+    <div class="paper-pinned p-10">
+      <div class="eyebrow mb-3">What people are saying</div>
+      <h3 class="display text-4xl mb-5">Early access, real reactions.</h3>
+      <p class="text-warm-gray leading-relaxed mb-8">
+        Hear what early testers have said about hosting and joining their
+        first Covey plans.
+      </p>
+      <a
+        href="/testimonials"
+        class="inline-block px-6 py-3 border border-ink text-xs uppercase tracking-[0.2em] hover:bg-ink hover:text-paper transition-colors"
+      >
+        Read testimonials
+      </a>
+    </div>
+    <div class="paper-pinned p-10 -rotate-1">
+      <div class="eyebrow mb-3">Get involved</div>
+      <h3 class="display text-4xl mb-5">See what's coming up.</h3>
+      <p class="text-warm-gray leading-relaxed mb-8">
+        Launch mixers, host meetups, and city-by-city rollout dates land here
+        first.
+      </p>
+      <a
+        href="/events"
+        class="inline-block px-6 py-3 border border-ink text-xs uppercase tracking-[0.2em] hover:bg-ink hover:text-paper transition-colors"
+      >
+        Upcoming events
+      </a>
+    </div>
+  </section>
+
+  <WaitlistCTA />
+</BaseLayout>

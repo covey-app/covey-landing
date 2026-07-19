@@ -1,0 +1,72 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import WaitlistCTA from "../components/WaitlistCTA.astro";
+
+// TODO(covey-landing): these are placeholder events so the page ships with
+// real layout/structure before launch. Replace dates/copy with confirmed
+// events, or delete entries you don't need — remove the "sample" badge
+// once a date is confirmed.
+const events = [
+  {
+    date: "TBD",
+    title: "San Francisco launch mixer",
+    location: "San Francisco, CA",
+    body: "An in-person meetup for the first wave of invited hosts and joiners — swap stories, meet your future plan-mates.",
+  },
+  {
+    date: "TBD",
+    title: "First host office hours",
+    location: "Virtual",
+    body: "A live Q&A for anyone hosting their first Covey plan — capacity, pricing, and safety basics.",
+  },
+];
+---
+
+<BaseLayout
+  title="Upcoming Events"
+  description="Covey launch mixers, host meetups, and city rollout events."
+>
+  <div class="max-w-5xl mx-auto px-6 py-24">
+    <div class="eyebrow mb-3">Upcoming events</div>
+    <h1 class="display text-5xl md:text-6xl mb-6 text-balance">
+      Meet the people building the <span class="italic text-clay">first plans</span>.
+    </h1>
+    <p class="text-warm-gray text-lg leading-relaxed max-w-2xl mb-16">
+      Launch mixers, host meetups, and city-by-city rollout dates land here
+      first. Join the waitlist to get notified before events go public.
+    </p>
+
+    <div class="space-y-6">
+      {
+        events.map((e) => (
+          <div class="paper-edge p-6 md:p-8 grid md:grid-cols-12 gap-6 items-start relative">
+            <span class="sample-badge absolute top-4 right-5">Sample</span>
+            <div class="md:col-span-2">
+              <div class="eyebrow">{e.date}</div>
+            </div>
+            <div class="md:col-span-10">
+              <h3 class="font-serif text-2xl text-ink mb-1">{e.title}</h3>
+              <div class="text-sm text-clay uppercase tracking-[0.14em] mb-3">{e.location}</div>
+              <p class="text-warm-gray leading-relaxed">{e.body}</p>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+
+    <div class="mt-10 paper-edge p-8 text-center">
+      <p class="font-serif italic text-warm-gray text-lg mb-2">
+        Nothing confirmed yet.
+      </p>
+      <p class="text-warm-gray">
+        We'll post real dates here as soon as they're locked in.
+      </p>
+    </div>
+  </div>
+
+  <WaitlistCTA
+    eyebrow="Don't miss it"
+    heading="Get notified about the next event."
+    body="Waitlist members hear about launch mixers and city rollouts before anyone else."
+  />
+</BaseLayout>

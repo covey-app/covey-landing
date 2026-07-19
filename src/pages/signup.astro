@@ -1,0 +1,73 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { SITE } from "../config";
+---
+
+<BaseLayout
+  title="Join the waitlist"
+  description="Join the Covey waitlist. We're launching invite-only on iOS, starting in San Francisco."
+>
+  <div class="max-w-2xl mx-auto px-6 py-24 text-center">
+    <div class="eyebrow mb-3">{SITE.launchRegion}</div>
+    <h1 class="display text-5xl md:text-6xl mb-6">Be first through the door.</h1>
+    <p class="text-warm-gray text-lg leading-relaxed mb-12 max-w-xl mx-auto">
+      Covey is rolling out invite-only on iOS, starting in {SITE.city}. Drop
+      your email below and we'll let you know the moment a spot opens up —
+      no spam, just the invite when it's ready.
+    </p>
+
+    <form
+      name="waitlist"
+      method="POST"
+      data-netlify="true"
+      action="/thanks"
+      class="vellum-panel p-8 space-y-6 text-left"
+    >
+      <input type="hidden" name="form-name" value="waitlist" />
+      <p class="hidden">
+        <label>Don't fill this out if you're human: <input name="bot-field" /></label>
+      </p>
+
+      <label class="block">
+        <div class="eyebrow mb-2">Email</div>
+        <input
+          required
+          type="email"
+          name="email"
+          placeholder="you@example.com"
+          class="w-full bg-transparent border-b border-edge focus:border-ink outline-none py-2 font-serif text-lg"
+        />
+      </label>
+
+      <label class="block">
+        <div class="eyebrow mb-2">First name (optional)</div>
+        <input
+          name="name"
+          class="w-full bg-transparent border-b border-edge focus:border-ink outline-none py-2"
+        />
+      </label>
+
+      <label class="block">
+        <div class="eyebrow mb-2">City (optional)</div>
+        <input
+          name="city"
+          placeholder="Where should we launch next?"
+          class="w-full bg-transparent border-b border-edge focus:border-ink outline-none py-2"
+        />
+      </label>
+
+      <label class="flex items-start gap-3 text-sm text-warm-gray">
+        <input required type="checkbox" name="over18" class="mt-1" />
+        <span>I confirm I'm 18 or older.</span>
+      </label>
+
+      <button class="w-full px-10 py-4 bg-ink text-paper text-xs uppercase tracking-[0.2em] hover:bg-clay transition-colors">
+        Join the waitlist
+      </button>
+    </form>
+
+    <p class="text-xs text-warm-gray mt-8 uppercase tracking-[0.18em]">
+      Already have an invite? <a href={SITE.appUrl} class="border-b border-warm-gray hover:text-ink hover:border-ink">Open the app →</a>
+    </p>
+  </div>
+</BaseLayout>

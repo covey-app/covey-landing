@@ -1,0 +1,22 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Thanks" description="Thanks — we've got it." noIndex={true}>
+  <div class="max-w-xl mx-auto px-6 py-32 text-center">
+    <div class="paper-pinned p-12">
+      <span class="font-serif italic text-clay text-2xl block mb-4">Got it.</span>
+      <h1 class="display text-4xl mb-4">Thanks — we've got it.</h1>
+      <p class="text-warm-gray leading-relaxed mb-8">
+        If you joined the waitlist, we'll email you the moment an invite is
+        ready. If you sent us a message, we'll reply within a few days.
+      </p>
+      <a
+        href="/"
+        class="inline-block px-8 py-4 bg-ink text-paper text-xs uppercase tracking-[0.2em] hover:bg-clay transition-colors"
+      >
+        Back home
+      </a>
+    </div>
+  </div>
+</BaseLayout>

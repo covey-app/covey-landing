@@ -1,0 +1,18 @@
+# build output
+dist/
+.astro/
+
+# dependencies
+node_modules/
+
+# env
+.env
+.env.production
+
+# editor / os
+.DS_Store
+Thumbs.db
+.vscode/
+
+# cursor (never commit local agent config)
+.cursor/

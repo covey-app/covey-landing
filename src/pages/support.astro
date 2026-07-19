@@ -1,0 +1,63 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { SITE } from "../config";
+
+const channels = [
+  {
+    title: "General support",
+    value: SITE.emails.support,
+    body: "Questions about the waitlist, your invite, or the website.",
+  },
+  {
+    title: "Trust & safety",
+    value: SITE.emails.safety,
+    body: "Urgent behavior reports, policy concerns, and incident escalations.",
+  },
+  {
+    title: "Press & partnerships",
+    value: SITE.emails.press,
+    body: "Media inquiries, partnership proposals, and collaboration requests.",
+  },
+];
+---
+
+<BaseLayout
+  title="Support"
+  description="Contact Covey support for account, waitlist, safety, or general questions."
+>
+  <div class="max-w-5xl mx-auto px-6 py-24">
+    <div class="eyebrow mb-3">Support</div>
+    <h1 class="display text-5xl md:text-6xl mb-6">How can we help?</h1>
+    <p class="text-warm-gray text-lg leading-relaxed max-w-3xl">
+      Covey is currently invite-only, rolling out on iOS. For account,
+      waitlist, or safety questions, reach out through one of the channels
+      below and we'll get back to you within a few days.
+    </p>
+
+    <div class="mt-12 grid md:grid-cols-3 gap-6">
+      {
+        channels.map((item) => (
+          <div class="paper-edge p-6">
+            <h2 class="font-serif text-2xl text-ink mb-2">{item.title}</h2>
+            <a
+              href={`mailto:${item.value}`}
+              class="text-sm uppercase tracking-[0.18em] text-clay mb-3 block hover:underline"
+            >
+              {item.value}
+            </a>
+            <p class="text-warm-gray leading-relaxed">{item.body}</p>
+          </div>
+        ))
+      }
+    </div>
+
+    <div class="mt-12 border-t border-edge pt-8 flex flex-wrap gap-4 text-xs uppercase tracking-[0.2em]">
+      <a href="/privacy" class="border-b border-ink pb-1 hover:text-clay hover:border-clay">
+        Privacy policy
+      </a>
+      <a href="/contact" class="border-b border-ink pb-1 hover:text-clay hover:border-clay">
+        Contact form
+      </a>
+    </div>
+  </div>
+</BaseLayout>

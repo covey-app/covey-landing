@@ -1,0 +1,73 @@
+---
+import { SITE } from "../config";
+
+const cols = [
+  {
+    title: "Company",
+    links: [
+      { href: "/about", label: "About" },
+      { href: "/testimonials", label: "Testimonials" },
+      { href: "/events", label: "Upcoming events" },
+      { href: "/contact", label: "Contact" },
+    ],
+  },
+  {
+    title: "Legal",
+    links: [
+      { href: "/privacy", label: "Privacy" },
+      { href: "/support", label: "Support" },
+    ],
+  },
+] as const;
+---
+
+<footer class="mt-32 border-t border-edge/60">
+  <div class="max-w-7xl mx-auto px-6 py-16 grid md:grid-cols-12 gap-12">
+    <div class="md:col-span-6 space-y-4">
+      <div class="font-serif italic text-3xl text-ink">{SITE.name}</div>
+      <p class="text-sm text-warm-gray max-w-sm leading-relaxed">
+        {SITE.tagline} Launching invite-only on iOS, {SITE.city} first.
+      </p>
+      <a
+        href={`mailto:${SITE.emails.hello}`}
+        class="inline-block text-xs uppercase tracking-[0.18em] text-warm-gray hover:text-ink"
+      >
+        {SITE.emails.hello}
+      </a>
+    </div>
+
+    {
+      cols.map((c) => (
+        <div class="md:col-span-2">
+          <div class="eyebrow mb-4">{c.title}</div>
+          <ul class="space-y-2 text-sm text-warm-gray">
+            {c.links.map((l) => (
+              <li>
+                <a href={l.href} class="hover:text-ink transition-colors">
+                  {l.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))
+    }
+
+    <div class="md:col-span-2 flex md:justify-end items-start">
+      <a
+        href={SITE.social.instagram}
+        target="_blank"
+        rel="noreferrer"
+        class="text-xs uppercase tracking-[0.18em] text-warm-gray hover:text-ink"
+      >
+        Instagram
+      </a>
+    </div>
+  </div>
+  <div class="border-t border-edge/40">
+    <div class="max-w-7xl mx-auto px-6 py-6 text-[10px] uppercase tracking-[0.2em] text-warm-gray flex justify-between flex-wrap gap-2">
+      <span>{SITE.city}</span>
+      <span>© {new Date().getFullYear()} {SITE.name} Co. · All rights reserved.</span>
+    </div>
+  </div>
+</footer>

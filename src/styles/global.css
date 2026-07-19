@@ -1,0 +1,144 @@
+@import "tailwindcss";
+
+/*
+ * Covey brand system — ported from the covey-web editorial palette so
+ * covey-landing reads as the same brand family: warm paper surfaces,
+ * ink charcoal text, a single clay accent, small moss/slate touches.
+ * Source of truth for these tokens: src/styles.css in the main app repo.
+ */
+
+@theme inline {
+  --color-bone: var(--bone);
+  --color-paper: var(--paper);
+  --color-vellum: var(--vellum);
+  --color-ink: var(--ink);
+  --color-warm-gray: var(--warm-gray);
+  --color-moss: var(--moss);
+  --color-clay: var(--clay);
+  --color-slate-blue: var(--slate-blue);
+  --color-edge: var(--edge);
+
+  --font-serif: "Fraunces", ui-serif, Georgia, serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  --shadow-paper: 0 1px 2px rgba(37, 35, 31, 0.04), 0 8px 24px -12px rgba(37, 35, 31, 0.12);
+  --shadow-pinned: 0 2px 4px rgba(37, 35, 31, 0.06), 0 18px 40px -20px rgba(37, 35, 31, 0.18);
+}
+
+:root {
+  --bone: #f3ede2;
+  --paper: #faf7ef;
+  --vellum: rgba(250, 247, 239, 0.72);
+  --ink: #25231f;
+  --warm-gray: #7a746b;
+  --moss: #6f7c5c;
+  --clay: #b56f4d;
+  --slate-blue: #6f8294;
+  --edge: #d8cfc0;
+}
+
+@layer base {
+  html {
+    font-family: var(--font-sans);
+    font-feature-settings: "ss01", "cv11";
+    -webkit-font-smoothing: antialiased;
+    color: var(--color-ink);
+    background-color: var(--color-bone);
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-bone);
+    background-image: radial-gradient(rgba(37, 35, 31, 0.025) 1px, transparent 1px),
+      radial-gradient(rgba(37, 35, 31, 0.018) 1px, transparent 1px);
+    background-size: 3px 3px, 7px 7px;
+    background-position: 0 0, 1px 2px;
+  }
+
+  ::selection {
+    background-color: rgba(181, 111, 77, 0.25);
+    color: var(--color-ink);
+  }
+}
+
+@layer components {
+  .font-serif {
+    font-family: var(--font-serif);
+  }
+  .font-mono {
+    font-family: var(--font-mono);
+  }
+
+  .paper-edge {
+    background-color: var(--color-paper);
+    box-shadow: var(--shadow-paper);
+    border: 1px solid color-mix(in oklab, var(--color-edge) 70%, transparent);
+  }
+
+  .paper-pinned {
+    background-color: var(--color-paper);
+    box-shadow: var(--shadow-pinned);
+    border: 1px solid color-mix(in oklab, var(--color-edge) 80%, transparent);
+  }
+
+  .vellum-panel {
+    background-color: var(--color-vellum);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid color-mix(in oklab, var(--color-edge) 60%, transparent);
+  }
+
+  .tape {
+    position: absolute;
+    width: 84px;
+    height: 22px;
+    background: color-mix(in oklab, var(--color-clay) 18%, transparent);
+    border: 1px solid color-mix(in oklab, var(--color-clay) 25%, transparent);
+    box-shadow: 0 1px 2px rgba(37, 35, 31, 0.06);
+  }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-warm-gray);
+  }
+
+  .display {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    line-height: 0.95;
+  }
+
+  .sample-badge {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-clay);
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+}
+
+@keyframes paper-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-paper-rise {
+  animation: paper-rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
