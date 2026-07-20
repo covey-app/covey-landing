@@ -17,6 +17,8 @@
   --color-clay: var(--clay);
   --color-slate-blue: var(--slate-blue);
   --color-edge: var(--edge);
+  --color-pop: var(--pop);
+  --color-pop-soft: var(--pop-soft);
 
   --font-serif: "Fraunces", ui-serif, Georgia, serif;
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
@@ -36,6 +38,12 @@
   --clay: #b56f4d;
   --slate-blue: #6f8294;
   --edge: #d8cfc0;
+
+  /* Pop accent — the "fun" layer. Same timeless base palette above stays
+     dominant; this is used sparingly (badges, highlights, playful hover
+     states) so energy comes from *how* things move, not a color overhaul. */
+  --pop: #f2b134;
+  --pop-soft: #fbe8bf;
 }
 
 @layer base {
@@ -128,18 +136,21 @@
     scrollbar-width: none;
   }
 
-  /* Buttons — lift + shadow on hover/press, used everywhere a CTA appears. */
+  /* Buttons — pill-shaped and a little bouncy. Rounded + playful on
+     purpose, in deliberate contrast with the squared-off "paper" cards, so
+     the site reads as timeless-but-fun rather than a straight redesign. */
   .btn {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, background-color 0.25s ease, color 0.25s ease;
+    border-radius: 999px;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease, background-color 0.25s ease, color 0.25s ease;
   }
   .btn:hover {
-    transform: translateY(-2px);
+    transform: translateY(-2px) scale(1.03);
   }
   .btn:active {
-    transform: translateY(0);
+    transform: translateY(0) scale(0.98);
   }
   .btn-primary {
     background-color: var(--color-ink);
@@ -147,22 +158,38 @@
   }
   .btn-primary:hover {
     background-color: var(--color-clay);
-    box-shadow: 0 12px 24px -8px color-mix(in oklab, var(--color-clay) 55%, transparent);
+    box-shadow: 0 14px 28px -8px color-mix(in oklab, var(--color-clay) 55%, transparent);
   }
   .btn-secondary {
     border: 1px solid color-mix(in oklab, var(--color-ink) 20%, transparent);
   }
   .btn-secondary:hover {
-    background-color: color-mix(in oklab, var(--color-ink) 5%, transparent);
-    box-shadow: 0 10px 20px -10px color-mix(in oklab, var(--color-ink) 30%, transparent);
+    background-color: var(--color-pop-soft);
+    border-color: color-mix(in oklab, var(--color-pop) 60%, transparent);
+    box-shadow: 0 10px 20px -10px color-mix(in oklab, var(--color-pop) 45%, transparent);
   }
 
-  /* Cards — subtle lift on hover so the grid feels alive/clickable. */
+  /* Playful "pop" badge/pill — used for tags, fun stats, sample labels. */
+  .pop-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    border-radius: 999px;
+    background-color: var(--color-pop-soft);
+    color: color-mix(in oklab, var(--color-pop) 55%, var(--color-ink) 45%);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.75rem;
+  }
+
+  /* Cards — playful bounce-lift on hover so the grid feels alive/clickable. */
   .card-hover {
-    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease, border-color 0.3s ease;
   }
   .card-hover:hover {
-    transform: translateY(-4px) rotate(var(--card-tilt, 0deg));
+    transform: translateY(-6px) scale(1.015) rotate(var(--card-tilt, 0deg));
     box-shadow: var(--shadow-pinned);
     border-color: color-mix(in oklab, var(--color-clay) 45%, transparent);
   }
@@ -236,4 +263,51 @@
 }
 .animate-drift {
   animation: drift 5s ease-in-out infinite;
+}
+
+@keyframes fly-by {
+  0% {
+    transform: translate(-10vw, 0) rotate(-6deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.85;
+  }
+  90% {
+    opacity: 0.85;
+  }
+  100% {
+    transform: translate(110vw, -8vh) rotate(-6deg);
+    opacity: 0;
+  }
+}
+/* One bird periodically flies clear across a section — purely decorative,
+   pointer-events disabled, hidden on small screens to keep mobile calm. */
+.flock-flyby {
+  position: absolute;
+  pointer-events: none;
+  width: 34px;
+  height: 34px;
+  animation: fly-by 18s linear infinite;
+}
+@media (max-width: 768px) {
+  .flock-flyby {
+    display: none;
+  }
+}
+
+@keyframes wiggle {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-8deg);
+  }
+  75% {
+    transform: rotate(8deg);
+  }
+}
+.card-hover:hover .wiggle-on-hover {
+  animation: wiggle 0.4s ease-in-out;
 }
