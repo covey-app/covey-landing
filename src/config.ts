@@ -32,4 +32,14 @@ export const SITE = {
   social: {
     instagram: "https://instagram.com/coveyapp",
   },
+
+  // Vercel has no built-in form backend (unlike Netlify Forms), so both
+  // forms POST straight to Formspree instead — keeps the site static with
+  // zero client-side JS. Create a free account at https://formspree.io,
+  // add each form once, and swap these two IDs for the real ones it gives
+  // you. Until then these are inert placeholders.
+  forms: {
+    waitlistEndpoint: "https://formspree.io/f/REPLACE_WITH_WAITLIST_FORM_ID",
+    contactEndpoint: "https://formspree.io/f/REPLACE_WITH_CONTACT_FORM_ID",
+  },
 } as const;

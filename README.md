@@ -13,9 +13,9 @@ This is intentionally a separate, minimal repo from `covey-ios` and
 | --- | --- |
 | `/` | Home — hero, features, how-it-works, CTA |
 | `/about` | About Us — story + principles |
-| `/contact` | Contact Us — form (Netlify Forms) + emails |
+| `/contact` | Contact Us — form (Formspree) + emails |
 | `/events` | Upcoming Events — placeholder content, see TODOs in `src/pages/events.astro` |
-| `/signup` | Waitlist signup (invite-only launch) — form (Netlify Forms) |
+| `/signup` | Waitlist signup (invite-only launch) — form (Formspree) |
 | `/testimonials` | Testimonials — placeholder content, see TODOs in `src/pages/testimonials.astro` |
 | `/privacy` | Privacy policy (marketing site scope only) |
 | `/support` | Support contact — required for App Store Connect |
@@ -38,6 +38,7 @@ JS disabled, see the `.reveal` rule and the script in `BaseLayout.astro`).
 - [ ] Replace placeholder dates in `src/pages/events.astro` with confirmed events, or leave the empty-state copy as-is.
 - [ ] Once you have a real iOS screenshot, drop it at `public/screenshots/hero.png` — see the TODO comment in `src/pages/index.astro` for where to slot it in alongside (or instead of) the bird illustration card.
 - [ ] `public/og-image.png` currently reuses the hero bird illustration — swap for a dedicated 1200×630 share image once you have real app screenshots or branding to show.
+- [ ] Create a free [Formspree](https://formspree.io) account, add the `waitlist` and `contact` forms, and replace the two placeholder IDs in `src/config.ts` (`SITE.forms.waitlistEndpoint` / `contactEndpoint`) with the real endpoint URLs Formspree gives you. Submit each form once after deploying and confirm the verification email Formspree sends — submissions are silently dropped until you do.
 - [ ] Set up inboxes (or forwarding) for every address in `src/config.ts` — `hello@`, `press@`, `support@`, `safety@coveyapp.co`. GoDaddy sells email, or you can forward `@coveyapp.co` to an existing inbox via GoDaddy's free email forwarding.
 - [ ] Once `covey-web` is deployed, set `appUrl`/`appIsLive` in `src/config.ts` so the nav links out to it.
 - [ ] Once iOS is approved, set `appStoreUrl` in `src/config.ts` and add a real badge to `/signup`.
@@ -52,53 +53,73 @@ npm run build     # outputs to dist/
 npm run preview   # serve the production build locally
 ```
 
-## Pushing this repo to GitHub
+## Connecting this repo to GitHub
 
-This folder isn't a git repo yet (created by hand, not via `gh repo clone`,
-since the setup was done from the parent `covey` workspace). From inside
-`covey-landing/`:
+This repo is already tracked with git and its `origin` remote points at
+`https://github.com/covey-app/covey-landing.git` (branch `main`). If that
+repo already exists under your org and you just need to push:
 
 ```bash
-git init
-git branch -M main
-git add .
-git commit -m "Initial covey-landing scaffold"
-git remote add origin https://github.com/covey-app/covey-landing.git
 git push -u origin main
 ```
 
-## Deploying on Netlify
+If your boss's approved repo lives somewhere else (a different org name or
+`landing-page` instead of `covey-landing`), repoint the existing remote
+instead of re-initializing anything:
 
-1. [app.netlify.com](https://app.netlify.com) → **Add new site** → **Import an existing project** → pick `covey-app/covey-landing` on GitHub.
-2. Build command: `npm run build`. Publish directory: `dist`. (Already set in `netlify.toml` — Netlify will detect it automatically.)
-3. Deploy. You'll get a `*.netlify.app` URL immediately with free SSL.
-4. Netlify auto-detects the two `data-netlify="true"` forms (`waitlist`, `contact`) on first deploy — check **Site settings → Forms** to see submissions and set up email notifications for new signups.
+```bash
+git remote set-url origin https://github.com/<org>/<repo>.git
+git push -u origin main
+```
 
-## Pointing your GoDaddy domain (`coveyapp.co`) at Netlify
+If you're starting from a brand-new, empty GitHub repo (no README/license
+generated on GitHub's side), the same `git push -u origin main` above is
+all you need — don't let GitHub's "Quick setup" `git init` instructions
+overwrite the history that's already here.
+
+## Deploying on Vercel
+
+1. [vercel.com](https://vercel.com) → sign in with GitHub (this authorizes
+   Vercel to see your repos — grant it access to the org/repo your boss
+   approved).
+2. **Add New...** → **Project** → import the GitHub repo for this site.
+3. Vercel auto-detects Astro from `vercel.json` / `package.json` — build
+   command `npm run build`, output directory `dist`. You shouldn't need to
+   change anything on the import screen.
+4. Click **Deploy**. You'll get a `*.vercel.app` URL in about a minute with
+   free SSL.
+5. From then on, every push to `main` auto-deploys to production, and every
+   pull request gets its own preview URL automatically — no CI changes
+   needed for this.
+
+Forms no longer submit to the host directly (Vercel has no Netlify
+Forms-style form backend) — they POST to Formspree instead. See the
+Formspree checklist item above; do that once, before/after your first
+deploy, or waitlist/contact submissions will silently go nowhere.
+
+## Pointing your GoDaddy domain (`coveyapp.co`) at Vercel
 
 You keep the domain registered at GoDaddy — you're just changing where its
 DNS points, not "hosting on GoDaddy." This is the standard setup and takes
 about 5 minutes plus DNS propagation time (up to ~24h, usually much faster).
 
-**In Netlify:** Site settings → Domain management → Add a domain → enter
-`coveyapp.co`. Netlify will show you the exact records to add.
+**In Vercel:** Project → Settings → Domains → add `coveyapp.co` (and
+`www.coveyapp.co` if you want both). Vercel will show you the exact records
+to add for your specific project.
 
 **In GoDaddy (godaddy.com → My Products → DNS → Manage Zones for coveyapp.co):**
 
 | Type | Name | Value | Notes |
 | --- | --- | --- | --- |
-| A | `@` | `75.2.60.5` | Netlify's load balancer IP — confirm the exact IP shown in your Netlify dashboard, it can change |
-| CNAME | `www` | `<your-site>.netlify.app` | Use the subdomain Netlify assigns your site |
+| A | `@` | `76.76.21.21` | Vercel's anycast IP for apex domains — confirm the exact value shown in your Vercel dashboard, it can change |
+| CNAME | `www` | `cname.vercel-dns.com` | Vercel's standard CNAME target |
 
-Alternative (often more reliable than a bare A record): in GoDaddy, delete
-the default `@` A record and instead set an **ALIAS**/**Forwarding** record
-for `@` → `<your-site>.netlify.app`, if GoDaddy's DNS panel offers ALIAS
-records for apex domains. Netlify's own domain setup screen always shows
-the current recommended records — follow what it displays over any hardcoded
-IP.
+Vercel's own domain setup screen always shows the current recommended
+records for your account — follow what it displays there over any
+hardcoded values above.
 
-Once DNS resolves, Netlify auto-provisions a free Let's Encrypt SSL
-certificate for `coveyapp.co` — no extra steps.
+Once DNS resolves, Vercel auto-provisions a free SSL certificate for
+`coveyapp.co` — no extra steps.
 
 **Decide your subdomain layout now** (recommended):
 
@@ -123,7 +144,8 @@ should be able to ship on its own. The connections are:
 - **App Store Connect:** once submitted, use `https://coveyapp.co/privacy`
   and `https://coveyapp.co/support` as your Privacy Policy URL and Support
   URL in `covey-ios`'s App Store Connect listing.
-- **Waitlist → invites:** waitlist emails land in Netlify Forms. Export
-  them (or wire a Netlify → Zapier/webhook integration) into whatever
-  system `covey-ios`/`covey-web` uses to actually send invites — that
-  pipeline lives outside this repo by design.
+- **Waitlist → invites:** waitlist emails land in Formspree (see
+  `SITE.forms` in `src/config.ts`). Export them from the Formspree
+  dashboard (or wire its Zapier/webhook integration) into whatever system
+  `covey-ios`/`covey-web` uses to actually send invites — that pipeline
+  lives outside this repo by design.

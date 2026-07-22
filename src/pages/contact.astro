@@ -40,13 +40,13 @@ import { SITE } from "../config";
       <form
         name="contact"
         method="POST"
-        data-netlify="true"
-        action="/thanks"
+        action={SITE.forms.contactEndpoint}
         class="vellum-panel p-8 space-y-6"
       >
-        <input type="hidden" name="form-name" value="contact" />
-        <p class="hidden">
-          <label>Don't fill this out if you're human: <input name="bot-field" /></label>
+        <input type="hidden" name="_next" value={`${SITE.url}/thanks`} />
+        <input type="hidden" name="_subject" value="New Covey contact form message" />
+        <p class="hidden" aria-hidden="true">
+          <label>Don't fill this out if you're human: <input name="_gotcha" /></label>
         </p>
 
         <label class="block">

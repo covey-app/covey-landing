@@ -25,13 +25,13 @@ import { SITE } from "../config";
     <form
       name="waitlist"
       method="POST"
-      data-netlify="true"
-      action="/thanks"
+      action={SITE.forms.waitlistEndpoint}
       class="vellum-panel p-8 space-y-6 text-left"
     >
-      <input type="hidden" name="form-name" value="waitlist" />
-      <p class="hidden">
-        <label>Don't fill this out if you're human: <input name="bot-field" /></label>
+      <input type="hidden" name="_next" value={`${SITE.url}/thanks`} />
+      <input type="hidden" name="_subject" value="New Covey waitlist signup" />
+      <p class="hidden" aria-hidden="true">
+        <label>Don't fill this out if you're human: <input name="_gotcha" /></label>
       </p>
 
       <label class="block">
