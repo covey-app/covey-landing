@@ -7,7 +7,8 @@ data, and no backend beyond form submissions (waitlist + contact).
 
 If you find a security issue with this site (e.g. an XSS vector, a
 misconfigured header, exposed data in a form), email
-**security@coveyapp.co** or safety@coveyapp.co. Please don't open a public
+**jwu@coveyapp.co** or **jsesteaga@coveyapp.co** directly (`security@coveyapp.co`
+isn't a live inbox yet — update this once it is). Please don't open a public
 GitHub issue for anything sensitive.
 
 ## What's already in place
