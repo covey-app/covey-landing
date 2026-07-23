@@ -1,38 +1,43 @@
 ---
-// The brand-story section — explains the name and ties the bird imagery to
-// the actual product idea instead of using it as pure decoration.
+// The brand-story section — a typographic, dictionary-style treatment of the
+// name (no illustrations), tying the etymology to the product idea.
+import CoveyMark from "./CoveyMark.astro";
 ---
 
 <section class="max-w-6xl mx-auto px-6 py-24 grid md:grid-cols-12 gap-12 items-center reveal">
-  <div class="md:col-span-6 relative">
-    <div class="paper-pinned p-3 -rotate-2 relative">
-      <div class="tape -top-3 left-10 -rotate-3"></div>
-      <img
-        src="/images/flock-circle.png"
-        alt="A small circle of birds gathered together, facing one another"
-        class="w-full aspect-[4/3] object-cover"
-        loading="lazy"
-      />
-    </div>
-    <div class="absolute -bottom-6 -right-4 vellum-panel p-4 w-40 rotate-3 hidden sm:block">
-      <div class="eyebrow mb-1">Noun</div>
-      <p class="font-serif text-sm text-ink leading-snug">
-        A small group of birds, gathered and moving as one.
-      </p>
+  <div class="md:col-span-5">
+    <div class="card-sunken p-8">
+      <div class="flex items-center justify-between mb-5">
+        <span class="font-mono font-semibold text-3xl tracking-[-0.03em] text-ink lowercase">covey</span>
+        <CoveyMark variant="dots" dotSize={7} />
+      </div>
+      <div class="font-mono text-sm text-ink-muted tracking-[0.06em] mb-6">
+        /kuh-vee/ · <span class="italic">noun</span>
+      </div>
+      <dl class="space-y-4">
+        <div class="grid grid-cols-[1.5rem_1fr] gap-3">
+          <dt class="font-mono text-clay">1.</dt>
+          <dd class="text-ink leading-relaxed">a small flock of birds that moves together.</dd>
+        </div>
+        <div class="grid grid-cols-[1.5rem_1fr] gap-3">
+          <dt class="font-mono text-clay">2.</dt>
+          <dd class="text-ink leading-relaxed">a small group of people gathered together.</dd>
+        </div>
+      </dl>
     </div>
   </div>
 
-  <div class="md:col-span-6">
+  <div class="md:col-span-7">
     <div class="eyebrow mb-3">Why "Covey"</div>
     <h2 class="display text-4xl md:text-5xl mb-6 text-balance">
-      Birds don't flock in <span class="italic text-clay">crowds</span>.
+      Birds don't flock in crowds.
     </h2>
-    <p class="text-warm-gray leading-relaxed text-lg mb-5">
+    <p class="text-ink-muted leading-relaxed text-lg mb-5">
       A covey is a small gathering of quail — ten or fifteen birds, never a
-      hundred. They move together, watch out for each other, and scatter
-      back to their own lives when the day is done.
+      hundred. They move together, watch out for each other, and scatter back
+      to their own lives when the day is done.
     </p>
-    <p class="text-warm-gray leading-relaxed text-lg">
+    <p class="text-ink-muted leading-relaxed text-lg">
       That's the whole app in one word. Not a crowd, not a feed — a small
       group of people, gathered around one plan, for one day.
     </p>

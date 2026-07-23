@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import CoveyMark from "../components/CoveyMark.astro";
 import { SITE } from "../config";
 ---
 
@@ -8,18 +9,15 @@ import { SITE } from "../config";
   description="Join the Covey waitlist. We're launching invite-only on iOS, starting in San Francisco."
 >
   <div class="max-w-2xl mx-auto px-6 py-24 text-center">
-    <img
-      src="/images/bird-mark.png"
-      alt=""
-      class="bird-icon is-clay w-10 h-10 object-contain mx-auto mb-6 animate-drift"
-      style="--drift-rotate: -4deg"
-    />
+    <div class="flex justify-center mb-6">
+      <CoveyMark variant="dots" dotSize={11} animate />
+    </div>
     <div class="eyebrow mb-3">{SITE.launchRegion}</div>
     <h1 class="display text-5xl md:text-6xl mb-6">Be first in the flock.</h1>
-    <p class="text-warm-gray text-lg leading-relaxed mb-12 max-w-xl mx-auto">
+    <p class="text-ink-muted text-lg leading-relaxed mb-12 max-w-xl mx-auto">
       Covey is rolling out invite-only on iOS, starting in {SITE.city}. Drop
-      your email below and we'll swoop into your inbox the moment a spot
-      opens up — no spam, just the invite when it's ready.
+      your email below and we'll reach out the moment a spot opens up — no
+      spam, just the invite when it's ready.
     </p>
 
     <form
@@ -27,7 +25,7 @@ import { SITE } from "../config";
       method="POST"
       data-netlify="true"
       action="/thanks"
-      class="vellum-panel p-8 space-y-6 text-left"
+      class="card p-8 space-y-6 text-left"
     >
       <input type="hidden" name="form-name" value="waitlist" />
       <p class="hidden">
@@ -41,7 +39,7 @@ import { SITE } from "../config";
           type="email"
           name="email"
           placeholder="you@example.com"
-          class="w-full bg-transparent border-b border-edge focus:border-clay outline-none py-2 font-serif text-lg transition-colors"
+          class="w-full bg-transparent border-b border-edge focus:border-accent-ink outline-none py-2 text-lg transition-colors"
         />
       </label>
 
@@ -49,7 +47,7 @@ import { SITE } from "../config";
         <div class="eyebrow mb-2">First name (optional)</div>
         <input
           name="name"
-          class="w-full bg-transparent border-b border-edge focus:border-clay outline-none py-2 transition-colors"
+          class="w-full bg-transparent border-b border-edge focus:border-accent-ink outline-none py-2 transition-colors"
         />
       </label>
 
@@ -58,28 +56,23 @@ import { SITE } from "../config";
         <input
           name="city"
           placeholder="Where should we launch next?"
-          class="w-full bg-transparent border-b border-edge focus:border-clay outline-none py-2 transition-colors"
+          class="w-full bg-transparent border-b border-edge focus:border-accent-ink outline-none py-2 transition-colors"
         />
       </label>
 
-      <label class="flex items-start gap-3 text-sm text-warm-gray">
-        <input required type="checkbox" name="over18" class="mt-1" />
+      <label class="flex items-start gap-3 text-sm text-ink-muted">
+        <input required type="checkbox" name="over18" class="mt-1 accent-[color:var(--accent-ink)]" />
         <span>I confirm I'm 18 or older.</span>
       </label>
 
-      <button class="btn btn-primary w-full justify-center px-10 py-4 text-xs uppercase tracking-[0.2em]">
-        <img
-          src="/images/bird-mark.png"
-          alt=""
-          class="bird-icon w-4 h-4 object-contain"
-          style="filter: brightness(0) invert(1);"
-        />
+      <button class="btn btn-primary w-full justify-center px-10 py-4 text-xs">
         Join the flock
       </button>
     </form>
 
-    <p class="text-xs text-warm-gray mt-8 uppercase tracking-[0.18em]">
-      Already have an invite? <a href={SITE.appUrl} class="border-b border-warm-gray hover:text-ink hover:border-ink">Open the app →</a>
+    <p class="font-mono text-xs text-ink-muted mt-8 uppercase tracking-[0.16em]">
+      Already have an invite?
+      <a href={SITE.appUrl} class="border-b border-ink-muted hover:text-ink hover:border-ink transition-colors">Open the app →</a>
     </p>
   </div>
 </BaseLayout>

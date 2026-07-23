@@ -1,69 +1,39 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import WaitlistCTA from "../components/WaitlistCTA.astro";
-
-// TODO(covey-landing): these are placeholder events so the page ships with
-// real layout/structure before launch. Replace dates/copy with confirmed
-// events, or delete entries you don't need — remove the "sample" badge
-// once a date is confirmed.
-const events = [
-  {
-    date: "TBD",
-    title: "San Francisco launch mixer",
-    location: "San Francisco, CA",
-    body: "An in-person meetup for the first wave of invited hosts and joiners — swap stories, meet your future plan-mates.",
-  },
-  {
-    date: "TBD",
-    title: "First host office hours",
-    location: "Virtual",
-    body: "A live Q&A for anyone hosting their first Covey plan — capacity, pricing, and safety basics.",
-  },
-];
+import CoveyMark from "../components/CoveyMark.astro";
 ---
 
 <BaseLayout
   title="Upcoming Events"
-  description="Covey launch mixers, host meetups, and city rollout events."
+  description="Covey launch mixers, host meetups, and city rollout events — dates coming soon."
 >
-  <div class="max-w-5xl mx-auto px-6 py-24">
-    <div class="eyebrow mb-3 flex items-center gap-2">
-      <img src="/images/bird-mark.png" alt="" class="bird-icon is-clay w-3.5 h-3.5" />
+  <div class="max-w-4xl mx-auto px-6 py-24">
+    <div class="eyebrow mb-3 flex items-center gap-2.5">
+      <CoveyMark variant="dots" dotSize={6} />
       Upcoming events
     </div>
     <h1 class="display text-5xl md:text-6xl mb-6 text-balance">
-      Meet the people building the <span class="italic text-clay">first plans</span>.
+      Meet the people building the first plans.
     </h1>
-    <p class="text-warm-gray text-lg leading-relaxed max-w-2xl mb-16">
-      Launch mixers, host meetups, and city-by-city rollout dates land here
-      first. Join the waitlist to get notified before events go public.
+    <p class="text-ink-muted text-lg leading-relaxed max-w-2xl mb-14">
+      Launch mixers, host meetups, and city-by-city rollout dates will land
+      here first. We haven't locked anything in yet — join the waitlist and
+      you'll hear about each event before it goes public.
     </p>
 
-    <div class="space-y-6">
-      {
-        events.map((e, i) => (
-          <div
-            class="paper-edge p-6 md:p-8 grid md:grid-cols-12 gap-6 items-start relative card-hover"
-            style={`--card-tilt: ${i % 2 === 0 ? "-1deg" : "1deg"}`}
-          >
-            <span class="sample-badge absolute top-4 right-5">Sample</span>
-            <div class="md:col-span-2">
-              <div class="eyebrow">{e.date}</div>
-            </div>
-            <div class="md:col-span-10">
-              <h3 class="font-serif text-2xl text-ink mb-1">{e.title}</h3>
-              <div class="text-sm text-clay uppercase tracking-[0.14em] mb-3">{e.location}</div>
-              <p class="text-warm-gray leading-relaxed">{e.body}</p>
-            </div>
-          </div>
-        ))
-      }
-    </div>
-
-    <div class="mt-10 paper-edge p-8 text-center flex flex-col items-center gap-3">
-      <img src="/images/bird-mark.png" alt="" class="bird-icon is-moss w-8 h-8 object-contain -scale-x-100" />
-      <p class="font-serif italic text-warm-gray text-lg">Nothing confirmed yet.</p>
-      <p class="text-warm-gray">We'll post real dates here as soon as they're locked in.</p>
+    <div class="card-sunken p-10 md:p-14 text-center">
+      <div class="flex justify-center mb-6">
+        <CoveyMark variant="dots" dotSize={10} />
+      </div>
+      <h2 class="title-mono text-2xl text-ink mb-3">Nothing on the calendar yet.</h2>
+      <p class="text-ink-muted leading-relaxed max-w-md mx-auto mb-8">
+        We'll post real dates here the moment they're confirmed — no
+        placeholder events, no maybes.
+      </p>
+      <a href="/signup" class="btn btn-primary px-8 py-3.5 text-xs">
+        Get notified
+      </a>
     </div>
   </div>
 

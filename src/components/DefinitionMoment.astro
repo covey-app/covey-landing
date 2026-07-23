@@ -1,0 +1,136 @@
+---
+/*
+ * DefinitionMoment — the web translation of the iOS opening animation
+ * (OpeningAnimation.swift): the word, its pronunciation, and two
+ * dictionary-style definitions revealing in sequence above the 5-color
+ * flock-dot cluster.
+ *
+ * Motion mirrors the app: dot cluster settles first, the word blooms in
+ * (scale 0.92 -> 1, blur 8 -> 0) on a soft spring, then each definition
+ * rises + fades with a small stagger. All decorative motion is gated behind
+ * `prefers-reduced-motion: no-preference`, so reduced-motion users see the
+ * final, fully legible state immediately.
+ */
+import CoveyMark from "./CoveyMark.astro";
+
+interface Props {
+  class?: string;
+}
+const { class: className = "" } = Astro.props;
+---
+
+<div class:list={["definition-moment", className]}>
+  <div class="dm-cluster">
+    <CoveyMark variant="dots" dotSize={8} animate />
+  </div>
+
+  <div class="dm-word">Covey</div>
+
+  <div class="dm-pron" aria-hidden="true">
+    <span>/</span><span class="dm-pron-word">kuh-vee</span><span>/</span>
+  </div>
+
+  <dl class="dm-defs">
+    <div class="dm-def" style="--d:0">
+      <dt>1.</dt>
+      <dd>a small flock of birds.</dd>
+    </div>
+    <div class="dm-def" style="--d:1">
+      <dt>2.</dt>
+      <dd>a small group of people gathered together.</dd>
+    </div>
+  </dl>
+</div>
+
+<style>
+  .definition-moment {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .dm-cluster {
+    margin-bottom: 1.75rem;
+  }
+
+  .dm-word {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: clamp(3.5rem, 12vw, 6rem);
+    letter-spacing: -0.05em;
+    line-height: 1;
+    color: var(--ink);
+    margin-bottom: 0.5rem;
+  }
+
+  .dm-pron {
+    display: inline-flex;
+    gap: 0.4rem;
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    letter-spacing: 0.1em;
+    color: var(--ink-muted);
+    margin-bottom: 2.5rem;
+  }
+
+  .dm-defs {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    text-align: left;
+    max-width: 30rem;
+  }
+  .dm-def {
+    display: grid;
+    grid-template-columns: 1.5rem 1fr;
+    gap: 0.75rem;
+    align-items: baseline;
+  }
+  .dm-def dt {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    color: var(--clay);
+  }
+  .dm-def dd {
+    font-family: var(--font-sans);
+    font-size: 1.0625rem;
+    line-height: 1.5;
+    color: var(--ink);
+    margin: 0;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .dm-word {
+      opacity: 0;
+      transform: scale(0.92);
+      filter: blur(8px);
+      animation: word-bloom 0.85s cubic-bezier(0.22, 1, 0.36, 1) 0.15s forwards;
+    }
+    .dm-pron {
+      opacity: 0;
+      transform: translateY(8px);
+      animation: soft-rise 0.5s ease-out 0.85s forwards;
+    }
+    .dm-def {
+      opacity: 0;
+      transform: translateY(12px);
+      animation: soft-rise 0.5s ease-out forwards;
+      animation-delay: calc(1.35s + var(--d) * 0.5s);
+    }
+  }
+
+  @keyframes word-bloom {
+    to {
+      opacity: 1;
+      transform: scale(1);
+      filter: blur(0);
+    }
+  }
+  @keyframes soft-rise {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
