@@ -1,0 +1,87 @@
+---
+/*
+ * CoveyMark — the brand mark.
+ *
+ * The current Covey identity has no bird/quail illustration; its recurring
+ * visual signature is the 5-color "flock" dot cluster from the app's opening
+ * animation (OpeningAnimation.swift: clay / moss / slate / ochre / accent),
+ * paired with the "Covey" wordmark in Geist Mono. This replaces the old
+ * bird-mark.png everywhere it was used.
+ */
+interface Props {
+  variant?: "full" | "dots" | "wordmark";
+  /** Dot diameter in px (wordmark scales relative to it). */
+  dotSize?: number;
+  class?: string;
+  /** Play a one-shot settle-in on the dots. */
+  animate?: boolean;
+}
+
+const {
+  variant = "full",
+  dotSize = 7,
+  class: className = "",
+  animate = false,
+} = Astro.props;
+
+const dots = ["clay", "moss", "slate", "ochre", "accent"];
+const gap = Math.max(3, Math.round(dotSize * 0.7));
+---
+
+<span class:list={["covey-mark", className]} aria-hidden={variant === "dots" ? "true" : undefined}>
+  {(variant === "full" || variant === "dots") && (
+    <span class:list={["covey-dots", animate && "is-animated"]} style={`gap:${gap}px`}>
+      {dots.map((c, i) => (
+        <span
+          class="covey-dot"
+          style={`--dot:var(--${c}); width:${dotSize}px; height:${dotSize}px; --i:${i}`}
+        />
+      ))}
+    </span>
+  )}
+  {(variant === "full" || variant === "wordmark") && (
+    <span class="covey-wordmark">Covey</span>
+  )}
+</span>
+
+<style>
+  .covey-mark {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+  }
+  .covey-dots {
+    display: inline-flex;
+    align-items: center;
+  }
+  .covey-dot {
+    display: inline-block;
+    border-radius: 999px;
+    background-color: var(--dot);
+    flex: none;
+  }
+  .covey-wordmark {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 1.375rem;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    line-height: 1;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .covey-dots.is-animated .covey-dot {
+      opacity: 0;
+      transform: scale(0.6);
+      animation: dot-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      animation-delay: calc(var(--i) * 0.05s);
+    }
+  }
+
+  @keyframes dot-in {
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+</style>

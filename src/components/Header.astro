@@ -1,5 +1,6 @@
 ---
-import { SITE } from "../config";
+import CoveyMark from "./CoveyMark.astro";
+import ThemeToggle from "./ThemeToggle.astro";
 
 const links = [
   { href: "/about", label: "About" },
@@ -11,27 +12,22 @@ const links = [
 const path = new URL(Astro.request.url).pathname;
 ---
 
-<header class="sticky top-0 z-40 vellum-panel border-b border-edge/60">
-  <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-    <a href="/" class="flex items-center gap-2 group">
-      <img
-        src="/images/bird-mark.png"
-        alt=""
-        class="bird-icon w-6 h-6 object-contain group-hover:animate-drift"
-        style="--drift-rotate: -6deg"
-      />
-      <span class="font-serif italic text-2xl tracking-tight text-ink">{SITE.name}</span>
-      <span class="eyebrow hidden sm:inline">Coming to iOS</span>
+<header class="sticky top-0 z-40 vellum-panel border-b">
+  <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between gap-4">
+    <a href="/" class="flex items-center gap-2.5 group shrink-0" aria-label="Covey — home">
+      <CoveyMark variant="dots" dotSize={7} class="group-hover:opacity-90 transition-opacity" />
+      <span class="font-mono font-semibold text-[1.35rem] tracking-[-0.03em] text-ink">Covey</span>
     </a>
 
-    <nav class="hidden md:flex items-center gap-8 text-sm">
+    <nav class="hidden md:flex items-center gap-8" aria-label="Primary">
       {
         links.map((l) => (
           <a
             href={l.href}
+            aria-current={path === l.href ? "page" : undefined}
             class:list={[
-              "font-medium transition-colors",
-              path === l.href ? "text-ink" : "text-warm-gray hover:text-ink",
+              "font-mono text-xs uppercase tracking-[0.14em] transition-colors",
+              path === l.href ? "text-ink" : "text-ink-muted hover:text-ink",
             ]}
           >
             {l.label}
@@ -40,18 +36,31 @@ const path = new URL(Astro.request.url).pathname;
       }
     </nav>
 
-    <a href="/signup" class="btn btn-primary px-4 py-2 text-xs uppercase tracking-[0.18em] font-medium">
-      Join the flock
-    </a>
+    <div class="flex items-center gap-3">
+      <ThemeToggle />
+      <a
+        href="/signup"
+        class="btn btn-primary px-4 py-2.5 text-[0.65rem]"
+      >
+        Join the flock
+      </a>
+    </div>
   </div>
 
-  <nav class="md:hidden border-t border-edge/60 overflow-x-auto no-scrollbar">
-    <div class="flex gap-6 px-6 py-3 whitespace-nowrap text-sm">
+  <nav
+    class="md:hidden border-t overflow-x-auto no-scrollbar"
+    aria-label="Primary mobile"
+  >
+    <div class="flex gap-6 px-6 py-3 whitespace-nowrap">
       {
         links.map((l) => (
           <a
             href={l.href}
-            class:list={[path === l.href ? "text-ink" : "text-warm-gray"]}
+            aria-current={path === l.href ? "page" : undefined}
+            class:list={[
+              "font-mono text-xs uppercase tracking-[0.14em]",
+              path === l.href ? "text-ink" : "text-ink-muted",
+            ]}
           >
             {l.label}
           </a>

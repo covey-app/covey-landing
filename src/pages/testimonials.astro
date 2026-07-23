@@ -1,69 +1,45 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import WaitlistCTA from "../components/WaitlistCTA.astro";
-
-// TODO(covey-landing): these are placeholder quotes so the page ships with
-// real layout/structure before launch. Swap every entry below for a real
-// tester quote (with permission) before going live — remove the
-// "sample" badge once you do.
-const testimonials = [
-  {
-    quote:
-      "I hosted a hike on a Saturday morning with zero group chat back-and-forth. Three people showed up ready to go.",
-    attribution: "Early access host",
-    city: "San Francisco",
-  },
-  {
-    quote:
-      "It felt less like a dating app and more like finding a flyer for exactly the thing I wanted to do that weekend.",
-    attribution: "Early access joiner",
-    city: "San Francisco",
-  },
-  {
-    quote:
-      "Capping plans at ten people changes everything. Nobody's performing for a feed — they're just showing up.",
-    attribution: "Early access host",
-    city: "San Francisco",
-  },
-];
+import CoveyMark from "../components/CoveyMark.astro";
 ---
 
 <BaseLayout
   title="Testimonials"
-  description="What early Covey testers are saying about hosting and joining real-world plans."
+  description="Real stories from early Covey hosts and joiners are coming soon, ahead of our invite-only iOS launch."
 >
-  <div class="max-w-5xl mx-auto px-6 py-24">
-    <div class="eyebrow mb-3 flex items-center gap-2">
-      <img src="/images/bird-mark.png" alt="" class="bird-icon is-clay w-3.5 h-3.5" />
+  <div class="max-w-4xl mx-auto px-6 py-24">
+    <div class="eyebrow mb-3 flex items-center gap-2.5">
+      <CoveyMark variant="dots" dotSize={6} />
       Testimonials
     </div>
     <h1 class="display text-5xl md:text-6xl mb-6 text-balance">
-      Early reactions, before the <span class="italic text-clay">public launch</span>.
+      Real stories, coming soon.
     </h1>
-    <p class="text-warm-gray text-lg leading-relaxed max-w-2xl mb-16">
-      A small group of testers has been hosting and joining plans ahead of
-      our invite-only iOS launch. Here's what they've said so far.
+    <p class="text-ink-muted text-lg leading-relaxed max-w-2xl mb-14">
+      We're just starting to put plans in front of our first hosts and joiners.
+      Rather than run invented quotes here, we'll publish real reactions — with
+      permission — once people have hosted and joined their first Covey plans.
     </p>
 
-    <div class="grid md:grid-cols-3 gap-6">
-      {
-        testimonials.map((t, i) => (
-          <div
-            class="paper-edge p-6 relative card-hover"
-            style={`--card-tilt: ${i === 0 ? "-1deg" : i === 1 ? "1deg" : "-1deg"}`}
-          >
-            <span class="sample-badge absolute top-4 right-5">Sample</span>
-            <span class="font-serif italic text-clay text-4xl block mb-4">"</span>
-            <p class="font-serif text-lg text-ink leading-relaxed mb-6">{t.quote}</p>
-            <div class="eyebrow">{t.attribution} · {t.city}</div>
-          </div>
-        ))
-      }
+    <div class="card-sunken p-10 md:p-14 text-center">
+      <div class="flex justify-center mb-6">
+        <CoveyMark variant="dots" dotSize={10} />
+      </div>
+      <h2 class="title-mono text-2xl text-ink mb-3">Nothing to show yet — honestly.</h2>
+      <p class="text-ink-muted leading-relaxed max-w-md mx-auto mb-8">
+        Were you part of an early plan? If you'd be happy to share how it went,
+        we'd love to feature your story here.
+      </p>
+      <div class="flex justify-center gap-3 flex-wrap">
+        <a href="/contact" class="btn btn-secondary px-7 py-3.5 text-xs">
+          Share your story
+        </a>
+        <a href="/signup" class="btn btn-primary px-7 py-3.5 text-xs">
+          Join the waitlist
+        </a>
+      </div>
     </div>
-
-    <p class="text-xs text-warm-gray mt-10 uppercase tracking-[0.18em]">
-      Have a story from an early plan? <a href="/contact" class="border-b border-warm-gray hover:text-ink hover:border-ink">Send it our way →</a>
-    </p>
   </div>
 
   <WaitlistCTA

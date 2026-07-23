@@ -1,0 +1,46 @@
+---
+/*
+ * CategoryChip — web translation of the app's CategoryChip (Pills.swift):
+ * a soft category-tinted fill, category "ink" text, and a hairline stroke in
+ * the category primary at low opacity. Colors resolve from the per-category
+ * CSS variables defined in global.css, so chips theme correctly in dark mode.
+ */
+interface Props {
+  categoryKey: string;
+  label: string;
+  class?: string;
+}
+const { categoryKey, label, class: className = "" } = Astro.props;
+const style = `--c:var(--cat-${categoryKey}); --c-soft:var(--cat-${categoryKey}-soft); --c-ink:var(--cat-${categoryKey}-ink)`;
+---
+
+<span class:list={["category-chip", className]} style={style}>
+  <span class="category-dot"></span>
+  {label}
+</span>
+
+<style>
+  .category-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.7rem;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: 0.75rem;
+    letter-spacing: 0.02em;
+    line-height: 1;
+    color: var(--c-ink);
+    background-color: var(--c-soft);
+    border: 0.7px solid color-mix(in oklab, var(--c) 28%, transparent);
+    white-space: nowrap;
+  }
+  .category-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    background-color: var(--c);
+    flex: none;
+  }
+</style>

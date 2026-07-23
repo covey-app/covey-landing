@@ -1,4 +1,5 @@
 ---
+import CoveyMark from "./CoveyMark.astro";
 import { SITE } from "../config";
 
 const cols = [
@@ -21,22 +22,20 @@ const cols = [
 ] as const;
 ---
 
-<footer class="mt-32 border-t border-edge/60">
+<footer class="mt-32 border-t">
   <div class="max-w-7xl mx-auto px-6 py-16 grid md:grid-cols-12 gap-12">
-    <div class="md:col-span-6 space-y-4">
-      <div class="flex items-center gap-2">
-        <img src="/images/bird-mark.png" alt="" class="bird-icon w-7 h-7 object-contain" />
-        <div class="font-serif italic text-3xl text-ink">{SITE.name}</div>
-      </div>
-      <p class="text-sm text-warm-gray max-w-sm leading-relaxed">
-        {SITE.tagline} Launching invite-only on iOS, {SITE.city} first.
+    <div class="md:col-span-6 space-y-5">
+      <CoveyMark variant="full" dotSize={8} />
+      <p class="text-sm text-ink-muted max-w-sm leading-relaxed">
+        {SITE.tagline} Launching invite-only on iOS, {SITE.city.split(",")[0]} first.
       </p>
-      <p class="text-xs text-warm-gray max-w-sm leading-relaxed italic font-serif">
-        A "covey" is a small flock of birds that moves together. That's the whole idea.
+      <p class="font-mono text-xs text-ink-subtle max-w-sm leading-relaxed lowercase tracking-tight">
+        covey /kuh-vee/ — a small flock of birds; a small group of people
+        gathered together.
       </p>
       <a
         href={`mailto:${SITE.emails.hello}`}
-        class="inline-block text-xs uppercase tracking-[0.18em] text-warm-gray hover:text-ink"
+        class="inline-block font-mono text-xs uppercase tracking-[0.16em] text-ink-muted hover:text-ink transition-colors"
       >
         {SITE.emails.hello}
       </a>
@@ -46,7 +45,7 @@ const cols = [
       cols.map((c) => (
         <div class="md:col-span-2">
           <div class="eyebrow mb-4">{c.title}</div>
-          <ul class="space-y-2 text-sm text-warm-gray">
+          <ul class="space-y-2.5 text-sm text-ink-muted">
             {c.links.map((l) => (
               <li>
                 <a href={l.href} class="hover:text-ink transition-colors">
@@ -64,14 +63,14 @@ const cols = [
         href={SITE.social.instagram}
         target="_blank"
         rel="noreferrer"
-        class="text-xs uppercase tracking-[0.18em] text-warm-gray hover:text-ink"
+        class="font-mono text-xs uppercase tracking-[0.16em] text-ink-muted hover:text-ink transition-colors"
       >
         Instagram
       </a>
     </div>
   </div>
-  <div class="border-t border-edge/40">
-    <div class="max-w-7xl mx-auto px-6 py-6 text-[10px] uppercase tracking-[0.2em] text-warm-gray flex justify-between flex-wrap gap-2">
+  <div class="border-t">
+    <div class="max-w-7xl mx-auto px-6 py-6 font-mono text-[10px] uppercase tracking-[0.2em] text-ink-subtle flex justify-between flex-wrap gap-2">
       <span>{SITE.city}</span>
       <span>© {new Date().getFullYear()} {SITE.name} Co. · All rights reserved.</span>
     </div>

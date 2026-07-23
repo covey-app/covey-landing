@@ -1,132 +1,427 @@
 @import "tailwindcss";
 
 /*
- * Covey brand system — ported from the covey-web editorial palette so
- * covey-landing reads as the same brand family: warm paper surfaces,
- * ink charcoal text, a single clay accent, small moss/slate touches.
- * Source of truth for these tokens: src/styles.css in the main app repo.
+ * Covey — landing page design system.
+ *
+ * Full realignment to the current Covey iOS design system
+ * (Spring/Summer 2026 redesign). Source of truth for every token below:
+ *   covey/ios/Covey/Core/DesignSystem/{Colors,Typography,Shadows,Spacing,Motion}.swift
+ *   covey/ios/Covey/Core/DesignSystem/ActivityCategoryPalette.swift
+ *
+ * Character: near-white "paper" grounds, charcoal ink, a matcha-green +
+ * coffee-brown brand accent duo, Geist Mono titles/UI chrome, Instrument Sans
+ * reading copy, Manrope for a few friendly moments. Earth tones (clay, moss,
+ * slate, ochre) and the 9 category colors are accents only — primary actions
+ * stay charcoal ink.
  */
 
+@custom-variant dark (&:is(.dark *));
+
 @theme inline {
-  --color-bone: var(--bone);
+  /* Surfaces */
+  --color-background: var(--background);
   --color-paper: var(--paper);
+  --color-paper-elevated: var(--paper-elevated);
+  --color-paper-sunken: var(--paper-sunken);
   --color-vellum: var(--vellum);
+
+  /* Text */
   --color-ink: var(--ink);
-  --color-warm-gray: var(--warm-gray);
-  --color-moss: var(--moss);
-  --color-clay: var(--clay);
-  --color-slate-blue: var(--slate-blue);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-subtle: var(--ink-subtle);
+  --color-ink-inverse: var(--ink-inverse);
+
+  /* Borders */
   --color-edge: var(--edge);
-  --color-pop: var(--pop);
-  --color-pop-soft: var(--pop-soft);
+  --color-hairline: var(--hairline);
 
-  --font-serif: "Fraunces", ui-serif, Georgia, serif;
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  /* Brand accent duo */
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-pale: var(--accent-pale);
 
-  --shadow-paper: 0 1px 2px rgba(37, 35, 31, 0.04), 0 8px 24px -12px rgba(37, 35, 31, 0.12);
-  --shadow-pinned: 0 2px 4px rgba(37, 35, 31, 0.06), 0 18px 40px -20px rgba(37, 35, 31, 0.18);
+  /* Earth / semantic accents */
+  --color-moss: var(--moss);
+  --color-moss-soft: var(--moss-soft);
+  --color-slate: var(--slate);
+  --color-slate-soft: var(--slate-soft);
+  --color-clay: var(--clay);
+  --color-clay-soft: var(--clay-soft);
+  --color-ochre: var(--ochre);
+  --color-ochre-soft: var(--ochre-soft);
+  --color-rose: var(--rose);
+  --color-rose-soft: var(--rose-soft);
+  --color-danger: var(--danger);
+
+  /* Type */
+  --font-mono: "Geist Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --font-sans: "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-friendly: "Manrope", ui-sans-serif, system-ui, sans-serif;
+
+  /* Radii — CoveyRadius */
+  --radius-xs: 6px;
+  --radius-sm: 12px;
+  --radius-md: 18px;
+  --radius-lg: 20px;
+  --radius-image: 18px;
+  --radius-button: 14px;
+  --radius-sheet: 28px;
+
+  /* Shadows — CoveyShadow (light base rgb 18,20,30) */
+  --shadow-paper: var(--sh-paper);
+  --shadow-pinned: var(--sh-pinned);
+  --shadow-floating: var(--sh-floating);
+  --shadow-bead: var(--sh-bead);
 }
 
 :root {
-  --bone: #f3ede2;
-  --paper: #faf7ef;
-  --vellum: rgba(250, 247, 239, 0.72);
-  --ink: #25231f;
-  --warm-gray: #7a746b;
-  --moss: #6f7c5c;
-  --clay: #b56f4d;
-  --slate-blue: #6f8294;
-  --edge: #d8cfc0;
+  color-scheme: light;
 
-  /* Pop accent — the "fun" layer. Same timeless base palette above stays
-     dominant; this is used sparingly (badges, highlights, playful hover
-     states) so energy comes from *how* things move, not a color overhaul. */
-  --pop: #f2b134;
-  --pop-soft: #fbe8bf;
+  /* Surfaces (light) */
+  --background: #f4f4f4;
+  --paper-elevated: #ffffff;
+  --paper: #ededed;
+  --paper-sunken: #e5e5e5;
+  --vellum: rgba(255, 255, 255, 0.78);
+
+  /* Text (light) */
+  --ink: #1c1c1e;
+  --ink-muted: #6b6b70;
+  --ink-subtle: #9a9aa0;
+  --ink-inverse: #ffffff;
+
+  /* Borders (light) */
+  --edge: #e3e3e1;
+  --hairline: rgba(227, 227, 225, 0.55);
+
+  /* Brand accent duo (light) — matcha green + coffee brown */
+  --accent: #112100;
+  --accent-ink: #6f4e37;
+  --accent-strong: #0a1900;
+  --accent-soft: #e2ead7;
+  --accent-pale: #edf2e5;
+
+  /* Earth / semantic accents (light) */
+  --moss: #3db078;
+  --moss-soft: #ddf1e5;
+  --slate: #5c7bd9;
+  --slate-soft: #e1e8fa;
+  --clay: #c77a5a;
+  --clay-soft: #f4dccb;
+  --ochre: #e2a634;
+  --ochre-soft: #faebc8;
+  --rose: #e0386f;
+  --rose-soft: #fbe0ea;
+  --danger: #e04339;
+
+  /* Shadows (light) */
+  --sh-paper: 0 2px 6px rgba(18, 20, 30, 0.06);
+  --sh-pinned: 0 2px 2px rgba(18, 20, 30, 0.05), 0 16px 26px rgba(18, 20, 30, 0.14);
+  --sh-floating: 0 2px 4px rgba(18, 20, 30, 0.08), 0 20px 32px rgba(18, 20, 30, 0.2);
+  --sh-bead: 0 1.5px 3px rgba(18, 20, 30, 0.1);
+
+  /* Activity category palette (light) — exact ActivityCategoryPalette.swift */
+  --cat-food: #e98a2e;        --cat-food-soft: #fff0de;        --cat-food-ink: #6d3510;
+  --cat-outdoors: #7fae3f;    --cat-outdoors-soft: #eef6e5;    --cat-outdoors-ink: #2f4f16;
+  --cat-sports: #4a78d0;      --cat-sports-soft: #e8f0ff;      --cat-sports-ink: #1e3a73;
+  --cat-professional: #5a6b86;--cat-professional-soft: #eceff5;--cat-professional-ink: #293346;
+  --cat-media: #d94a4a;       --cat-media-soft: #fce7e7;       --cat-media-ink: #6b1f1f;
+  --cat-arts: #e2a634;        --cat-arts-soft: #faebc8;        --cat-arts-ink: #5a3d0e;
+  --cat-culture: #6f4e37;     --cat-culture-soft: #efe3d8;     --cat-culture-ink: #3e2a1b;
+  --cat-fashion: #d86fa3;     --cat-fashion-soft: #fbe8f1;     --cat-fashion-ink: #6a2448;
+  --cat-nightlife: #4b2a78;   --cat-nightlife-soft: #eee6f7;   --cat-nightlife-ink: #241038;
+}
+
+.dark {
+  color-scheme: dark;
+
+  /* Surfaces (dark) */
+  --background: #0e0e10;
+  --paper-elevated: #1a1a1d;
+  --paper: #141416;
+  --paper-sunken: #202024;
+  --vellum: rgba(20, 20, 22, 0.62);
+
+  /* Text (dark) */
+  --ink: #f2f2f3;
+  --ink-muted: #b6b7bd;
+  --ink-subtle: #6f7079;
+  --ink-inverse: #0e0e10;
+
+  /* Borders (dark) */
+  --edge: #2a2a2e;
+  --hairline: rgba(42, 42, 46, 0.85);
+
+  /* Brand accent duo (dark) */
+  --accent: #a7c98a;
+  --accent-ink: #cda987;
+  --accent-strong: #bbd79f;
+  --accent-soft: #1e2a12;
+  --accent-pale: #161e0e;
+
+  /* Earth / semantic accents (dark) */
+  --moss: #7cdda8;
+  --moss-soft: #163022;
+  --slate: #9ab3ff;
+  --slate-soft: #1b2440;
+  --clay: #e69877;
+  --clay-soft: #3d2415;
+  --ochre: #f2c062;
+  --ochre-soft: #3b2c13;
+  --rose: #f2769e;
+  --rose-soft: #3e1626;
+  --danger: #ff7264;
+
+  /* Shadows (dark) — black at higher alpha */
+  --sh-paper: 0 2px 6px rgba(0, 0, 0, 0.6);
+  --sh-pinned: 0 2px 2px rgba(0, 0, 0, 0.62), 0 16px 26px rgba(0, 0, 0, 0.72);
+  --sh-floating: 0 2px 4px rgba(0, 0, 0, 0.66), 0 20px 32px rgba(0, 0, 0, 0.78);
+  --sh-bead: 0 1.5px 3px rgba(0, 0, 0, 0.64);
+
+  /* Activity category palette (dark) */
+  --cat-food: #f2a856;        --cat-food-soft: #4b2c0e;        --cat-food-ink: #faddb3;
+  --cat-outdoors: #9cc85f;    --cat-outdoors-soft: #2b3b19;    --cat-outdoors-ink: #d7e9bd;
+  --cat-sports: #7ca1e5;      --cat-sports-soft: #152744;      --cat-sports-ink: #d4e0f4;
+  --cat-professional: #8c9bb5;--cat-professional-soft: #1c2330;--cat-professional-ink: #d3dae8;
+  --cat-media: #ea7373;       --cat-media-soft: #431515;       --cat-media-ink: #f6cdcd;
+  --cat-arts: #f2c062;        --cat-arts-soft: #3b2c13;        --cat-arts-ink: #f3d79a;
+  --cat-culture: #b08968;     --cat-culture-soft: #3a2a1d;     --cat-culture-ink: #ebd9c6;
+  --cat-fashion: #e598bd;     --cat-fashion-soft: #3f1a2e;     --cat-fashion-ink: #f6d2e2;
+  --cat-nightlife: #8260bc;   --cat-nightlife-soft: #281445;   --cat-nightlife-ink: #e1d2f5;
 }
 
 @layer base {
+  * {
+    border-color: var(--edge);
+  }
+
   html {
     font-family: var(--font-sans);
-    font-feature-settings: "ss01", "cv11";
+    font-feature-settings: "ss01";
     -webkit-font-smoothing: antialiased;
-    color: var(--color-ink);
-    background-color: var(--color-bone);
+    text-rendering: optimizeLegibility;
+    color: var(--ink);
+    background-color: var(--background);
     scroll-behavior: smooth;
   }
 
   body {
-    background-color: var(--color-bone);
-    background-image: radial-gradient(rgba(37, 35, 31, 0.025) 1px, transparent 1px),
-      radial-gradient(rgba(37, 35, 31, 0.018) 1px, transparent 1px);
-    background-size: 3px 3px, 7px 7px;
-    background-position: 0 0, 1px 2px;
+    position: relative;
+    background-color: var(--background);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  /*
+   * Paper surface treatment, ported from PaperBackground.swift:
+   * a faint top-left white "bloom" plus a low-opacity print grain. Both are
+   * light-mode only (the app skips the bloom/sheen in dark mode).
+   */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(60% 55% at 12% 0%, rgba(255, 255, 255, 0.75), transparent 70%);
+  }
+
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .dark body::before {
+    display: none;
+  }
+  .dark body::after {
+    opacity: 0.03;
+  }
+
+  /* Keep real content above the fixed paper layers. */
+  body > * {
+    position: relative;
+    z-index: 1;
   }
 
   ::selection {
-    background-color: rgba(181, 111, 77, 0.25);
-    color: var(--color-ink);
+    background-color: color-mix(in oklab, var(--accent) 22%, transparent);
+    color: var(--ink);
+  }
+
+  /* Visible, on-brand focus ring for every interactive element. */
+  :focus-visible {
+    outline: 2px solid var(--accent-ink);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+  .dark :focus-visible {
+    outline-color: var(--accent);
   }
 }
 
 @layer components {
-  .font-serif {
-    font-family: var(--font-serif);
-  }
   .font-mono {
     font-family: var(--font-mono);
   }
-
-  .paper-edge {
-    background-color: var(--color-paper);
-    box-shadow: var(--shadow-paper);
-    border: 1px solid color-mix(in oklab, var(--color-edge) 70%, transparent);
+  .font-friendly {
+    font-family: var(--font-friendly);
   }
 
-  .paper-pinned {
-    background-color: var(--color-paper);
-    box-shadow: var(--shadow-pinned);
-    border: 1px solid color-mix(in oklab, var(--color-edge) 80%, transparent);
-  }
-
-  .vellum-panel {
-    background-color: var(--color-vellum);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid color-mix(in oklab, var(--color-edge) 60%, transparent);
-  }
-
-  .tape {
-    position: absolute;
-    width: 84px;
-    height: 22px;
-    background: color-mix(in oklab, var(--color-clay) 18%, transparent);
-    border: 1px solid color-mix(in oklab, var(--color-clay) 25%, transparent);
-    box-shadow: 0 1px 2px rgba(37, 35, 31, 0.06);
-  }
-
+  /* Eyebrow / overline — Geist Mono SemiBold, uppercase, tracked. */
   .eyebrow {
     font-family: var(--font-mono);
-    font-size: 10px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--color-warm-gray);
-  }
-
-  .display {
-    font-family: var(--font-serif);
-    font-weight: 400;
-    letter-spacing: -0.02em;
-    line-height: 0.95;
-  }
-
-  .sample-badge {
-    font-family: var(--font-mono);
-    font-size: 9px;
+    font-weight: 600;
+    font-size: 0.6875rem;
     letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: var(--color-clay);
+    color: var(--ink-muted);
+  }
+
+  /*
+   * Display / hero — Geist Mono, lowercase, tight negative tracking.
+   * Mirrors CoveyType.display* + `.coveyDisplay()`'s .textCase(.lowercase).
+   */
+  .display {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.02;
+    text-transform: lowercase;
+  }
+
+  /* Section / card titles — Geist Mono Medium. */
+  .title-mono {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+
+  /* Surfaces — flat elevated cards (no glass, per brief). */
+  .card {
+    background-color: var(--paper-elevated);
+    border: 0.7px solid color-mix(in oklab, var(--edge) 55%, transparent);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-paper);
+  }
+  .card-pinned {
+    background-color: var(--paper-elevated);
+    border: 0.7px solid color-mix(in oklab, var(--edge) 55%, transparent);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-pinned);
+  }
+  .card-sunken {
+    background-color: var(--paper-sunken);
+    border: 0.7px solid color-mix(in oklab, var(--edge) 55%, transparent);
+    border-radius: var(--radius-lg);
+  }
+
+  /* Translucent chrome for the sticky header. */
+  .vellum-panel {
+    background-color: var(--vellum);
+    backdrop-filter: saturate(1.1) blur(10px);
+    -webkit-backdrop-filter: saturate(1.1) blur(10px);
+    border-color: color-mix(in oklab, var(--edge) 70%, transparent);
+  }
+
+  /* Buttons — charcoal-ink primary, outlined secondary. Radius 14 (button). */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: var(--radius-button);
+    font-family: var(--font-mono);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    cursor: pointer;
+    transition:
+      transform var(--motion-snappy),
+      box-shadow 0.25s ease,
+      background-color 0.25s ease,
+      border-color 0.25s ease,
+      color 0.25s ease;
+  }
+  .btn:active {
+    transform: scale(0.97);
+  }
+  .btn-primary {
+    background-color: var(--ink);
+    color: var(--ink-inverse);
+    box-shadow: var(--shadow-paper);
+  }
+  .btn-primary:hover {
+    background-color: color-mix(in oklab, var(--ink) 88%, var(--accent-ink) 12%);
+    box-shadow: var(--shadow-pinned);
+  }
+  .btn-secondary {
+    background-color: transparent;
+    color: var(--ink);
+    border: 1px solid color-mix(in oklab, var(--ink) 30%, transparent);
+  }
+  .btn-secondary:hover {
+    background-color: color-mix(in oklab, var(--ink) 5%, transparent);
+    border-color: color-mix(in oklab, var(--ink) 45%, transparent);
+  }
+  .btn-accent {
+    background-color: transparent;
+    color: var(--accent-ink);
+    border: 1px solid color-mix(in oklab, var(--accent) 45%, transparent);
+  }
+  .btn-accent:hover {
+    background-color: var(--accent-soft);
+  }
+
+  /* Status badge / chip — radius 12, Geist Mono Medium 12. */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.3125rem 0.625rem;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: 0.6875rem;
+    letter-spacing: 0.04em;
+    line-height: 1;
+    border: 0.6px solid transparent;
+    white-space: nowrap;
+  }
+  .badge-neutral {
+    color: var(--ink-muted);
+    background-color: color-mix(in oklab, var(--edge) 18%, transparent);
+    border-color: color-mix(in oklab, var(--edge) 55%, transparent);
+  }
+  .badge-ink {
+    color: var(--ink-inverse);
+    background-color: var(--ink);
+  }
+  .badge-accent {
+    color: var(--accent-ink);
+    background-color: var(--accent-soft);
+    border-color: color-mix(in oklab, var(--accent) 30%, transparent);
+  }
+
+  /* Lift-on-hover for interactive cards — restrained, no tilt. */
+  .lift {
+    transition:
+      transform var(--motion-card),
+      box-shadow 0.3s ease,
+      border-color 0.3s ease;
+  }
+  .lift:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-pinned);
+    border-color: color-mix(in oklab, var(--accent) 35%, var(--edge));
   }
 
   .no-scrollbar::-webkit-scrollbar {
@@ -136,98 +431,55 @@
     scrollbar-width: none;
   }
 
-  /* Buttons — pill-shaped and a little bouncy. Rounded + playful on
-     purpose, in deliberate contrast with the squared-off "paper" cards, so
-     the site reads as timeless-but-fun rather than a straight redesign. */
-  .btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    border-radius: 999px;
-    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease, background-color 0.25s ease, color 0.25s ease;
-  }
-  .btn:hover {
-    transform: translateY(-2px) scale(1.03);
-  }
-  .btn:active {
-    transform: translateY(0) scale(0.98);
-  }
-  .btn-primary {
-    background-color: var(--color-ink);
-    color: var(--color-paper);
-  }
-  .btn-primary:hover {
-    background-color: var(--color-clay);
-    box-shadow: 0 14px 28px -8px color-mix(in oklab, var(--color-clay) 55%, transparent);
-  }
-  .btn-secondary {
-    border: 1px solid color-mix(in oklab, var(--color-ink) 20%, transparent);
-  }
-  .btn-secondary:hover {
-    background-color: var(--color-pop-soft);
-    border-color: color-mix(in oklab, var(--color-pop) 60%, transparent);
-    box-shadow: 0 10px 20px -10px color-mix(in oklab, var(--color-pop) 45%, transparent);
-  }
-
-  /* Playful "pop" badge/pill — used for tags, fun stats, sample labels. */
-  .pop-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    border-radius: 999px;
-    background-color: var(--color-pop-soft);
-    color: color-mix(in oklab, var(--color-pop) 55%, var(--color-ink) 45%);
+  /* Skip-to-content link — visible only when focused. */
+  .skip-link {
+    position: absolute;
+    left: 1rem;
+    top: -3rem;
+    z-index: 100;
+    padding: 0.5rem 1rem;
+    background-color: var(--ink);
+    color: var(--ink-inverse);
+    border-radius: var(--radius-sm);
     font-family: var(--font-mono);
-    font-size: 10px;
-    letter-spacing: 0.14em;
+    font-size: 0.75rem;
     text-transform: uppercase;
-    padding: 0.3rem 0.75rem;
+    letter-spacing: 0.14em;
+    transition: top 0.2s ease;
   }
-
-  /* Cards — playful bounce-lift on hover so the grid feels alive/clickable. */
-  .card-hover {
-    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease, border-color 0.3s ease;
-  }
-  .card-hover:hover {
-    transform: translateY(-6px) scale(1.015) rotate(var(--card-tilt, 0deg));
-    box-shadow: var(--shadow-pinned);
-    border-color: color-mix(in oklab, var(--color-clay) 45%, transparent);
-  }
-
-  /* Bird icon — the recurring brand mark. Reused at multiple sizes/rotations
-     instead of a big icon set, like a rubber-stamp motif. */
-  .bird-icon {
-    display: inline-block;
-    filter: brightness(0) saturate(100%);
-  }
-  .bird-icon.is-clay {
-    filter: brightness(0) saturate(100%) invert(45%) sepia(40%) saturate(900%) hue-rotate(335deg) brightness(85%);
-  }
-  .bird-icon.is-moss {
-    filter: brightness(0) saturate(100%) invert(45%) sepia(20%) saturate(500%) hue-rotate(60deg) brightness(80%);
-  }
-
-  .btn:hover .bird-icon {
-    animation: flap 0.5s ease-in-out;
-  }
-
-  /* Scroll reveal — progressive enhancement only. Elements are visible by
-     default; JS adds .js-ready + IntersectionObserver toggles .is-visible. */
-  .reveal {
-    opacity: 1;
-    transform: none;
-  }
-  .js-ready .reveal {
-    opacity: 0;
-    transform: translateY(18px);
-    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-  .js-ready .reveal.is-visible {
-    opacity: 1;
-    transform: translateY(0);
+  .skip-link:focus {
+    top: 1rem;
   }
 }
 
+/*
+ * Motion tokens — translated from CoveyMotion.swift.
+ * Springs are approximated with a matching overshoot/settle cubic-bezier.
+ */
+:root {
+  --motion-standard: 0.28s cubic-bezier(0.33, 0, 0.2, 1);
+  --motion-snappy: 0.22s cubic-bezier(0.3, 0.8, 0.3, 1);
+  --motion-card: 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Scroll reveal — progressive enhancement; visible by default without JS. */
+.reveal {
+  opacity: 1;
+  transform: none;
+}
+.js-ready .reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.js-ready .reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Signature entrance for the hero brand moment. */
 @keyframes paper-rise {
   from {
     opacity: 0;
@@ -239,75 +491,26 @@
   }
 }
 .animate-paper-rise {
-  animation: paper-rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: paper-rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-@keyframes flap {
-  0%,
-  100% {
-    transform: rotate(0deg) translateY(0);
+/*
+ * Reduced motion: disable all decorative motion, snap reveals to visible.
+ * Mirrors the app's central reduce-motion guard.
+ */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
   }
-  50% {
-    transform: rotate(-12deg) translateY(-2px);
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
   }
-}
-
-@keyframes drift {
-  0%,
-  100% {
-    transform: translateY(0) rotate(var(--drift-rotate, 2deg));
+  .js-ready .reveal {
+    opacity: 1;
+    transform: none;
   }
-  50% {
-    transform: translateY(-6px) rotate(var(--drift-rotate, 2deg));
-  }
-}
-.animate-drift {
-  animation: drift 5s ease-in-out infinite;
-}
-
-@keyframes fly-by {
-  0% {
-    transform: translate(-10vw, 0) rotate(-6deg);
-    opacity: 0;
-  }
-  10% {
-    opacity: 0.85;
-  }
-  90% {
-    opacity: 0.85;
-  }
-  100% {
-    transform: translate(110vw, -8vh) rotate(-6deg);
-    opacity: 0;
-  }
-}
-/* One bird periodically flies clear across a section — purely decorative,
-   pointer-events disabled, hidden on small screens to keep mobile calm. */
-.flock-flyby {
-  position: absolute;
-  pointer-events: none;
-  width: 34px;
-  height: 34px;
-  animation: fly-by 18s linear infinite;
-}
-@media (max-width: 768px) {
-  .flock-flyby {
-    display: none;
-  }
-}
-
-@keyframes wiggle {
-  0%,
-  100% {
-    transform: rotate(0deg);
-  }
-  25% {
-    transform: rotate(-8deg);
-  }
-  75% {
-    transform: rotate(8deg);
-  }
-}
-.card-hover:hover .wiggle-on-hover {
-  animation: wiggle 0.4s ease-in-out;
 }

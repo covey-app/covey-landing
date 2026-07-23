@@ -11,24 +11,23 @@ const lastUpdated = "July 19, 2026";
   <div class="max-w-3xl mx-auto px-6 py-24">
     <div class="eyebrow mb-3">Privacy</div>
     <h1 class="display text-5xl md:text-6xl mb-4">Privacy policy</h1>
-    <p class="text-warm-gray text-sm uppercase tracking-[0.18em] mb-12">
+    <p class="font-mono text-ink-muted text-xs uppercase tracking-[0.16em] mb-12">
       Last updated {lastUpdated}
     </p>
 
-    <div class="paper-edge p-6 mb-12">
-      <p class="text-warm-gray leading-relaxed">
+    <div class="card p-6 mb-12">
+      <p class="text-ink-muted leading-relaxed">
         <strong class="text-ink">Scope of this page:</strong> this policy
         covers only the {SITE.domain} marketing website — the waitlist form,
-        the contact form, and basic site analytics. It does not cover the
-        Covey iOS app itself, which has its own, more detailed privacy
-        policy governing account data, plans, messages, location, and
-        payments.
+        the contact form, and basic site analytics. It does not cover the Covey
+        iOS app itself, which has its own, more detailed privacy policy
+        governing account data, plans, messages, location, and payments.
       </p>
     </div>
 
-    <div class="space-y-10 text-warm-gray leading-relaxed text-lg">
+    <div class="space-y-10 text-ink-muted leading-relaxed text-lg">
       <section>
-        <h2 class="font-serif text-2xl text-ink mb-3">What we collect</h2>
+        <h2 class="title-mono text-2xl text-ink mb-3">What we collect</h2>
         <p>
           When you join the waitlist or send us a message, we collect the
           information you submit — typically your name, email address, and
@@ -38,7 +37,7 @@ const lastUpdated = "July 19, 2026";
       </section>
 
       <section>
-        <h2 class="font-serif text-2xl text-ink mb-3">How we use it</h2>
+        <h2 class="title-mono text-2xl text-ink mb-3">How we use it</h2>
         <p>
           We use waitlist submissions to notify you when an invite becomes
           available and to understand demand by city. We use contact form
@@ -48,7 +47,7 @@ const lastUpdated = "July 19, 2026";
       </section>
 
       <section>
-        <h2 class="font-serif text-2xl text-ink mb-3">Where it's stored</h2>
+        <h2 class="title-mono text-2xl text-ink mb-3">Where it's stored</h2>
         <p>
           Form submissions are processed by our hosting provider's form
           handling service. We may export this data into our own systems to
@@ -57,7 +56,7 @@ const lastUpdated = "July 19, 2026";
       </section>
 
       <section>
-        <h2 class="font-serif text-2xl text-ink mb-3">Your choices</h2>
+        <h2 class="title-mono text-2xl text-ink mb-3">Your choices</h2>
         <p>
           Email {SITE.emails.support} at any time to ask what information we
           have about you, to correct it, or to have it deleted from the
@@ -66,18 +65,18 @@ const lastUpdated = "July 19, 2026";
       </section>
 
       <section>
-        <h2 class="font-serif text-2xl text-ink mb-3">Contact</h2>
+        <h2 class="title-mono text-2xl text-ink mb-3">Contact</h2>
         <p>
-          Questions about this policy: {" "}
-          <a href={`mailto:${SITE.emails.support}`} class="text-clay hover:underline">
+          Questions about this policy:
+          <a href={`mailto:${SITE.emails.support}`} class="text-accent-ink hover:underline">
             {SITE.emails.support}
           </a>.
         </p>
       </section>
     </div>
 
-    <div class="mt-16 paper-edge p-6 text-sm text-warm-gray">
-      <strong class="text-ink">Before you submit this to App Store Connect:</strong>{" "}
+    <div class="mt-16 card-sunken p-6 text-sm text-ink-muted">
+      <strong class="text-ink">Before you submit this to App Store Connect:</strong>
       have this reviewed against your actual data practices and the covey-ios
       app's own privacy policy — this draft only covers the marketing site.
     </div>
