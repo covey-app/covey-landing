@@ -28,7 +28,7 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" v
 
   <text x="102" y="410" font-family="'Geist Mono','SF Mono',ui-monospace,monospace" font-size="30" letter-spacing="4" fill="#6B6B70">/kuh-vee/ &#183; a small group, one plan, one day</text>
 
-  <text x="102" y="500" font-family="'Instrument Sans',system-ui,sans-serif" font-size="40" fill="#1C1C1E">Make a plan. Open a few spots. Meet people through it.</text>
+  <text x="102" y="500" font-family="'Instrument Sans',system-ui,sans-serif" font-size="40" fill="#1C1C1E">Anything, anytime, together.</text>
 
   <text x="102" y="545" font-family="'Geist Mono','SF Mono',ui-monospace,monospace" font-size="22" letter-spacing="3" fill="#6F4E37">COVEYAPP.CO &#183; iOS, INVITE-ONLY</text>
 </svg>`;

@@ -39,38 +39,38 @@ const stats = [
   title="About"
   description="Covey is a plan-first social app built around real-world itineraries and small-group meetups, launching invite-only on iOS."
 >
-  <div class="max-w-4xl mx-auto px-6 py-24">
+  <div class="max-w-4xl mx-auto px-6 py-[var(--section-y)]">
     <div class="eyebrow mb-3 flex items-center gap-2.5">
       <CoveyMark variant="dots" dotSize={6} />
       About
     </div>
-    <h1 class="display text-5xl md:text-6xl mb-10">A new shape for going out.</h1>
+    <h1 class="display t-h1 mb-8">A new shape for going out.</h1>
 
-    <div class="space-y-8 text-lg text-ink-muted leading-relaxed">
-      <p>
+    <div class="space-y-6 leading-relaxed">
+      <p class="text-xl md:text-2xl text-ink leading-snug max-w-3xl">
         Covey started with a simple frustration: most ways to meet people
         online have nothing to do with what you actually want to
-        <em class="text-ink not-italic font-medium">do</em>. Group chats
-        stall. Apps optimize for swipes, not Saturdays. The good plans live in
-        someone's head and never leave it.
+        <em class="not-italic text-accent-ink font-medium">do</em>.
       </p>
-      <p>
-        We're building a plan-first social app. Hosts publish small
-        itineraries — a wine crawl, a bookstore loop, a sunrise hike — and a
-        few seats stay open for whoever's curious.
+      <p class="text-lg text-ink-muted">
+        Group chats stall. Apps optimize for swipes, not Saturdays. The good
+        plans live in someone's head and never leave it. We're building a
+        plan-first social app instead — hosts publish small itineraries, a wine
+        crawl, a bookstore loop, a sunrise hike, and a few seats stay open for
+        whoever's curious.
       </p>
-      <p>
+      <p class="text-lg text-ink-muted">
         Plans are intentionally small. Two to ten people, a date, a few stops,
         and a clear vibe. You're not joining a "community." You're showing up
         at the first stop.
       </p>
     </div>
 
-    <div class="mt-20 grid sm:grid-cols-3 gap-5">
+    <div class="mt-16 grid sm:grid-cols-3 gap-5 reveal-stagger">
       {
-        stats.map((s) => (
-          <div class="card lift p-6">
-            <div class="font-mono font-semibold text-3xl text-ink tracking-tight">{s.k}</div>
+        stats.map((s, i) => (
+          <div class="card p-6 reveal-item" style={`--i:${i}`}>
+            <div class="font-mono font-semibold text-2xl md:text-3xl text-ink tracking-tight text-balance">{s.k}</div>
             <div class="eyebrow mt-2">{s.v}</div>
           </div>
         ))
@@ -79,30 +79,30 @@ const stats = [
 
     <BirdDivider />
 
-    <div class="card-sunken p-8 md:p-10 my-4 flex flex-col md:flex-row gap-8 items-center">
+    <div class="card-pinned p-8 md:p-12 my-4 flex flex-col md:flex-row gap-8 items-center" style="border-radius: var(--radius-sheet)">
       <div class="shrink-0">
-        <CoveyMark variant="dots" dotSize={14} />
+        <CoveyMark variant="dots" dotSize={16} />
       </div>
       <div>
-        <div class="eyebrow mb-2">Where the name comes from</div>
-        <p class="text-xl text-ink leading-relaxed">
+        <div class="eyebrow mb-3">Where the name comes from</div>
+        <p class="text-xl md:text-2xl text-ink leading-snug">
           A covey is a small flock of quail — never a crowd, always moving
-          together. It's the same shape we're building the app around: a
-          handful of people, one plan, one day.
+          together. The same shape we're building the app around: a handful of
+          people, one plan, one day.
         </p>
       </div>
     </div>
 
-    <div class="mt-20">
+    <div class="mt-16">
       <div class="eyebrow mb-3">What we believe</div>
-      <h2 class="display text-4xl mb-10">Four principles we build around.</h2>
-      <ol class="space-y-10">
+      <h2 class="display t-h2 mb-8">Four principles we build around.</h2>
+      <ol class="space-y-8">
         {
           principles.map((p) => (
-            <li class="grid md:grid-cols-12 gap-6 md:gap-8 border-t pt-10">
-              <span class="md:col-span-2 font-mono font-semibold text-accent-ink text-4xl tracking-tight">{p.n}</span>
+            <li class="grid md:grid-cols-12 gap-4 md:gap-8 border-t pt-8">
+              <span class="md:col-span-2 font-mono font-semibold text-accent-ink text-3xl md:text-4xl tracking-tight">{p.n}</span>
               <div class="md:col-span-10">
-                <h3 class="title-mono text-2xl text-ink mb-3">{p.t}</h3>
+                <h3 class="title-mono text-xl md:text-2xl text-ink mb-2">{p.t}</h3>
                 <p class="text-ink-muted text-lg leading-relaxed max-w-2xl">{p.d}</p>
               </div>
             </li>

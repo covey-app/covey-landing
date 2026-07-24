@@ -1,6 +1,8 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import CoveyMark from "../components/CoveyMark.astro";
+import FormField from "../components/FormField.astro";
+import FormEnhance from "../components/FormEnhance.astro";
 import { SITE } from "../config";
 ---
 
@@ -8,12 +10,12 @@ import { SITE } from "../config";
   title="Join the waitlist"
   description="Join the Covey waitlist. We're launching invite-only on iOS, starting in San Francisco."
 >
-  <div class="max-w-2xl mx-auto px-6 py-24 text-center">
+  <div class="max-w-2xl mx-auto px-6 py-[var(--section-y)] text-center">
     <div class="flex justify-center mb-6">
       <CoveyMark variant="dots" dotSize={11} animate />
     </div>
     <div class="eyebrow mb-3">{SITE.launchRegion}</div>
-    <h1 class="display text-5xl md:text-6xl mb-6">Be first in the flock.</h1>
+    <h1 class="display t-h1 mb-6">Be first in the flock.</h1>
     <p class="text-ink-muted text-lg leading-relaxed mb-12 max-w-xl mx-auto">
       Covey is rolling out invite-only on iOS, starting in {SITE.city}. Drop
       your email below and we'll reach out the moment a spot opens up — no
@@ -24,48 +26,37 @@ import { SITE } from "../config";
       name="waitlist"
       method="POST"
       data-netlify="true"
+      netlify-honeypot="bot-field"
       action="/thanks"
-      class="card p-8 space-y-6 text-left"
+      data-astro-reload
+      data-enhance
+      novalidate
+      class="card p-7 sm:p-8 text-left"
     >
       <input type="hidden" name="form-name" value="waitlist" />
       <p class="hidden">
         <label>Don't fill this out if you're human: <input name="bot-field" /></label>
       </p>
 
-      <label class="block">
-        <div class="eyebrow mb-2">Email</div>
-        <input
-          required
-          type="email"
-          name="email"
-          placeholder="you@example.com"
-          class="w-full bg-transparent border-b border-edge focus:border-accent-ink outline-none py-2 text-lg transition-colors"
-        />
-      </label>
+      <FormField
+        type="email"
+        name="email"
+        label="Email"
+        required
+        autocomplete="email"
+        inputmode="email"
+        placeholder="you@example.com"
+        error="Enter a valid email so we can send your invite."
+      />
+      <FormField name="name" label="First name" autocomplete="given-name" />
+      <FormField name="city" label="City" placeholder="Where should we launch next?" />
 
-      <label class="block">
-        <div class="eyebrow mb-2">First name (optional)</div>
-        <input
-          name="name"
-          class="w-full bg-transparent border-b border-edge focus:border-accent-ink outline-none py-2 transition-colors"
-        />
-      </label>
-
-      <label class="block">
-        <div class="eyebrow mb-2">City (optional)</div>
-        <input
-          name="city"
-          placeholder="Where should we launch next?"
-          class="w-full bg-transparent border-b border-edge focus:border-accent-ink outline-none py-2 transition-colors"
-        />
-      </label>
-
-      <label class="flex items-start gap-3 text-sm text-ink-muted">
-        <input required type="checkbox" name="over18" class="mt-1 accent-[color:var(--accent-ink)]" />
+      <label class="flex items-start gap-3 text-sm text-ink-muted mt-5">
+        <input required type="checkbox" name="over18" class="mt-1 h-4 w-4 accent-[color:var(--accent-ink)]" />
         <span>I confirm I'm 18 or older.</span>
       </label>
 
-      <button class="btn btn-primary w-full justify-center px-10 py-4 text-xs">
+      <button type="submit" class="btn btn-primary btn-lg w-full justify-center mt-7">
         Join the flock
       </button>
     </form>
@@ -75,4 +66,5 @@ import { SITE } from "../config";
       <a href={SITE.appUrl} class="border-b border-ink-muted hover:text-ink hover:border-ink transition-colors">Open the app →</a>
     </p>
   </div>
+  <FormEnhance />
 </BaseLayout>

@@ -4,7 +4,7 @@
  */
 export const SITE = {
   name: "Covey",
-  tagline: "Make a plan. Open a few spots. Meet people through it.",
+  tagline: "Anything, anytime, together.",
   domain: "coveyapp.co",
   url: "https://coveyapp.co",
 
