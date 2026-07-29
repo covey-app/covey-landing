@@ -1,6 +1,7 @@
 ---
 import CoveyMark from "./CoveyMark.astro";
 import ThemeToggle from "./ThemeToggle.astro";
+import { SITE } from "../config";
 
 const links = [
   { href: "/about", label: "About" },
@@ -38,6 +39,26 @@ const path = new URL(Astro.request.url).pathname;
 
     <div class="flex items-center gap-3">
       <ThemeToggle />
+      {
+        /* The product lives on app.coveyapp.co; the waitlist stays here.
+           Browsing plans needs no account, so it leads the sign-in link. */
+        SITE.appIsLive && (
+          <>
+            <a
+              href={SITE.browseUrl}
+              class="hidden sm:inline-flex font-mono text-xs uppercase tracking-[0.14em] text-ink-muted hover:text-ink transition-colors"
+            >
+              Browse plans
+            </a>
+            <a
+              href={SITE.appUrl}
+              class="hidden sm:inline-flex font-mono text-xs uppercase tracking-[0.14em] text-ink-muted hover:text-ink transition-colors"
+            >
+              Sign in
+            </a>
+          </>
+        )
+      }
       <a
         href="/signup"
         class="btn btn-primary px-4 py-2.5 text-[0.65rem]"

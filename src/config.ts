@@ -8,9 +8,20 @@ export const SITE = {
   domain: "coveyapp.co",
   url: "https://coveyapp.co",
 
-  // TODO: confirm the live URL for the covey-web app once it's deployed,
-  // then flip `appIsLive` to true so header/footer nav links to it.
+  // The Expo app (separate covey-web repo) is the only thing on
+  // `app.coveyapp.co`; everything on the apex domain — including the waitlist
+  // at /signup — lives in this Astro site and must never be duplicated in the
+  // Expo tree.
+  //
+  // `appIsLive` is the single switch for cross-linking into the product: flip
+  // it to true once the Expo static export is deployed and the header/footer
+  // "Browse plans" / "Sign in" links appear.
   appUrl: "https://app.coveyapp.co",
+
+  // Published plans are readable without an account (see
+  // docs/web-public-access.md in covey-web), so this is where marketing
+  // traffic that isn't ready to hand over an email should land.
+  browseUrl: "https://app.coveyapp.co/explore",
   appIsLive: false,
 
   // Launch is invite-only on iOS first (see docs/launch/decision-matrix.md

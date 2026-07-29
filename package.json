@@ -6,7 +6,10 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "tokens:generate": "node scripts/design-tokens/generate.mjs",
+    "tokens:check": "node scripts/design-tokens/generate.mjs --check",
+    "tokens:verify": "node scripts/design-tokens/verify.mjs && node scripts/design-tokens/generate.mjs --check"
   },
   "dependencies": {
     "astro": "^7.1.3"

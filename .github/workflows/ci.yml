@@ -16,4 +16,8 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
+      # Fails if src/styles/tokens.css is stale vs the committed tokens.json.
+      # (The cross-repo drift check against covey-web's theme is local-only:
+      # `npm run tokens:verify` with a covey-web checkout.)
+      - run: npm run tokens:check
       - run: npm run build

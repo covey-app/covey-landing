@@ -39,7 +39,7 @@ JS disabled, see the `.reveal` rule and the script in `BaseLayout.astro`).
 - [ ] Once you have a real iOS screenshot, drop it at `public/screenshots/hero.png` — see the TODO comment in `src/pages/index.astro` for where to slot it in alongside (or instead of) the bird illustration card.
 - [ ] `public/og-image.png` currently reuses the hero bird illustration — swap for a dedicated 1200×630 share image once you have real app screenshots or branding to show.
 - [ ] Set up inboxes (or forwarding) for every address in `src/config.ts` — `hello@`, `press@`, `support@`, `safety@coveyapp.co`. GoDaddy sells email, or you can forward `@coveyapp.co` to an existing inbox via GoDaddy's free email forwarding.
-- [ ] Once `covey-web` is deployed, set `appUrl`/`appIsLive` in `src/config.ts` so the nav links out to it.
+- [ ] Once `covey-web` is deployed at `app.coveyapp.co`, flip `appIsLive` in `src/config.ts` so the header/footer show "Browse plans" (`browseUrl`, no account needed) and "Sign in" (`appUrl`).
 - [ ] Once iOS is approved, set `appStoreUrl` in `src/config.ts` and add a real badge to `/signup`.
 - [ ] Have the `/privacy` draft reviewed against your real data practices before submitting the URL to App Store Connect.
 
@@ -50,6 +50,10 @@ npm install
 npm run dev       # http://localhost:4321
 npm run build     # outputs to dist/
 npm run preview   # serve the production build locally
+
+# Design tokens shared with covey-web (see scripts/design-tokens/README.md)
+npm run tokens:verify     # drift check vs a covey-web checkout (../covey-web or COVEY_WEB_DIR)
+npm run tokens:generate   # rewrite src/styles/tokens.css from tokens.json
 ```
 
 ## Pushing this repo to GitHub
@@ -111,15 +115,27 @@ subdomain so the header/footer link out to it correctly.
 ## Connecting to `covey-ios` and `covey-web`
 
 This repo has no code dependency on the other two — that's the point, it
-should be able to ship on its own. The connections are:
+should be able to ship on its own. The deploy split is:
 
-- **Brand:** the palette, type (Fraunces / Inter / JetBrains Mono), and
-  copy voice in this repo were ported from `covey-web`'s existing
-  `src/styles.css` and marketing routes, so all three properties read as
-  one brand.
-- **Cross-links:** `src/config.ts` holds the single `appUrl` used to link
-  from this marketing site into `covey-web`. Update it there once, not
-  scattered across pages.
+| Domain | Repo | Build |
+| --- | --- | --- |
+| `coveyapp.co` | this repo (Astro) | `npm run build` → `dist/` |
+| `app.coveyapp.co` | `covey-web` (Expo static export) | `npx expo export --platform web` → `dist/` |
+
+All marketing, legal, and waitlist pages live here; the product app hosts
+none of them and links back to this site instead. The connections are:
+
+- **Brand / design tokens:** colors, radii, spacing, and font stacks are
+  synced one-directionally from `covey-web`'s `lib/theme/` (itself ported
+  from iOS) via `scripts/design-tokens/` — `tokens.json` is the committed
+  copy, `src/styles/tokens.css` the generated output consumed by
+  `global.css`. Run `npm run tokens:verify` after theme changes over there.
+  Landing-only values (CSS shadows, category palette, motion) stay
+  hand-written in `global.css`. See `scripts/design-tokens/README.md`.
+- **Cross-links:** `src/config.ts` holds `appUrl` ("Sign in"), `browseUrl`
+  ("Browse plans" — published plans are viewable without an account), and
+  the `appIsLive` switch that hides both until the product deploy exists.
+  Update them there once, not scattered across pages.
 - **App Store Connect:** once submitted, use `https://coveyapp.co/privacy`
   and `https://coveyapp.co/support` as your Privacy Policy URL and Support
   URL in `covey-ios`'s App Store Connect listing.
