@@ -21,3 +21,5 @@ Thumbs.db
 
 # cursor (never commit local agent config)
 .cursor/
+.vercel
+.env*
