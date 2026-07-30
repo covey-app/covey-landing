@@ -2,44 +2,39 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import WaitlistCTA from "../components/WaitlistCTA.astro";
 import CoveyMark from "../components/CoveyMark.astro";
+import EmptyState from "../components/EmptyState.astro";
 ---
 
 <BaseLayout
   title="Testimonials"
   description="Real stories from early Covey hosts and joiners are coming soon, ahead of our invite-only iOS launch."
 >
-  <div class="max-w-4xl mx-auto px-6 py-24">
+  <div class="max-w-4xl mx-auto px-6 py-[var(--section-y)]">
     <div class="eyebrow mb-3 flex items-center gap-2.5">
       <CoveyMark variant="dots" dotSize={6} />
       Testimonials
     </div>
-    <h1 class="display text-5xl md:text-6xl mb-6 text-balance">
+    <h1 class="display t-h1 mb-6 text-balance">
       Real stories, coming soon.
     </h1>
-    <p class="text-ink-muted text-lg leading-relaxed max-w-2xl mb-14">
+    <p class="text-ink-muted text-lg leading-relaxed max-w-2xl mb-12">
       We're just starting to put plans in front of our first hosts and joiners.
       Rather than run invented quotes here, we'll publish real reactions — with
       permission — once people have hosted and joined their first Covey plans.
     </p>
 
-    <div class="card-sunken p-10 md:p-14 text-center">
-      <div class="flex justify-center mb-6">
-        <CoveyMark variant="dots" dotSize={10} />
-      </div>
-      <h2 class="title-mono text-2xl text-ink mb-3">Nothing to show yet — honestly.</h2>
-      <p class="text-ink-muted leading-relaxed max-w-md mx-auto mb-8">
-        Were you part of an early plan? If you'd be happy to share how it went,
-        we'd love to feature your story here.
-      </p>
-      <div class="flex justify-center gap-3 flex-wrap">
-        <a href="/contact" class="btn btn-secondary px-7 py-3.5 text-xs">
-          Share your story
-        </a>
-        <a href="/signup" class="btn btn-primary px-7 py-3.5 text-xs">
-          Join the waitlist
-        </a>
-      </div>
-    </div>
+    <EmptyState
+      title="Nothing to show yet — honestly."
+      body="Were you part of an early plan? If you'd be happy to share how it went, we'd love to feature your story here."
+    >
+      <a href="/signup" class="btn btn-primary">Join the flock</a>
+      <a href="/contact" class="btn btn-secondary">Share your story</a>
+    </EmptyState>
+
+    <p class="mt-8 text-center font-mono text-xs uppercase tracking-[0.16em] text-ink-muted">
+      In the meantime —
+      <a href="/about" class="text-accent-ink border-b border-transparent hover:border-current transition-colors">read what Covey is</a>
+    </p>
   </div>
 
   <WaitlistCTA

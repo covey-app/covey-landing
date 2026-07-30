@@ -1,0 +1,71 @@
+---
+/*
+ * FormEnhance — progressive enhancement for any form[data-enhance]. Adds
+ * blur/submit validation (toggling aria-invalid to reveal .field-error),
+ * prevents double submits, and shows a labeled loading state. The native
+ * POST is preserved as the fallback, so forms still work without JS and the
+ * configured backend (Netlify Forms) still receives the submission.
+ */
+---
+
+<script>
+  function enhance(form: HTMLFormElement) {
+    if (form.dataset.enhanced === "true") return;
+    form.dataset.enhanced = "true";
+
+    const controls = form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>(
+      ".field-control",
+    );
+
+    const validate = (el: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement) => {
+      const valid = el.checkValidity();
+      el.setAttribute("aria-invalid", valid ? "false" : "true");
+      const err = el.parentElement?.querySelector<HTMLElement>(".field-error");
+      if (err && !valid) err.textContent = el.validationMessage || "Please check this field.";
+      return valid;
+    };
+
+    controls.forEach((el) => {
+      el.addEventListener("blur", () => {
+        if (el.getAttribute("aria-invalid") !== null || el.value) validate(el);
+      });
+      el.addEventListener("input", () => {
+        if (el.getAttribute("aria-invalid") === "true") validate(el);
+      });
+    });
+
+    form.addEventListener("submit", (e) => {
+      let firstInvalid: HTMLElement | null = null;
+      controls.forEach((el) => {
+        if (!validate(el) && !firstInvalid) firstInvalid = el;
+      });
+
+      if (firstInvalid) {
+        e.preventDefault();
+        (firstInvalid as HTMLElement).focus();
+        return;
+      }
+
+      // Valid: prevent double submit and show a labeled loading state, but let
+      // the native POST proceed to the backend.
+      const btn = form.querySelector<HTMLButtonElement>("button[type='submit'], button:not([type])");
+      if (btn && btn.dataset.loading !== "true") {
+        btn.dataset.loading = "true";
+        setTimeout(() => {
+          btn.setAttribute("aria-busy", "true");
+          btn.dataset.label = btn.textContent || "";
+          btn.innerHTML = '<span class="btn-spinner" aria-hidden="true"></span><span>Sending…</span>';
+        }, 150);
+      }
+    });
+  }
+
+  function initForms() {
+    document
+      .querySelectorAll<HTMLFormElement>("form[data-enhance]")
+      .forEach(enhance);
+  }
+
+  initForms();
+  document.addEventListener("astro:page-load", initForms);
+</script>

@@ -4,7 +4,7 @@
  */
 export const SITE = {
   name: "Covey",
-  tagline: "Make a plan. Open a few spots. Meet people through it.",
+  tagline: "Anything, anytime, together.",
   domain: "coveyapp.co",
   url: "https://coveyapp.co",
 
@@ -22,7 +22,10 @@ export const SITE = {
   // docs/web-public-access.md in covey-web), so this is where marketing
   // traffic that isn't ready to hand over an email should land.
   browseUrl: "https://app.coveyapp.co/explore",
+  // convenience explicit sign-in route for direct login links
+  signInUrl: "https://app.coveyapp.co/login",
   appIsLive: false,
+
 
   // Launch is invite-only on iOS first (see docs/launch/decision-matrix.md
   // in the covey-ios repo) — no public App Store link yet. Once approved,

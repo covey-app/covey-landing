@@ -9,12 +9,13 @@ import CoveyMark from "../components/CoveyMark.astro";
       <CoveyMark variant="dots" dotSize={9} />
     </div>
     <div class="eyebrow mb-3">404</div>
-    <h1 class="display text-5xl mb-6">That page wandered off.</h1>
+    <h1 class="display t-h1 mb-6">That page wandered off.</h1>
     <p class="text-ink-muted leading-relaxed mb-8">
       The page you're looking for doesn't exist or has moved.
     </p>
-    <a href="/" class="btn btn-primary px-8 py-4 text-xs">
-      Back home
-    </a>
+    <div class="flex justify-center gap-3 flex-wrap">
+      <a href="/" class="btn btn-primary btn-lg">Back home</a>
+      <a href="/about" class="btn btn-secondary btn-lg">About Covey</a>
+    </div>
   </div>
 </BaseLayout>
