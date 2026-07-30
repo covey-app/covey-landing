@@ -8,16 +8,24 @@ export const SITE = {
   domain: "coveyapp.co",
   url: "https://coveyapp.co",
 
-  // Flip `appIsLive` to true once go.coveyapp.co is deployed and verified —
-  // every link below stays inert (unrendered) until then. `/` itself is
-  // intentionally never linked to: it's owned by the signed-in app in
-  // covey-web's router and 404s for a signed-out visitor, the same reason
-  // covey-web's own gated screens live under `/members/*` rather than
-  // reusing signed-in paths. Always link to a real, ungated route instead.
-  appUrl: "https://go.coveyapp.co",
-  signInUrl: "https://go.coveyapp.co/login",
-  browseUrl: "https://go.coveyapp.co/explore",
-  appIsLive: true,
+  // The Expo app (separate covey-web repo) is the only thing on
+  // `app.coveyapp.co`; everything on the apex domain — including the waitlist
+  // at /signup — lives in this Astro site and must never be duplicated in the
+  // Expo tree.
+  //
+  // `appIsLive` is the single switch for cross-linking into the product: flip
+  // it to true once the Expo static export is deployed and the header/footer
+  // "Browse plans" / "Sign in" links appear.
+  appUrl: "https://app.coveyapp.co",
+
+  // Published plans are readable without an account (see
+  // docs/web-public-access.md in covey-web), so this is where marketing
+  // traffic that isn't ready to hand over an email should land.
+  browseUrl: "https://app.coveyapp.co/explore",
+  // convenience explicit sign-in route for direct login links
+  signInUrl: "https://app.coveyapp.co/login",
+  appIsLive: false,
+
 
   // Launch is invite-only on iOS first (see docs/launch/decision-matrix.md
   // in the covey-ios repo) — no public App Store link yet. Once approved,

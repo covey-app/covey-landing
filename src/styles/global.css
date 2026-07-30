@@ -1,10 +1,17 @@
 @import "tailwindcss";
+/*
+ * Colors, radii, spacing and font stacks shared with the Expo app (the
+ * separate covey-web repo) — generated from scripts/design-tokens/tokens.json,
+ * which is verified against covey-web's lib/theme/colors.ts. Everything below
+ * is landing-only.
+ */
+@import "./tokens.css";
 
 /*
  * Covey — landing page design system.
  *
  * Full realignment to the current Covey iOS design system
- * (Spring/Summer 2026 redesign). Source of truth for every token below:
+ * (Spring/Summer 2026 redesign). Upstream source for every token below:
  *   covey/ios/Covey/Core/DesignSystem/{Colors,Typography,Shadows,Spacing,Motion}.swift
  *   covey/ios/Covey/Core/DesignSystem/ActivityCategoryPalette.swift
  *
@@ -56,18 +63,18 @@
   --color-danger: var(--danger);
 
   /* Type */
-  --font-mono: "Geist Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
-  --font-sans: "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
-  --font-friendly: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--ff-mono);
+  --font-sans: var(--ff-sans);
+  --font-friendly: var(--ff-friendly);
 
   /* Radii — CoveyRadius */
-  --radius-xs: 6px;
-  --radius-sm: 12px;
-  --radius-md: 18px;
-  --radius-lg: 20px;
-  --radius-image: 18px;
-  --radius-button: 14px;
-  --radius-sheet: 28px;
+  --radius-xs: var(--rad-xs);
+  --radius-sm: var(--rad-small);
+  --radius-md: var(--rad-medium);
+  --radius-lg: var(--rad-large);
+  --radius-image: var(--rad-image);
+  --radius-button: var(--rad-button);
+  --radius-sheet: var(--rad-sheet);
 
   /* Fluid type scale — iOS-derived, adapted for the web via clamp(). */
   --fs-hero: clamp(2.25rem, 6.2vw + 0.5rem, 4.5rem);
@@ -86,6 +93,11 @@
   --shadow-bead: var(--sh-bead);
 }
 
+/*
+ * Landing-only tokens. Surfaces, text, borders, accents, radii and font stacks
+ * all come from tokens.css above; shadows differ from the RN elevation tokens
+ * and the category palette has no Expo counterpart yet, so both live here.
+ */
 :root {
   color-scheme: light;
 
@@ -126,6 +138,7 @@
   --rose-soft: #fbe0ea;
   --danger: #e04339;
 
+
   /* Shadows (light) */
   --sh-paper: 0 2px 6px rgba(18, 20, 30, 0.06);
   --sh-pinned: 0 2px 2px rgba(18, 20, 30, 0.05), 0 16px 26px rgba(18, 20, 30, 0.14);
@@ -145,45 +158,6 @@
 }
 
 .dark {
-  color-scheme: dark;
-
-  /* Surfaces (dark) */
-  --background: #0e0e10;
-  --paper-elevated: #1a1a1d;
-  --paper: #141416;
-  --paper-sunken: #202024;
-  --vellum: rgba(20, 20, 22, 0.62);
-
-  /* Text (dark) */
-  --ink: #f2f2f3;
-  --ink-muted: #b6b7bd;
-  --ink-subtle: #6f7079;
-  --ink-inverse: #0e0e10;
-
-  /* Borders (dark) */
-  --edge: #2a2a2e;
-  --hairline: rgba(42, 42, 46, 0.85);
-
-  /* Brand accent duo (dark) */
-  --accent: #a7c98a;
-  --accent-ink: #cda987;
-  --accent-strong: #bbd79f;
-  --accent-soft: #1e2a12;
-  --accent-pale: #161e0e;
-
-  /* Earth / semantic accents (dark) */
-  --moss: #7cdda8;
-  --moss-soft: #163022;
-  --slate: #9ab3ff;
-  --slate-soft: #1b2440;
-  --clay: #e69877;
-  --clay-soft: #3d2415;
-  --ochre: #f2c062;
-  --ochre-soft: #3b2c13;
-  --rose: #f2769e;
-  --rose-soft: #3e1626;
-  --danger: #ff7264;
-
   /* Shadows (dark) — black at higher alpha */
   --sh-paper: 0 2px 6px rgba(0, 0, 0, 0.6);
   --sh-pinned: 0 2px 2px rgba(0, 0, 0, 0.62), 0 16px 26px rgba(0, 0, 0, 0.72);
