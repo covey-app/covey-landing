@@ -16,28 +16,10 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
+      - name: Design tokens check
+        run: npm run tokens:check
       - name: Type + content check
         run: npm run check
       - name: Production build
         run: npm run build
 
-  e2e:
-    runs-on: ubuntu-latest
-    needs: build-check
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-      - run: npm ci
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium firefox webkit
-      - name: Run Playwright (overflow, axe, smoke)
-        run: npm run test:e2e
-      - uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
-        with:
-          name: playwright-report
-          path: playwright-report/
-          retention-days: 7

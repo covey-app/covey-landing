@@ -2,7 +2,7 @@
 import CoveyMark from "./CoveyMark.astro";
 import { SITE } from "../config";
 
-const cols = [
+const cols: { title: string; links: { href: string; label: string }[] }[] = [
   {
     title: "Company",
     links: [
@@ -10,6 +10,13 @@ const cols = [
       { href: "/testimonials", label: "Testimonials" },
       { href: "/events", label: "Upcoming events" },
       { href: "/contact", label: "Contact" },
+      // The product is a separate deploy on app.coveyapp.co (covey-web repo).
+      ...(SITE.appIsLive
+        ? [
+            { href: SITE.browseUrl, label: "Browse plans" },
+            { href: SITE.appUrl, label: "Sign in" },
+          ]
+        : []),
     ],
   },
   {
@@ -19,7 +26,7 @@ const cols = [
       { href: "/support", label: "Support" },
     ],
   },
-] as const;
+];
 ---
 
 <footer class="mt-[var(--section-y-tight)] border-t">

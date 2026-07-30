@@ -46,16 +46,27 @@ const isCurrent = (href: string) => normalize(href) === path;
     <div class="flex items-center gap-2">
       <ThemeToggle />
       {
+        /* The product lives on app.coveyapp.co; the waitlist stays here.
+           Browsing plans needs no account, so it leads the sign-in link. */
         SITE.appIsLive && (
-          <a
-            href={SITE.signInUrl}
-            class="hidden md:inline-flex font-mono text-xs uppercase tracking-[0.14em] text-ink-muted hover:text-ink transition-colors px-2"
-          >
-            Sign in
-          </a>
+          <>
+            <a
+              href={SITE.browseUrl}
+              class="hidden sm:inline-flex font-mono text-xs uppercase tracking-[0.14em] text-ink-muted hover:text-ink transition-colors"
+            >
+              Browse plans
+            </a>
+            <a
+              href={SITE.appUrl}
+              class="hidden sm:inline-flex font-mono text-xs uppercase tracking-[0.14em] text-ink-muted hover:text-ink transition-colors"
+            >
+              Sign in
+            </a>
+          </>
         )
       }
       <a href="/signup" class="btn btn-primary btn-sm hidden md:inline-flex">
+
         Join the flock
       </a>
       <button

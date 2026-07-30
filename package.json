@@ -9,8 +9,12 @@
     "preview": "astro preview",
     "check": "astro check",
     "og": "node scripts/gen-og.mjs",
+    "tokens:generate": "node scripts/design-tokens/generate.mjs",
+    "tokens:check": "node scripts/design-tokens/generate.mjs --check",
+    "tokens:verify": "node scripts/design-tokens/verify.mjs && node scripts/design-tokens/generate.mjs --check",
     "test:e2e": "playwright test",
     "test": "astro check && astro build && playwright test"
+
   },
   "dependencies": {
     "astro": "^7.1.3"

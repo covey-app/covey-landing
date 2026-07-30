@@ -64,13 +64,9 @@ import { SITE } from "../config";
     {
       SITE.appIsLive && (
         <p class="font-mono text-xs text-ink-muted mt-8 uppercase tracking-[0.16em]">
-          Already have an invite?{" "}
-          <a
-            href={SITE.signInUrl}
-            class="border-b border-ink-muted hover:text-ink hover:border-ink transition-colors"
-          >
-            Sign in →
-          </a>
+          Already have an invite?
+          <a href={SITE.appUrl} class="border-b border-ink-muted hover:text-ink hover:border-ink transition-colors">Open the app →</a>
+
         </p>
       )
     }
