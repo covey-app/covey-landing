@@ -25,9 +25,9 @@ const channels = [
   title="Support"
   description="Contact Covey support for account, waitlist, safety, or general questions."
 >
-  <div class="max-w-5xl mx-auto px-6 py-24">
+  <div class="max-w-5xl mx-auto px-6 py-[var(--section-y)]">
     <div class="eyebrow mb-3">Support</div>
-    <h1 class="display text-5xl md:text-6xl mb-6">How can we help?</h1>
+    <h1 class="display t-h1 mb-6">How can we help?</h1>
     <p class="text-ink-muted text-lg leading-relaxed max-w-3xl">
       Covey is currently invite-only, rolling out on iOS. For account,
       waitlist, or safety questions, reach out through one of the channels
@@ -37,7 +37,7 @@ const channels = [
     <div class="mt-12 grid md:grid-cols-3 gap-5">
       {
         channels.map((item) => (
-          <div class="card lift p-6">
+          <div class="card p-6">
             <h2 class="title-mono text-xl text-ink mb-2">{item.title}</h2>
             <a
               href={`mailto:${item.value}`}

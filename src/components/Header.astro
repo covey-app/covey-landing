@@ -1,18 +1,25 @@
 ---
 import CoveyMark from "./CoveyMark.astro";
 import ThemeToggle from "./ThemeToggle.astro";
+import { SITE } from "../config";
 
+// Testimonials + Events are intentionally kept out of the primary nav until
+// they hold real content (they remain reachable from the footer).
 const links = [
   { href: "/about", label: "About" },
-  { href: "/testimonials", label: "Testimonials" },
-  { href: "/events", label: "Events" },
   { href: "/contact", label: "Contact" },
 ];
 
-const path = new URL(Astro.request.url).pathname;
+// Normalize trailing slashes so /about and /about/ both mark the nav link.
+const normalize = (p: string) => p.replace(/\/+$/, "") || "/";
+const path = normalize(new URL(Astro.request.url).pathname);
+const isCurrent = (href: string) => normalize(href) === path;
 ---
 
-<header class="sticky top-0 z-40 vellum-panel border-b">
+<header
+  data-header
+  class="sticky top-0 z-40 vellum-panel border-b"
+>
   <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between gap-4">
     <a href="/" class="flex items-center gap-2.5 group shrink-0" aria-label="Covey — home">
       <CoveyMark variant="dots" dotSize={7} class="group-hover:opacity-90 transition-opacity" />
@@ -24,10 +31,10 @@ const path = new URL(Astro.request.url).pathname;
         links.map((l) => (
           <a
             href={l.href}
-            aria-current={path === l.href ? "page" : undefined}
+            aria-current={isCurrent(l.href) ? "page" : undefined}
             class:list={[
-              "font-mono text-xs uppercase tracking-[0.14em] transition-colors",
-              path === l.href ? "text-ink" : "text-ink-muted hover:text-ink",
+              "font-mono text-xs uppercase tracking-[0.14em] transition-colors py-2",
+              isCurrent(l.href) ? "text-ink" : "text-ink-muted hover:text-ink",
             ]}
           >
             {l.label}
@@ -36,36 +43,176 @@ const path = new URL(Astro.request.url).pathname;
       }
     </nav>
 
-    <div class="flex items-center gap-3">
+    <div class="flex items-center gap-2">
       <ThemeToggle />
-      <a
-        href="/signup"
-        class="btn btn-primary px-4 py-2.5 text-[0.65rem]"
-      >
+      {
+        /* The product lives on app.coveyapp.co; the waitlist stays here.
+           Browsing plans needs no account, so it leads the sign-in link. */
+        SITE.appIsLive && (
+          <>
+            <a
+              href={SITE.browseUrl}
+              class="hidden sm:inline-flex font-mono text-xs uppercase tracking-[0.14em] text-ink-muted hover:text-ink transition-colors"
+            >
+              Browse plans
+            </a>
+            <a
+              href={SITE.appUrl}
+              class="hidden sm:inline-flex font-mono text-xs uppercase tracking-[0.14em] text-ink-muted hover:text-ink transition-colors"
+            >
+              Sign in
+            </a>
+          </>
+        )
+      }
+      <a href="/signup" class="btn btn-primary btn-sm hidden md:inline-flex">
+
         Join the flock
       </a>
+      <button
+        type="button"
+        class="menu-btn md:hidden"
+        aria-label="Open menu"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        data-menu-btn
+      >
+        <svg class="icon-open" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+          <path d="M4 7h16M4 12h16M4 17h16" />
+        </svg>
+        <svg class="icon-close" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+          <path d="M6 6l12 12M18 6L6 18" />
+        </svg>
+      </button>
     </div>
   </div>
 
-  <nav
-    class="md:hidden border-t overflow-x-auto no-scrollbar"
-    aria-label="Primary mobile"
-  >
-    <div class="flex gap-6 px-6 py-3 whitespace-nowrap">
+  <div id="mobile-menu" class="mobile-menu md:hidden border-t" hidden data-menu-panel>
+    <nav class="max-w-7xl mx-auto px-6 py-4 flex flex-col" aria-label="Mobile">
       {
         links.map((l) => (
           <a
             href={l.href}
-            aria-current={path === l.href ? "page" : undefined}
+            aria-current={isCurrent(l.href) ? "page" : undefined}
             class:list={[
-              "font-mono text-xs uppercase tracking-[0.14em]",
-              path === l.href ? "text-ink" : "text-ink-muted",
+              "menu-link font-mono text-sm uppercase tracking-[0.12em]",
+              isCurrent(l.href) ? "text-ink" : "text-ink-muted",
             ]}
           >
             {l.label}
           </a>
         ))
       }
-    </div>
-  </nav>
+      {
+        SITE.appIsLive && (
+          <a
+            href={SITE.signInUrl}
+            class="menu-link font-mono text-sm uppercase tracking-[0.12em] text-ink-muted"
+          >
+            Sign in
+          </a>
+        )
+      }
+      <a href="/signup" class="btn btn-primary w-full mt-3">Join the flock</a>
+    </nav>
+  </div>
 </header>
+
+<style>
+  .menu-btn {
+    display: inline-grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-sm);
+    color: var(--ink-muted);
+    border: 0.7px solid color-mix(in oklab, var(--edge) 65%, transparent);
+    background-color: transparent;
+    cursor: pointer;
+    transition:
+      color 0.25s ease,
+      background-color 0.25s ease,
+      border-color 0.25s ease;
+  }
+  .menu-btn:hover {
+    color: var(--ink);
+    border-color: color-mix(in oklab, var(--ink) 25%, transparent);
+  }
+  .menu-btn svg {
+    grid-area: 1 / 1;
+  }
+  .menu-btn .icon-close {
+    display: none;
+  }
+  .menu-btn[aria-expanded="true"] .icon-open {
+    display: none;
+  }
+  .menu-btn[aria-expanded="true"] .icon-close {
+    display: block;
+  }
+
+  .menu-link {
+    display: flex;
+    align-items: center;
+    min-height: 48px;
+    border-bottom: 0.7px solid color-mix(in oklab, var(--edge) 45%, transparent);
+  }
+  .menu-link:last-of-type {
+    border-bottom: none;
+  }
+
+  .mobile-menu[hidden] {
+    display: none;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .mobile-menu:not([hidden]) {
+      animation: menu-in 0.22s cubic-bezier(0.33, 0, 0.2, 1) both;
+    }
+  }
+  @keyframes menu-in {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
+
+<script>
+  function initMenu() {
+    const btn = document.querySelector<HTMLButtonElement>("[data-menu-btn]");
+    const panel = document.querySelector<HTMLElement>("[data-menu-panel]");
+    if (!btn || !panel || btn.dataset.bound === "true") return;
+    btn.dataset.bound = "true";
+
+    const setOpen = (open: boolean) => {
+      btn.setAttribute("aria-expanded", String(open));
+      btn.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+      panel.hidden = !open;
+    };
+
+    btn.addEventListener("click", () => {
+      setOpen(btn.getAttribute("aria-expanded") !== "true");
+    });
+
+    // Close on link tap, Escape (returning focus), or resize to desktop.
+    panel.addEventListener("click", (e) => {
+      if ((e.target as HTMLElement).closest("a")) setOpen(false);
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && btn.getAttribute("aria-expanded") === "true") {
+        setOpen(false);
+        btn.focus();
+      }
+    });
+    window.addEventListener("resize", () => {
+      if (window.innerWidth >= 768) setOpen(false);
+    });
+  }
+
+  initMenu();
+  document.addEventListener("astro:page-load", initMenu);
+</script>

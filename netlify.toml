@@ -4,6 +4,17 @@
 
 # Netlify auto-detects the <form data-netlify="true"> tags in signup.astro
 # and contact.astro at build time — no functions or serverless code needed.
+# Forms POST to /thanks; the pages carry data-astro-reload so Astro's client
+# router does a full navigation and Netlify captures the submission.
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+    Strict-Transport-Security = "max-age=63072000; includeSubDomains; preload"
 
 [[redirects]]
   from = "/*"

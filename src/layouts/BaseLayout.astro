@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css";
+import { ClientRouter } from "astro:transitions";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import { SITE } from "../config";
@@ -18,10 +19,13 @@ const canonicalURL = new URL(Astro.url.pathname, SITE.url);
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#f4f4f4" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0e0e10" media="(prefers-color-scheme: dark)" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="canonical" href={canonicalURL} />
     {noIndex && <meta name="robots" content="noindex" />}
+    <ClientRouter />
 
     <title>{title} — {SITE.name}</title>
     <meta name="description" content={description} />
@@ -60,8 +64,8 @@ const canonicalURL = new URL(Astro.url.pathname, SITE.url);
   <body>
     <a href="#main" class="skip-link">Skip to content</a>
     <div class="min-h-screen flex flex-col">
-      <Header />
-      <main id="main" class="flex-1">
+      <Header transition:persist />
+      <main id="main" class="flex-1" transition:animate="fade">
         <slot />
       </main>
       <Footer />
@@ -70,19 +74,21 @@ const canonicalURL = new URL(Astro.url.pathname, SITE.url);
     <script>
       // Progressive enhancement only — every .reveal element is already
       // visible without this script (see the base .reveal rule in
-      // global.css). This just adds a soft fade/slide-up as sections enter
-      // the viewport, so the site still works with JS disabled.
-      const prefersReducedMotion = window.matchMedia(
-        "(prefers-reduced-motion: reduce)",
-      ).matches;
+      // global.css). This adds a soft fade/slide-up as sections enter the
+      // viewport and firms the sticky header after a small scroll. Both are
+      // re-initialised on every view transition via astro:page-load.
+      function setupReveals() {
+        const prefersReducedMotion = window.matchMedia(
+          "(prefers-reduced-motion: reduce)",
+        ).matches;
 
-      if (prefersReducedMotion) {
-        // Honor the user's preference: reveal everything immediately, no
-        // observer, no transitions.
-        document
-          .querySelectorAll(".reveal")
-          .forEach((el) => el.classList.add("is-visible"));
-      } else {
+        const revealEls = document.querySelectorAll(
+          ".reveal, .reveal-stagger",
+        );
+        if (prefersReducedMotion) {
+          revealEls.forEach((el) => el.classList.add("is-visible"));
+          return;
+        }
         document.documentElement.classList.add("js-ready");
         const observer = new IntersectionObserver(
           (entries) => {
@@ -93,12 +99,31 @@ const canonicalURL = new URL(Astro.url.pathname, SITE.url);
               }
             }
           },
-          { threshold: 0.15 },
+          { threshold: 0.1, rootMargin: "0px 0px -8% 0px" },
         );
-        document
-          .querySelectorAll(".reveal")
-          .forEach((el) => observer.observe(el));
+        revealEls.forEach((el) => observer.observe(el));
       }
+
+      // Sticky-header scrolled state — attach the scroll listener once; the
+      // header element persists across view transitions.
+      function setupHeaderScroll() {
+        const w = window as unknown as { __coveyHeaderScroll?: boolean };
+        if (w.__coveyHeaderScroll) return;
+        w.__coveyHeaderScroll = true;
+        const onScroll = () => {
+          const header = document.querySelector("[data-header]");
+          if (header) header.classList.toggle("is-scrolled", window.scrollY > 16);
+        };
+        onScroll();
+        window.addEventListener("scroll", onScroll, { passive: true });
+      }
+
+      // astro:page-load fires on the initial load and after every view
+      // transition when ClientRouter is present.
+      document.addEventListener("astro:page-load", () => {
+        setupReveals();
+        setupHeaderScroll();
+      });
     </script>
   </body>
 </html>

@@ -7,13 +7,19 @@ on:
     branches: [main]
 
 jobs:
-  build:
+  build-check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
       - run: npm ci
-      - run: npm run build
+      - name: Design tokens check
+        run: npm run tokens:check
+      - name: Type + content check
+        run: npm run check
+      - name: Production build
+        run: npm run build
+

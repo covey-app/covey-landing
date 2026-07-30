@@ -6,9 +6,10 @@
  * title-forward hero line, a row of category "stop orbs", and the
  * date · time · city · stops meta line, closing on the host + going count.
  */
+type Tone = "neutral" | "ink" | "accent" | "moss" | "slate" | "rose" | "clay";
 interface Plan {
-  hangout: { label: string; tone: "neutral" | "ink" | "accent" | "rose" };
-  join: { label: string; tone: "neutral" | "ink" | "accent" };
+  hangout: { label: string; tone: Tone };
+  join: { label: string; tone: Tone };
   title: string;
   /** Category CSS-var keys for the stop orbs. */
   stops: string[];
@@ -40,11 +41,14 @@ const initials = host
   .map((w) => w[0]?.toUpperCase() ?? "")
   .join("");
 
-const toneClass: Record<string, string> = {
+const toneClass: Record<Tone, string> = {
   neutral: "badge-neutral",
   ink: "badge-ink",
   accent: "badge-accent",
-  rose: "badge-neutral",
+  moss: "badge-moss",
+  slate: "badge-slate",
+  rose: "badge-rose",
+  clay: "badge-clay",
 };
 const meta = [date, time, city, `${stops.length} stops`].filter(Boolean);
 ---
@@ -162,8 +166,8 @@ const meta = [date, time, city, `${stops.length} stops`].filter(Boolean);
     width: 1.5rem;
     height: 1.5rem;
     border-radius: 999px;
-    background-color: var(--moss-soft);
-    color: var(--moss);
+    background-color: var(--cat-outdoors-soft);
+    color: var(--cat-outdoors-ink);
     font-family: var(--font-mono);
     font-size: 0.625rem;
     font-weight: 600;
