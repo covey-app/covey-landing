@@ -1,6 +1,7 @@
 ---
 import CoveyMark from "./CoveyMark.astro";
 import ThemeToggle from "./ThemeToggle.astro";
+import { SITE } from "../config";
 
 // Testimonials + Events are intentionally kept out of the primary nav until
 // they hold real content (they remain reachable from the footer).
@@ -44,6 +45,16 @@ const isCurrent = (href: string) => normalize(href) === path;
 
     <div class="flex items-center gap-2">
       <ThemeToggle />
+      {
+        SITE.appIsLive && (
+          <a
+            href={SITE.signInUrl}
+            class="hidden md:inline-flex font-mono text-xs uppercase tracking-[0.14em] text-ink-muted hover:text-ink transition-colors px-2"
+          >
+            Sign in
+          </a>
+        )
+      }
       <a href="/signup" class="btn btn-primary btn-sm hidden md:inline-flex">
         Join the flock
       </a>
@@ -80,6 +91,16 @@ const isCurrent = (href: string) => normalize(href) === path;
             {l.label}
           </a>
         ))
+      }
+      {
+        SITE.appIsLive && (
+          <a
+            href={SITE.signInUrl}
+            class="menu-link font-mono text-sm uppercase tracking-[0.12em] text-ink-muted"
+          >
+            Sign in
+          </a>
+        )
       }
       <a href="/signup" class="btn btn-primary w-full mt-3">Join the flock</a>
     </nav>

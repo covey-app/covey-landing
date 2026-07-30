@@ -8,10 +8,16 @@ export const SITE = {
   domain: "coveyapp.co",
   url: "https://coveyapp.co",
 
-  // TODO: confirm the live URL for the covey-web app once it's deployed,
-  // then flip `appIsLive` to true so header/footer nav links to it.
-  appUrl: "https://app.coveyapp.co",
-  appIsLive: false,
+  // Flip `appIsLive` to true once go.coveyapp.co is deployed and verified —
+  // every link below stays inert (unrendered) until then. `/` itself is
+  // intentionally never linked to: it's owned by the signed-in app in
+  // covey-web's router and 404s for a signed-out visitor, the same reason
+  // covey-web's own gated screens live under `/members/*` rather than
+  // reusing signed-in paths. Always link to a real, ungated route instead.
+  appUrl: "https://go.coveyapp.co",
+  signInUrl: "https://go.coveyapp.co/login",
+  browseUrl: "https://go.coveyapp.co/explore",
+  appIsLive: true,
 
   // Launch is invite-only on iOS first (see docs/launch/decision-matrix.md
   // in the covey-ios repo) — no public App Store link yet. Once approved,

@@ -117,7 +117,15 @@ const faqs = [
         </p>
         <div class="flex flex-wrap gap-3" style="--i:3">
           <a href="/signup" class="btn btn-primary btn-lg">Join the flock</a>
-          <a href="/about" class="btn btn-secondary btn-lg">How it works</a>
+          {
+            SITE.appIsLive ? (
+              <a href={SITE.browseUrl} class="btn btn-secondary btn-lg">
+                Browse plans
+              </a>
+            ) : (
+              <a href="/about" class="btn btn-secondary btn-lg">How it works</a>
+            )
+          }
         </div>
         <div class="mt-8 font-mono text-xs uppercase tracking-[0.14em] text-ink-muted flex gap-x-4 gap-y-2 flex-wrap items-center" style="--i:4">
           <span>Free to use</span>
