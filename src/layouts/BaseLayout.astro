@@ -46,17 +46,33 @@ const canonicalURL = new URL(Astro.url.pathname, SITE.url);
       href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Manrope:wght@400;500;600;700&display=swap"
     />
 
-    <!-- Apply the saved theme before first paint to avoid a flash. -->
+    <!-- Apply theme before paint; keep it across ClientRouter swaps. -->
     <script is:inline>
       (function () {
-        try {
-          const stored = localStorage.getItem("covey-theme");
-          const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-          if (stored === "dark" || (!stored && prefersDark)) {
-            document.documentElement.classList.add("dark");
-          }
-        } catch (e) {
-          /* ignore */
+        function preferDark() {
+          try {
+            var stored = localStorage.getItem("covey-theme");
+            if (stored === "dark") return true;
+            if (stored === "light") return false;
+          } catch (e) {}
+          return window.matchMedia("(prefers-color-scheme: dark)").matches;
+        }
+
+        function apply(doc) {
+          var root = doc.documentElement;
+          if (preferDark()) root.classList.add("dark");
+          else root.classList.remove("dark");
+        }
+
+        apply(document);
+
+        // Without this, soft navigations swap in a fresh <html> without .dark
+        // and the page flashes back to light mode.
+        if (!window.__coveyThemeSwap) {
+          window.__coveyThemeSwap = true;
+          document.addEventListener("astro:before-swap", function (event) {
+            apply(event.newDocument);
+          });
         }
       })();
     </script>

@@ -1,9 +1,8 @@
 ---
 /*
- * ThemeToggle — light/dark switch. The initial theme is applied pre-paint by
- * an inline script in BaseLayout (no flash of the wrong theme); this button
- * toggles the `.dark` class on <html>, persists the choice, and exposes the
- * current state via aria-pressed + a dynamic label.
+ * ThemeToggle — light/dark switch. Theme application + view-transition
+ * persistence live in BaseLayout's inline script; this button only fires
+ * a click that toggles `.dark` on <html> and syncs its ARIA state.
  */
 ---
 
@@ -35,6 +34,8 @@
     border: 0.7px solid color-mix(in oklab, var(--edge) 65%, transparent);
     background-color: transparent;
     cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
     transition:
       color 0.25s ease,
       background-color 0.25s ease,
@@ -51,6 +52,7 @@
   }
   .theme-toggle svg {
     grid-area: 1 / 1;
+    pointer-events: none;
     transition:
       opacity 0.2s ease,
       transform 0.2s ease;
@@ -62,27 +64,17 @@
   .icon-sun {
     opacity: 1;
   }
-  :global(.dark) .icon-sun {
+  :global(html.dark) .icon-sun {
     opacity: 0;
     transform: rotate(45deg) scale(0.8);
   }
-  :global(.dark) .icon-moon {
+  :global(html.dark) .icon-moon {
     opacity: 1;
     transform: none;
   }
 </style>
 
 <script>
-  function applyTheme(dark: boolean) {
-    document.documentElement.classList.toggle("dark", dark);
-    try {
-      localStorage.setItem("covey-theme", dark ? "dark" : "light");
-    } catch (e) {
-      /* storage unavailable — ignore */
-    }
-    syncButtons();
-  }
-
   function syncButtons() {
     const dark = document.documentElement.classList.contains("dark");
     document
@@ -96,19 +88,46 @@
       });
   }
 
-  function initToggles() {
-    const buttons = document.querySelectorAll<HTMLButtonElement>("[data-theme-toggle]");
-    buttons.forEach((btn) => {
-      if (btn.dataset.bound === "true") return;
-      btn.dataset.bound = "true";
-      btn.addEventListener("click", () => {
-        applyTheme(!document.documentElement.classList.contains("dark"));
-      });
-    });
+  function setThemeColor(dark: boolean) {
+    let meta = document.querySelector(
+      'meta[name="theme-color"]:not([media])',
+    ) as HTMLMetaElement | null;
+    if (!meta) {
+      meta = document.createElement("meta");
+      meta.setAttribute("name", "theme-color");
+      document.head.appendChild(meta);
+    }
+    meta.setAttribute("content", dark ? "#0e0e10" : "#f4f4f4");
+  }
+
+  function applyTheme(dark: boolean) {
+    document.documentElement.classList.toggle("dark", dark);
+    try {
+      localStorage.setItem("covey-theme", dark ? "dark" : "light");
+    } catch {
+      /* storage unavailable */
+    }
+    setThemeColor(dark);
     syncButtons();
   }
 
-  initToggles();
+  // Document-level delegation survives Header transition:persist + soft nav.
+  const w = window as unknown as { __coveyThemeClick?: boolean };
+  if (!w.__coveyThemeClick) {
+    w.__coveyThemeClick = true;
+    document.addEventListener(
+      "click",
+      (e) => {
+        const target = e.target as Element | null;
+        if (!target?.closest?.("[data-theme-toggle]")) return;
+        e.preventDefault();
+        applyTheme(!document.documentElement.classList.contains("dark"));
+      },
+      true,
+    );
+  }
+
+  syncButtons();
+  document.addEventListener("astro:page-load", syncButtons);
   document.addEventListener("astro:after-swap", syncButtons);
-  document.addEventListener("astro:page-load", initToggles);
 </script>
