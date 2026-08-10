@@ -22,7 +22,7 @@
  * stay charcoal ink.
  */
 
-@custom-variant dark (&:is(.dark *));
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme inline {
   /* Surfaces */
@@ -158,6 +158,46 @@
 }
 
 .dark {
+  color-scheme: dark;
+
+  /*
+   * Must restate surfaces/text/accents here. The light :root block above is
+   * intentionally ordered after tokens.css (a11y tweaks), which means it also
+   * beats tokens.css's .dark rule on equal specificity. Without this block,
+   * toggling .dark on <html> leaves the page looking light forever.
+   */
+  --background: #0e0e10;
+  --paper-elevated: #1a1a1d;
+  --paper: #141416;
+  --paper-sunken: #202024;
+  --vellum: rgba(20, 20, 22, 0.62);
+
+  --ink: #f2f2f3;
+  --ink-muted: #b6b7bd;
+  --ink-subtle: #6f7079;
+  --ink-inverse: #0e0e10;
+
+  --edge: #2a2a2e;
+  --hairline: rgba(42, 42, 46, 0.85);
+
+  --accent: #a7c98a;
+  --accent-ink: #cda987;
+  --accent-strong: #bbd79f;
+  --accent-soft: #1e2a12;
+  --accent-pale: #161e0e;
+
+  --moss: #7cdda8;
+  --moss-soft: #163022;
+  --slate: #9ab3ff;
+  --slate-soft: #1b2440;
+  --clay: #e69877;
+  --clay-soft: #3d2415;
+  --ochre: #f2c062;
+  --ochre-soft: #3b2c13;
+  --rose: #f2769e;
+  --rose-soft: #3e1626;
+  --danger: #ff7264;
+
   /* Shadows (dark) — black at higher alpha */
   --sh-paper: 0 2px 6px rgba(0, 0, 0, 0.6);
   --sh-pinned: 0 2px 2px rgba(0, 0, 0, 0.62), 0 16px 26px rgba(0, 0, 0, 0.72);
