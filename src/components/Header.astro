@@ -18,9 +18,9 @@ const isCurrent = (href: string) => normalize(href) === path;
 
 <header
   data-header
-  class="sticky top-0 z-40 vellum-panel border-b"
+  class="sticky top-0 z-40 vellum-panel border-b pt-[env(safe-area-inset-top,0px)]"
 >
-  <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between gap-4">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between gap-3 sm:gap-4">
     <a href="/" class="flex items-center gap-2.5 group shrink-0" aria-label="Covey — home">
       <CoveyMark variant="dots" dotSize={7} class="group-hover:opacity-90 transition-opacity" />
       <span class="font-mono font-semibold text-[1.35rem] tracking-[-0.03em] text-ink">Covey</span>
@@ -105,12 +105,20 @@ const isCurrent = (href: string) => normalize(href) === path;
       }
       {
         SITE.appIsLive && (
-          <a
-            href={SITE.signInUrl}
-            class="menu-link font-mono text-sm uppercase tracking-[0.12em] text-ink-muted"
-          >
-            Sign in
-          </a>
+          <>
+            <a
+              href={SITE.browseUrl}
+              class="menu-link font-mono text-sm uppercase tracking-[0.12em] text-ink-muted"
+            >
+              Browse plans
+            </a>
+            <a
+              href={SITE.signInUrl}
+              class="menu-link font-mono text-sm uppercase tracking-[0.12em] text-ink-muted"
+            >
+              Sign in
+            </a>
+          </>
         )
       }
       <a href="/signup" class="btn btn-primary w-full mt-3">Join the flock</a>

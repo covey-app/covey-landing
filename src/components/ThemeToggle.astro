@@ -80,6 +80,17 @@
     } catch (e) {
       /* storage unavailable — ignore */
     }
+    // Explicit theme-color (no media query) so iOS Safari chrome follows the
+    // manual toggle instead of only system prefers-color-scheme.
+    let meta = document.querySelector(
+      'meta[name="theme-color"]:not([media])',
+    ) as HTMLMetaElement | null;
+    if (!meta) {
+      meta = document.createElement("meta");
+      meta.setAttribute("name", "theme-color");
+      document.head.appendChild(meta);
+    }
+    meta.setAttribute("content", dark ? "#0e0e10" : "#f4f4f4");
     syncButtons();
   }
 

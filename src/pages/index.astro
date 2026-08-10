@@ -101,47 +101,45 @@ const faqs = [
   title="Anything, anytime, together"
   description="Covey is a plan-first social app launching invite-only on iOS. Hosts publish small real-world itineraries and a few seats stay open for whoever's curious."
 >
-  <section class="max-w-7xl mx-auto px-6 pt-14 md:pt-20 pb-16 lg:pb-24">
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-y-12 lg:gap-8 items-center">
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 pt-10 sm:pt-14 md:pt-20 pb-14 sm:pb-16 lg:pb-24">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-y-10 sm:gap-y-12 lg:gap-8 items-center">
       <div class="lg:col-span-6 hero-enter">
-        <div class="eyebrow mb-6 flex items-center gap-2.5" style="--i:0">
+        <div class="eyebrow mb-5 sm:mb-6 flex items-center gap-2.5" style="--i:0">
           <CoveyMark variant="dots" dotSize={6} />
-          {SITE.launchRegion}
+          <span class="leading-snug">{SITE.launchRegion}</span>
         </div>
-        <h1 class="display t-hero text-balance mb-7" style="--i:1">
+        <h1 class="display t-hero text-balance mb-5 sm:mb-7" style="--i:1">
           Anything, anytime, <span class="text-accent-ink">together</span>.
         </h1>
-        <p class="max-w-md text-lg text-ink-muted leading-relaxed mb-9" style="--i:2">
+        <p class="max-w-md text-[1.0625rem] sm:text-lg text-ink-muted leading-relaxed mb-7 sm:mb-9" style="--i:2">
           Covey is a plan-first social app. Hosts publish small real-world
           itineraries and a few seats stay open for whoever's curious.
         </p>
-        <div class="flex flex-wrap gap-3" style="--i:3">
-          <a href="/signup" class="btn btn-primary btn-lg">Join the flock</a>
+        <div class="flex flex-col sm:flex-row flex-wrap gap-3" style="--i:3">
+          <a href="/signup" class="btn btn-primary btn-lg w-full sm:w-auto">Join the flock</a>
           {
             SITE.appIsLive ? (
-              <a href={SITE.browseUrl} class="btn btn-secondary btn-lg">
+              <a href={SITE.browseUrl} class="btn btn-secondary btn-lg w-full sm:w-auto">
                 Browse plans
               </a>
             ) : (
-              <a href="/about" class="btn btn-secondary btn-lg">How it works</a>
+              <a href="/about" class="btn btn-secondary btn-lg w-full sm:w-auto">How it works</a>
             )
           }
         </div>
-        <div class="mt-8 font-mono text-xs uppercase tracking-[0.14em] text-ink-muted flex gap-x-4 gap-y-2 flex-wrap items-center" style="--i:4">
-          <span>Free to use</span>
-          <span class="opacity-40" aria-hidden="true">·</span>
-          <span>2–10 person plans</span>
-          <span class="opacity-40" aria-hidden="true">·</span>
-          <span>iOS first, invite-only</span>
-        </div>
+        <ul class="mt-7 sm:mt-8 font-mono text-xs uppercase tracking-[0.14em] text-ink-muted flex flex-col sm:flex-row gap-2 sm:gap-0 sm:flex-wrap sm:items-center list-none p-0 m-0" style="--i:4">
+          <li class="sm:after:content-['·'] sm:after:mx-4 sm:after:opacity-40">Free to use</li>
+          <li class="sm:after:content-['·'] sm:after:mx-4 sm:after:opacity-40">2–10 person plans</li>
+          <li>iOS first, invite-only</li>
+        </ul>
       </div>
 
       <div class="lg:col-span-6">
         <div class="hero-visual mx-auto max-w-md lg:max-w-none animate-paper-rise">
-          <div class="hero-def card-pinned p-7 sm:p-10" style="border-radius: var(--radius-sheet)">
+          <div class="hero-def card-pinned p-5 sm:p-7 md:p-10" style="border-radius: var(--radius-sheet)">
             <DefinitionMoment />
           </div>
-          <div class="hero-mock mt-6 mx-auto w-full max-w-[17rem] lg:mt-0 lg:mx-0 lg:absolute lg:-bottom-6 lg:-right-3 lg:w-60 lg:rotate-3">
+          <div class="hero-mock mt-5 sm:mt-6 mx-auto w-full max-w-[17rem] lg:mt-0 lg:mx-0 lg:absolute lg:-bottom-6 lg:-right-3 lg:w-60 lg:rotate-3">
             <PlanCardMock {...heroPlan} class="lg:shadow-floating" />
           </div>
         </div>
@@ -150,7 +148,7 @@ const faqs = [
   </section>
 
   <div class="border-y">
-    <div class="max-w-7xl mx-auto px-6 py-6">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-5 sm:py-6">
       <div class="flex md:flex-wrap md:items-center gap-3 items-center overflow-x-auto no-scrollbar edge-fade md:overflow-visible md:[-webkit-mask-image:none] md:[mask-image:none]">
         <span class="eyebrow shrink-0 mr-1">Plans across</span>
         {
@@ -166,75 +164,75 @@ const faqs = [
 
   <BirdDivider />
 
-  <section class="max-w-6xl mx-auto px-6 py-[var(--section-y)] grid md:grid-cols-12 gap-12 lg:gap-16 items-start reveal">
+  <section class="max-w-6xl mx-auto px-4 sm:px-6 py-[var(--section-y)] grid md:grid-cols-12 gap-10 lg:gap-16 items-start reveal">
     <div class="md:col-span-5 md:sticky md:top-24">
       <div class="eyebrow mb-3">What it is</div>
-      <h2 class="display t-h2 mb-6">Not a feed. A corkboard.</h2>
-      <p class="text-ink-muted leading-relaxed text-lg">
+      <h2 class="display t-h2 mb-5 sm:mb-6">Not a feed. A corkboard.</h2>
+      <p class="text-ink-muted leading-relaxed text-[1.0625rem] sm:text-lg">
         Covey isn't trying to be another social network. It's a place where
         one person sketches an itinerary — a few stops, a date, a mood — and
         the right two or three people show up.
       </p>
       <a
         href="/about"
-        class="inline-block mt-8 font-mono text-xs uppercase tracking-[0.16em] border-b border-ink pb-1 hover:text-accent-ink hover:border-accent-ink transition-colors"
+        class="inline-flex min-h-11 md:min-h-0 items-center mt-6 sm:mt-8 font-mono text-xs uppercase tracking-[0.16em] border-b border-ink pb-1 hover:text-accent-ink hover:border-accent-ink transition-colors"
       >
         More about Covey →
       </a>
     </div>
-    <div class="md:col-span-7 grid sm:grid-cols-2 gap-5 reveal-stagger">
+    <div class="md:col-span-7 grid sm:grid-cols-2 gap-4 sm:gap-5 reveal-stagger">
       {
         features.map((f, i) => (
-          <div class="card p-6 reveal-item" style={`--i:${i}`}>
+          <div class="card p-5 sm:p-6 reveal-item" style={`--i:${i}`}>
             <span class="badge badge-accent mb-4">{f.tag}</span>
             <h3 class="title-mono text-xl text-ink mb-2 mt-3">{f.t}</h3>
-            <p class="text-[0.95rem] text-ink-muted leading-relaxed">{f.d}</p>
+            <p class="text-[0.9875rem] sm:text-[0.95rem] text-ink-muted leading-relaxed">{f.d}</p>
           </div>
         ))
       }
     </div>
   </section>
 
-  <section class="max-w-6xl mx-auto px-6 py-[var(--section-y-tight)] reveal">
-    <div class="grid md:grid-cols-2 gap-8 md:gap-16 items-end mb-12">
+  <section class="max-w-6xl mx-auto px-4 sm:px-6 py-[var(--section-y-tight)] reveal">
+    <div class="grid md:grid-cols-2 gap-6 md:gap-16 items-end mb-10 sm:mb-12">
       <div>
         <div class="eyebrow mb-4">How it works</div>
         <h2 class="display t-h2">Three steps, no group chat.</h2>
       </div>
-      <p class="text-ink-muted leading-relaxed text-lg">
+      <p class="text-ink-muted leading-relaxed text-[1.0625rem] sm:text-lg">
         Whether you're hosting your first plan or joining one, the flow is the
         same shape: find or sketch the day, lock in your seat, and show up at
         the first stop.
       </p>
     </div>
 
-    <ol class="grid md:grid-cols-3 gap-5 reveal-stagger">
+    <ol class="grid md:grid-cols-3 gap-4 sm:gap-5 reveal-stagger">
       {
         steps.map((s, i) => (
-          <li class="card p-7 reveal-item" style={`--i:${i}`}>
+          <li class="card p-6 sm:p-7 reveal-item" style={`--i:${i}`}>
             <div class="font-mono font-semibold text-4xl text-accent-ink mb-4 tracking-tight">
               {s.n}
             </div>
             <h3 class="title-mono text-xl text-ink mb-2">{s.t}</h3>
-            <p class="text-ink-muted leading-relaxed">{s.d}</p>
+            <p class="text-ink-muted leading-relaxed text-[0.9875rem] sm:text-base">{s.d}</p>
           </li>
         ))
       }
     </ol>
   </section>
 
-  <section class="max-w-6xl mx-auto px-6 py-[var(--section-y-tight)] reveal">
-    <div class="grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
+  <section class="max-w-6xl mx-auto px-4 sm:px-6 py-[var(--section-y-tight)] reveal">
+    <div class="grid lg:grid-cols-2 gap-8 lg:gap-14 items-center">
       <div>
         <div class="eyebrow mb-4">A real plan</div>
-        <h2 class="display t-h2 mb-6">
+        <h2 class="display t-h2 mb-5 sm:mb-6">
           Every plan is an itinerary.
         </h2>
-        <p class="text-ink-muted leading-relaxed text-lg mb-4">
+        <p class="text-ink-muted leading-relaxed text-[1.0625rem] sm:text-lg mb-4">
           Not a vague "let's hang out." A host lays out the stops, the time,
           and the vibe — so you know exactly what you're saying yes to.
         </p>
-        <p class="text-ink-muted leading-relaxed text-lg">
+        <p class="text-ink-muted leading-relaxed text-[1.0625rem] sm:text-lg">
           Category-tinted stops, a clear seat count, and one person owning the
           day. That's the whole card.
         </p>
@@ -246,8 +244,8 @@ const faqs = [
     </div>
   </section>
 
-  <section class="max-w-7xl mx-auto px-6 py-[var(--section-y-tight)] grid md:grid-cols-2 gap-6 reveal">
-    <a href="/events" class="card card-link p-9 md:p-10">
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 py-[var(--section-y-tight)] grid md:grid-cols-2 gap-4 sm:gap-6 reveal">
+    <a href="/events" class="card card-link p-7 sm:p-9 md:p-10">
       <div class="eyebrow mb-3">Get involved</div>
       <h3 class="display t-h3 mb-4">See what's coming up.</h3>
       <p class="text-ink-muted leading-relaxed mb-6">
@@ -258,7 +256,7 @@ const faqs = [
         Upcoming events →
       </span>
     </a>
-    <a href="/testimonials" class="card card-link p-9 md:p-10">
+    <a href="/testimonials" class="card card-link p-7 sm:p-9 md:p-10">
       <div class="eyebrow mb-3">Early stories</div>
       <h3 class="display t-h3 mb-4">Real reactions, soon.</h3>
       <p class="text-ink-muted leading-relaxed mb-6">
@@ -271,20 +269,20 @@ const faqs = [
     </a>
   </section>
 
-  <section class="max-w-3xl mx-auto px-6 py-[var(--section-y-tight)] reveal">
+  <section class="max-w-3xl mx-auto px-4 sm:px-6 py-[var(--section-y-tight)] reveal">
     <div class="eyebrow mb-3 text-center">FAQ</div>
-    <h2 class="display t-h2 mb-10 text-center">Good questions.</h2>
+    <h2 class="display t-h2 mb-8 sm:mb-10 text-center">Good questions.</h2>
     <div class="space-y-3">
       {
         faqs.map((f) => (
           <details class="card faq-item p-0 group">
-            <summary class="flex items-center justify-between gap-4 cursor-pointer list-none p-5 title-mono text-lg text-ink">
+            <summary class="flex items-center justify-between gap-4 cursor-pointer list-none p-4 sm:p-5 title-mono text-base sm:text-lg text-ink">
               {f.q}
-              <span class="faq-plus font-mono text-ink-muted text-2xl leading-none" aria-hidden="true">+</span>
+              <span class="faq-plus font-mono text-ink-muted text-2xl leading-none shrink-0" aria-hidden="true">+</span>
             </summary>
             <div class="faq-answer">
               <div>
-                <p class="px-5 pb-5 text-ink-muted leading-relaxed">{f.a}</p>
+                <p class="px-4 sm:px-5 pb-5 text-ink-muted leading-relaxed text-[0.9875rem] sm:text-base">{f.a}</p>
               </div>
             </div>
           </details>
