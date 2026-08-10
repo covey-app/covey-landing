@@ -42,13 +42,16 @@
       border-color 0.25s ease,
       transform var(--motion-snappy);
   }
-  .theme-toggle:hover {
-    color: var(--ink);
-    background-color: color-mix(in oklab, var(--ink) 5%, transparent);
-    border-color: color-mix(in oklab, var(--ink) 25%, transparent);
+  @media (hover: hover) and (pointer: fine) {
+    .theme-toggle:hover {
+      color: var(--ink);
+      background-color: color-mix(in oklab, var(--ink) 5%, transparent);
+      border-color: color-mix(in oklab, var(--ink) 25%, transparent);
+    }
   }
   .theme-toggle:active {
     transform: scale(0.94);
+    color: var(--ink);
   }
   .theme-toggle svg {
     grid-area: 1 / 1;

@@ -62,13 +62,19 @@ const canonicalURL = new URL(Astro.url.pathname, SITE.url);
         }
 
         function setThemeColor(dark) {
+          var color = dark ? "#0e0e10" : "#f4f4f4";
           var meta = document.querySelector('meta[name="theme-color"]:not([media])');
           if (!meta) {
             meta = document.createElement("meta");
             meta.setAttribute("name", "theme-color");
             document.head.appendChild(meta);
           }
-          meta.setAttribute("content", dark ? "#0e0e10" : "#f4f4f4");
+          meta.setAttribute("content", color);
+          // Keep media-tagged theme-color tags in sync too — iOS Safari
+          // otherwise keeps the system preference chrome color after a tap.
+          document.querySelectorAll('meta[name="theme-color"][media]').forEach(function (m) {
+            m.setAttribute("content", color);
+          });
         }
 
         function syncButtons(dark) {
@@ -98,6 +104,7 @@ const canonicalURL = new URL(Astro.url.pathname, SITE.url);
 
         if (!window.__coveyThemeInit) {
           window.__coveyThemeInit = true;
+          var ignoreClickUntil = 0;
 
           document.addEventListener(
             "click",
@@ -106,6 +113,23 @@ const canonicalURL = new URL(Astro.url.pathname, SITE.url);
               if (!t || !t.closest) return;
               if (!t.closest("[data-theme-toggle]")) return;
               e.preventDefault();
+              // Skip the synthetic click that follows a touch pointerup.
+              if (Date.now() < ignoreClickUntil) return;
+              apply(!document.documentElement.classList.contains("dark"), document);
+            },
+            true,
+          );
+
+          // Finger taps: handle on pointerup so iOS doesn't wait on click.
+          document.addEventListener(
+            "pointerup",
+            function (e) {
+              if (e.pointerType !== "touch" && e.pointerType !== "pen") return;
+              var t = e.target;
+              if (!t || !t.closest) return;
+              if (!t.closest("[data-theme-toggle]")) return;
+              e.preventDefault();
+              ignoreClickUntil = Date.now() + 500;
               apply(!document.documentElement.classList.contains("dark"), document);
             },
             true,
