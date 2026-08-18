@@ -1,0 +1,62 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { SITE } from "../config";
+
+const lastUpdated = "August 18, 2026";
+---
+
+<BaseLayout
+  title="Status"
+  description="Current support guidance for Covey app and website availability."
+>
+  <div class="max-w-3xl mx-auto px-6 py-[var(--section-y)]">
+    <div class="eyebrow mb-3">Status</div>
+    <h1 class="display t-h1 mb-4">Covey status</h1>
+    <p class="font-mono text-ink-muted text-xs uppercase tracking-[0.16em] mb-12">
+      Last updated {lastUpdated}
+    </p>
+
+    <div class="card p-6 mb-12">
+      <p class="text-ink-muted leading-relaxed">
+        Covey does not currently publish a separate live status dashboard. If
+        you are having trouble with the app, website, invites, messages, plans,
+        or payments, contact support and we will investigate.
+      </p>
+    </div>
+
+    <div class="space-y-10 text-ink-muted leading-relaxed text-lg">
+      <section>
+        <h2 class="title-mono text-2xl text-ink mb-3">Get help</h2>
+        <p>
+          Email
+          <a href={`mailto:${SITE.emails.support}`} class="text-accent-ink underline underline-offset-2 decoration-1">
+            {SITE.emails.support}
+          </a>
+          with what you were trying to do, the page or screen where it happened,
+          and any error message you saw.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="title-mono text-2xl text-ink mb-3">Safety issues</h2>
+        <p>
+          For urgent trust and safety concerns, email
+          <a href={`mailto:${SITE.emails.safety}`} class="text-accent-ink underline underline-offset-2 decoration-1">
+            {SITE.emails.safety}
+          </a>.
+          If someone is in immediate danger, contact local emergency services
+          first.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="title-mono text-2xl text-ink mb-3">What to include</h2>
+        <p>
+          Helpful details include your account email, device and browser,
+          approximate time of the issue, affected plan or message, and whether
+          the problem happens again after refreshing or reopening the app.
+        </p>
+      </section>
+    </div>
+  </div>
+</BaseLayout>

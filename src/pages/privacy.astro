@@ -1,12 +1,12 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { SITE } from "../config";
-const lastUpdated = "July 19, 2026";
+const lastUpdated = "August 18, 2026";
 ---
 
 <BaseLayout
   title="Privacy Policy"
-  description="How coveyapp.co collects and uses information from waitlist signups and contact forms."
+  description="How Covey collects, uses, and protects information across the app and website."
 >
   <div class="max-w-3xl mx-auto px-6 py-[var(--section-y)]">
     <div class="eyebrow mb-3">Privacy</div>
@@ -17,11 +17,10 @@ const lastUpdated = "July 19, 2026";
 
     <div class="card p-6 mb-12">
       <p class="text-ink-muted leading-relaxed">
-        <strong class="text-ink">Scope of this page:</strong> this policy
-        covers only the {SITE.domain} marketing website — the waitlist form,
-        the contact form, and basic site analytics. It does not cover the Covey
-        iOS app itself, which has its own, more detailed privacy policy
-        governing account data, plans, messages, location, and payments.
+        <strong class="text-ink">Scope of this page:</strong> this policy is a
+        plain-language draft for Covey's product app and {SITE.domain}
+        marketing website. It covers account data, plans, messages, location,
+        analytics, payments, support requests, and deletion choices.
       </p>
     </div>
 
@@ -29,38 +28,67 @@ const lastUpdated = "July 19, 2026";
       <section>
         <h2 class="title-mono text-2xl text-ink mb-3">What we collect</h2>
         <p>
-          When you join the waitlist or send us a message, we collect the
-          information you submit — typically your name, email address, and
-          optionally your city and message content. We do not require an
-          account to use this website.
+          Covey collects information you give us, such as your name, email
+          address, profile details, city, support messages, waitlist details,
+          and anything you choose to add to a plan, recap, comment, or message.
+          If you create an account, we also receive account identifiers from
+          our authentication provider.
+        </p>
+        <p class="mt-4">
+          The app may process plan details, attendance, saved places,
+          bookmarks, chat messages, photos or media you upload, and approximate
+          or precise location when you choose to use location-based features.
+          Payment details are handled by Stripe; Covey does not store full card
+          numbers.
         </p>
       </section>
 
       <section>
         <h2 class="title-mono text-2xl text-ink mb-3">How we use it</h2>
         <p>
-          We use waitlist submissions to notify you when an invite becomes
-          available and to understand demand by city. We use contact form
-          submissions to respond to your question. We do not sell this
-          information to third parties.
+          We use this information to run Covey, create and show plans, deliver
+          messages, personalize recommendations, process payments, send service
+          updates, respond to support requests, investigate safety reports, and
+          understand whether the product is working. We use website and product
+          analytics to improve onboarding, performance, and reliability.
+        </p>
+        <p class="mt-4">
+          We do not sell your personal information. We do not use private
+          messages or non-public plan content for third-party advertising.
         </p>
       </section>
 
       <section>
-        <h2 class="title-mono text-2xl text-ink mb-3">Where it's stored</h2>
+        <h2 class="title-mono text-2xl text-ink mb-3">Who processes it</h2>
         <p>
-          Form submissions are processed by our hosting provider's form
-          handling service. We may export this data into our own systems to
-          manage invites and respond to messages.
+          Covey uses service providers to operate the app and website. These
+          include Supabase for authentication, database, storage, and backend
+          infrastructure; Stripe for payments; hosting providers for the
+          website and app; and analytics or error-reporting tools that help us
+          understand usage and diagnose problems. These providers process data
+          for Covey so we can provide the service.
         </p>
       </section>
 
       <section>
-        <h2 class="title-mono text-2xl text-ink mb-3">Your choices</h2>
+        <h2 class="title-mono text-2xl text-ink mb-3">Location and visibility</h2>
         <p>
-          Email {SITE.emails.support} at any time to ask what information we
-          have about you, to correct it, or to have it deleted from the
-          waitlist.
+          Location features are meant to help people discover plans and places.
+          You can control device location permissions through your operating
+          system. Some plan, profile, and activity information may be visible to
+          other people depending on the feature, your relationship to those
+          people, and the privacy settings available in the app.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="title-mono text-2xl text-ink mb-3">Deletion and choices</h2>
+        <p>
+          You can ask us to access, correct, export, or delete information tied
+          to your account. Account deletion is available from the app when
+          signed in; you can also contact support if you need help. Deletion may
+          not remove information we must keep for security, fraud prevention,
+          payment records, legal obligations, backups, or abuse investigations.
         </p>
       </section>
 

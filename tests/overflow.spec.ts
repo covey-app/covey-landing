@@ -7,7 +7,11 @@ const ROUTES = [
   "/signup",
   "/testimonials",
   "/events",
+  "/terms",
   "/privacy",
+  "/safety",
+  "/deletion",
+  "/status",
   "/support",
   "/thanks",
 ];

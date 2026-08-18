@@ -1,0 +1,81 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { SITE } from "../config";
+
+const lastUpdated = "August 18, 2026";
+---
+
+<BaseLayout
+  title="Terms of Service"
+  description="The plain-language terms for using Covey's app and website."
+>
+  <div class="max-w-3xl mx-auto px-6 py-[var(--section-y)]">
+    <div class="eyebrow mb-3">Terms</div>
+    <h1 class="display t-h1 mb-4">Terms of service</h1>
+    <p class="font-mono text-ink-muted text-xs uppercase tracking-[0.16em] mb-12">
+      Last updated {lastUpdated}
+    </p>
+
+    <div class="card p-6 mb-12">
+      <p class="text-ink-muted leading-relaxed">
+        These terms are a plain-language draft for counsel. By using Covey, you
+        agree to use the service respectfully, follow applicable law, and take
+        responsibility for the plans, messages, photos, and other content you
+        share.
+      </p>
+    </div>
+
+    <div class="space-y-10 text-ink-muted leading-relaxed text-lg">
+      <section>
+        <h2 class="title-mono text-2xl text-ink mb-3">Using Covey</h2>
+        <p>
+          Covey helps people discover, plan, and coordinate things to do
+          together. You must provide accurate account information, keep your
+          login secure, and use the app only for lawful, personal, and
+          community-friendly purposes.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="title-mono text-2xl text-ink mb-3">Your content</h2>
+        <p>
+          You keep ownership of the content you add to Covey. You give Covey
+          permission to host, display, transmit, and process that content as
+          needed to operate the product, including plans, messages, profiles,
+          recaps, photos, and support requests.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="title-mono text-2xl text-ink mb-3">Payments and events</h2>
+        <p>
+          Some plans or features may involve payments, reservations, tickets, or
+          third-party venues. Payment processing is handled by Stripe. Event
+          hosts and attendees are responsible for reading plan details,
+          communicating clearly, and following any venue or partner rules.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="title-mono text-2xl text-ink mb-3">Safety</h2>
+        <p>
+          Do not harass, threaten, impersonate, spam, exploit, or endanger
+          others. We may review reports, limit visibility, remove content,
+          suspend accounts, or take other action when needed to protect people
+          and the service.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="title-mono text-2xl text-ink mb-3">Changes and contact</h2>
+        <p>
+          Covey may change the service or these terms as the product evolves.
+          Questions about these terms:
+          <a href={`mailto:${SITE.emails.support}`} class="text-accent-ink underline underline-offset-2 decoration-1">
+            {SITE.emails.support}
+          </a>.
+        </p>
+      </section>
+    </div>
+  </div>
+</BaseLayout>

@@ -1,0 +1,71 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { SITE } from "../config";
+
+const lastUpdated = "August 18, 2026";
+---
+
+<BaseLayout
+  title="Account Deletion"
+  description="How to request deletion of a Covey account and related data."
+>
+  <div class="max-w-3xl mx-auto px-6 py-[var(--section-y)]">
+    <div class="eyebrow mb-3">Deletion</div>
+    <h1 class="display t-h1 mb-4">Delete your Covey account</h1>
+    <p class="font-mono text-ink-muted text-xs uppercase tracking-[0.16em] mb-12">
+      Last updated {lastUpdated}
+    </p>
+
+    <div class="card p-6 mb-12">
+      <p class="text-ink-muted leading-relaxed">
+        You can request account deletion from the Covey app when signed in. If
+        you cannot access your account, contact support from the email address
+        tied to the account.
+      </p>
+    </div>
+
+    <div class="space-y-10 text-ink-muted leading-relaxed text-lg">
+      <section>
+        <h2 class="title-mono text-2xl text-ink mb-3">In the app</h2>
+        <p>
+          Open Covey, go to your profile or account settings, and choose the
+          account deletion option. The app will ask you to confirm before the
+          request is submitted.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="title-mono text-2xl text-ink mb-3">By email</h2>
+        <p>
+          If you need help, email
+          <a href={`mailto:${SITE.emails.support}`} class="text-accent-ink underline underline-offset-2 decoration-1">
+            {SITE.emails.support}
+          </a>
+          with "Account deletion" in the subject. Please write from the email
+          address on your Covey account so we can verify the request.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="title-mono text-2xl text-ink mb-3">What deletion covers</h2>
+        <p>
+          Deletion is meant to remove or de-identify account information and
+          personal content tied to your profile, including account details,
+          profile information, and app data where removal is technically and
+          legally possible.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="title-mono text-2xl text-ink mb-3">What may remain</h2>
+        <p>
+          Some records may be retained for security, fraud prevention, payment
+          records, legal obligations, backups, dispute handling, or safety
+          investigations. Content that other people already received, such as
+          messages or plan context, may not disappear from their accounts
+          immediately.
+        </p>
+      </section>
+    </div>
+  </div>
+</BaseLayout>
