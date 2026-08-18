@@ -46,17 +46,108 @@ const canonicalURL = new URL(Astro.url.pathname, SITE.url);
       href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Manrope:wght@400;500;600;700&display=swap"
     />
 
-    <!-- Apply the saved theme before first paint to avoid a flash. -->
+    <!-- Theme bootstrap + toggle. Kept inline so it runs before paint and
+         survives ClientRouter / transition:persist without module scripts. -->
     <script is:inline>
       (function () {
-        try {
-          const stored = localStorage.getItem("covey-theme");
-          const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-          if (stored === "dark" || (!stored && prefersDark)) {
-            document.documentElement.classList.add("dark");
+        var STORAGE_KEY = "covey-theme";
+
+        function preferDark() {
+          try {
+            var stored = localStorage.getItem(STORAGE_KEY);
+            if (stored === "dark") return true;
+            if (stored === "light") return false;
+          } catch (e) {}
+          return window.matchMedia("(prefers-color-scheme: dark)").matches;
+        }
+
+        function setThemeColor(dark) {
+          var color = dark ? "#0e0e10" : "#f4f4f4";
+          var meta = document.querySelector('meta[name="theme-color"]:not([media])');
+          if (!meta) {
+            meta = document.createElement("meta");
+            meta.setAttribute("name", "theme-color");
+            document.head.appendChild(meta);
           }
-        } catch (e) {
-          /* ignore */
+          meta.setAttribute("content", color);
+          // Keep media-tagged theme-color tags in sync too — iOS Safari
+          // otherwise keeps the system preference chrome color after a tap.
+          document.querySelectorAll('meta[name="theme-color"][media]').forEach(function (m) {
+            m.setAttribute("content", color);
+          });
+        }
+
+        function syncButtons(dark) {
+          document.querySelectorAll("[data-theme-toggle]").forEach(function (btn) {
+            btn.setAttribute("aria-pressed", String(dark));
+            btn.setAttribute(
+              "aria-label",
+              dark ? "Switch to light mode" : "Switch to dark mode",
+            );
+          });
+        }
+
+        function apply(dark, doc) {
+          doc = doc || document;
+          doc.documentElement.classList.toggle("dark", dark);
+          if (doc === document) {
+            try {
+              localStorage.setItem(STORAGE_KEY, dark ? "dark" : "light");
+            } catch (e) {}
+            setThemeColor(dark);
+            syncButtons(dark);
+          }
+        }
+
+        // Initial paint
+        apply(preferDark(), document);
+
+        if (!window.__coveyThemeInit) {
+          window.__coveyThemeInit = true;
+          var ignoreClickUntil = 0;
+
+          document.addEventListener(
+            "click",
+            function (e) {
+              var t = e.target;
+              if (!t || !t.closest) return;
+              if (!t.closest("[data-theme-toggle]")) return;
+              e.preventDefault();
+              // Skip the synthetic click that follows a touch pointerup.
+              if (Date.now() < ignoreClickUntil) return;
+              apply(!document.documentElement.classList.contains("dark"), document);
+            },
+            true,
+          );
+
+          // Finger taps: handle on pointerup so iOS doesn't wait on click.
+          document.addEventListener(
+            "pointerup",
+            function (e) {
+              if (e.pointerType !== "touch" && e.pointerType !== "pen") return;
+              var t = e.target;
+              if (!t || !t.closest) return;
+              if (!t.closest("[data-theme-toggle]")) return;
+              e.preventDefault();
+              ignoreClickUntil = Date.now() + 500;
+              apply(!document.documentElement.classList.contains("dark"), document);
+            },
+            true,
+          );
+
+          // Soft navigations swap a fresh <html> — re-apply before paint.
+          document.addEventListener("astro:before-swap", function (event) {
+            apply(preferDark(), event.newDocument);
+          });
+
+          document.addEventListener("astro:after-swap", function () {
+            syncButtons(document.documentElement.classList.contains("dark"));
+            setThemeColor(document.documentElement.classList.contains("dark"));
+          });
+
+          document.addEventListener("astro:page-load", function () {
+            syncButtons(document.documentElement.classList.contains("dark"));
+          });
         }
       })();
     </script>

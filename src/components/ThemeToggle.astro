@@ -1,9 +1,8 @@
 ---
 /*
- * ThemeToggle — light/dark switch. The initial theme is applied pre-paint by
- * an inline script in BaseLayout (no flash of the wrong theme); this button
- * toggles the `.dark` class on <html>, persists the choice, and exposes the
- * current state via aria-pressed + a dynamic label.
+ * ThemeToggle — light/dark switch.
+ * Click handling is an inline script in BaseLayout so it never depends on
+ * module load order or Header transition:persist quirks.
  */
 ---
 
@@ -24,7 +23,7 @@
   </svg>
 </button>
 
-<style>
+<style is:global>
   .theme-toggle {
     display: inline-grid;
     place-items: center;
@@ -35,80 +34,45 @@
     border: 0.7px solid color-mix(in oklab, var(--edge) 65%, transparent);
     background-color: transparent;
     cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
     transition:
       color 0.25s ease,
       background-color 0.25s ease,
       border-color 0.25s ease,
       transform var(--motion-snappy);
   }
-  .theme-toggle:hover {
-    color: var(--ink);
-    background-color: color-mix(in oklab, var(--ink) 5%, transparent);
-    border-color: color-mix(in oklab, var(--ink) 25%, transparent);
+  @media (hover: hover) and (pointer: fine) {
+    .theme-toggle:hover {
+      color: var(--ink);
+      background-color: color-mix(in oklab, var(--ink) 5%, transparent);
+      border-color: color-mix(in oklab, var(--ink) 25%, transparent);
+    }
   }
   .theme-toggle:active {
     transform: scale(0.94);
+    color: var(--ink);
   }
   .theme-toggle svg {
     grid-area: 1 / 1;
+    pointer-events: none;
     transition:
       opacity 0.2s ease,
       transform 0.2s ease;
   }
-  .icon-moon {
+  .theme-toggle .icon-moon {
     opacity: 0;
     transform: rotate(-45deg) scale(0.8);
   }
-  .icon-sun {
+  .theme-toggle .icon-sun {
     opacity: 1;
   }
-  :global(.dark) .icon-sun {
+  html.dark .theme-toggle .icon-sun {
     opacity: 0;
     transform: rotate(45deg) scale(0.8);
   }
-  :global(.dark) .icon-moon {
+  html.dark .theme-toggle .icon-moon {
     opacity: 1;
     transform: none;
   }
 </style>
-
-<script>
-  function applyTheme(dark: boolean) {
-    document.documentElement.classList.toggle("dark", dark);
-    try {
-      localStorage.setItem("covey-theme", dark ? "dark" : "light");
-    } catch (e) {
-      /* storage unavailable — ignore */
-    }
-    syncButtons();
-  }
-
-  function syncButtons() {
-    const dark = document.documentElement.classList.contains("dark");
-    document
-      .querySelectorAll<HTMLButtonElement>("[data-theme-toggle]")
-      .forEach((btn) => {
-        btn.setAttribute("aria-pressed", String(dark));
-        btn.setAttribute(
-          "aria-label",
-          dark ? "Switch to light mode" : "Switch to dark mode",
-        );
-      });
-  }
-
-  function initToggles() {
-    const buttons = document.querySelectorAll<HTMLButtonElement>("[data-theme-toggle]");
-    buttons.forEach((btn) => {
-      if (btn.dataset.bound === "true") return;
-      btn.dataset.bound = "true";
-      btn.addEventListener("click", () => {
-        applyTheme(!document.documentElement.classList.contains("dark"));
-      });
-    });
-    syncButtons();
-  }
-
-  initToggles();
-  document.addEventListener("astro:after-swap", syncButtons);
-  document.addEventListener("astro:page-load", initToggles);
-</script>
