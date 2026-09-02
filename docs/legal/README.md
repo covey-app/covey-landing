@@ -12,49 +12,28 @@ engineering work they require, and the questions outstanding for counsel.
 
 ---
 
-## ⚠️ Unresolved: two texts are currently published
+## These files are what is published
 
-**This must be decided before launch.** Right now there are two versions of each
-document:
+`src/pages/terms.astro` and `src/pages/privacy.astro` render these Markdown files
+directly, through `src/components/LegalDocument.astro`. Neither page contains any
+legal text of its own.
 
-1. **These files** — formal, defined terms, numbered clauses, conspicuous
-   statutory blocks, annexes. Drafted to be enforceable and to be redlined by an
-   attorney.
-2. **`src/pages/terms.astro` and `src/pages/privacy.astro`** — plain-language, in
-   Covey's voice. These are what is actually served at `coveyapp.co/terms` and
-   `/privacy`.
+That is deliberate. `LegalPolicy.termsURL` in the iOS app links users here to
+accept, and `policy_acceptances` stamps a version against whatever is served. If
+two differently-worded versions of the same agreement were published, the conflict
+between them would be resolved against the drafter. One source of truth removes
+the question.
 
-They cover the same ground and reach the same substantive positions, but they are
-not word-identical.
+**To change the published agreement, edit the Markdown in this directory.** Do not
+add legal text to the Astro pages.
 
-**Why that is a problem.** `LegalPolicy.termsURL` and `.privacyURL` in the iOS app
-point at the marketing site. Users therefore assent to the *web page*, and
-`policy_acceptances` stamps a version against the text served there. A formal
-document that no user was ever shown is not the agreement, however well drafted.
-If the two texts ever say different things about arbitration, liability, or
-consent, the conflict is resolved against the drafter.
-
-**Three ways out, in order of preference:**
-
-**(a) Publish the formal text; render these files at `/terms` and `/privacy`.**
-One source of truth, no divergence, and the text the user assents to is the text
-counsel approved. Costs the plain-language voice on those two pages. Astro can
-import Markdown directly, so the change is small; the design system's `legal-prose`
-class already exists to style it.
-
-**(b) Publish the formal text, keep a labelled summary.** Serve the formal document
-at `/terms` and `/privacy`, and move the plain-language version to a clearly marked
-"summary — not the agreement" page. The summary must say so conspicuously, and must
-link to the operative text. This is what most consumer platforms do.
-
-**(c) Treat the web pages as operative and these as drafting notes.** Cheapest, but
-it discards the enforceability work: the conspicuousness formatting, the defined
-terms, the annexes, and the acceptance mechanics in Terms § 2 are the parts that do
-the work if the agreement is ever tested.
-
-Until this is decided, **do not describe the repository files as "the terms"** in
-any external communication, and do not send them to a counterparty as though they
-were in force.
+A note on presentation: every provision set off as a `>` blockquote in these files
+is rendered as a conspicuous block — bordered, elevated, accent rule. That is not
+decoration. UCC § 1-201(b)(10) conditions the enforceability of a warranty
+disclaimer on conspicuousness, and California courts reason similarly about
+releases and limitations of liability. The `.legal-doc blockquote` rule in
+`src/styles/global.css` is load-bearing; do not flatten it into a quiet
+pull-quote, and do not use `>` for ordinary emphasis.
 
 ---
 
@@ -65,10 +44,12 @@ must move together:
 
 | Location | Constant |
 |---|---|
-| `docs/legal/*.md` | the `**Version:**` header line |
-| `src/config.ts` | `SITE.legal.version` |
+| `docs/legal/*.md` | the `**Version:**` header line — **the authority** |
 | `covey/ios/Covey/App/LegalPolicy.swift` | `LegalPolicy.currentVersion` |
 | `covey/supabase/migrations/…_signup_policy_consent.sql` | `current_policy_version()` |
+
+The landing site holds no version constant of its own; it renders the Markdown, so
+the header line is the only value it can show.
 
 The iOS app stamps `policy_acceptances.policy_version` with its constant. If these
 drift, the consent ledger records assent to text nobody was shown, which is worse
@@ -89,8 +70,8 @@ created before a bump remains bound only to the version it accepted.
 3. Bump the Version and Effective Date in the header, and record what the previous
    version was in `**Supersedes:**`.
 4. Bump the other three constants in the same commit.
-5. Mirror the change into the published surface, per whichever of (a)/(b)/(c)
-   above has been chosen.
+5. Rebuild and redeploy the landing site. No mirroring step is required — the
+   pages render these files.
 
 ## Placeholders still open
 

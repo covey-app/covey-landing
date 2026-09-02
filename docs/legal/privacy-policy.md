@@ -636,7 +636,7 @@ San Francisco, California, United States
 
 ---
 
-# ANNEX A — STATUTORY CATEGORIES OF PERSONAL INFORMATION
+## ANNEX A — STATUTORY CATEGORIES OF PERSONAL INFORMATION
 
 Collected in the twelve (12) months preceding the Effective Date. In every case
 the sources are those in Section 3 and the recipients are the Service Providers in
@@ -664,7 +664,7 @@ identification numbers other than as appearing on the document image at Section
 
 ---
 
-# ANNEX B — SERVICE PROVIDERS
+## ANNEX B — SERVICE PROVIDERS
 
 | Service Provider | Function | Categories disclosed |
 |---|---|---|
@@ -682,7 +682,7 @@ identification numbers other than as appearing on the document image at Section
 
 ---
 
-# ANNEX C — RETENTION SCHEDULE
+## ANNEX C — RETENTION SCHEDULE
 
 | Category | Retention period | Basis |
 |---|---|---|

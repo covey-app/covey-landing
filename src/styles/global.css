@@ -349,19 +349,157 @@
   }
 
   /*
-   * Legal prose (/terms, /privacy). These pages carry hundreds of inline
-   * links; styling them here keeps the markup readable and guarantees every
-   * link looks the same, which matters when a document's cross-references are
-   * part of how it reads.
+   * Rendered legal instruments (/terms, /privacy).
+   *
+   * The Markdown in docs/legal/ is the authoritative text, so this scope styles
+   * whatever the renderer emits rather than bespoke markup. Two rules here are
+   * load-bearing rather than decorative:
+   *
+   *  - `.legal-doc blockquote` is the CONSPICUOUS treatment. Every provision the
+   *    documents set off as a blockquote is one whose enforceability depends on
+   *    being conspicuous — the warranty disclaimer, the liability cap, the
+   *    release, the class-action waiver. UCC 1-201(b)(10) conditions a warranty
+   *    disclaimer on conspicuousness, and California courts reason the same way
+   *    about releases and liability limits. Do not flatten this into a quiet
+   *    pull-quote.
+   *  - `.legal-doc table` scrolls inside itself. Annex tables are wide, and the
+   *    overflow spec forbids the page body scrolling sideways at 320px.
    */
-  .legal-prose a {
+  .legal-doc {
+    color: var(--ink-muted);
+    font-size: 1.0625rem;
+    line-height: 1.7;
+  }
+
+  .legal-doc > h1 {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+    font-size: var(--fs-h2);
+    color: var(--ink);
+    margin-bottom: 1.25rem;
+  }
+
+  .legal-doc h2 {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    font-size: 1.35rem;
+    color: var(--ink);
+    margin-top: 3rem;
+    margin-bottom: 0.85rem;
+    scroll-margin-top: 7rem;
+  }
+
+  .legal-doc h3 {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: 1.1rem;
+    color: var(--ink);
+    margin-top: 2rem;
+    margin-bottom: 0.6rem;
+    scroll-margin-top: 7rem;
+  }
+
+  .legal-doc p {
+    margin-bottom: 1.1rem;
+  }
+
+  .legal-doc strong {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  .legal-doc a {
     color: var(--accent-ink);
     text-decoration: underline;
     text-underline-offset: 2px;
     text-decoration-thickness: 1px;
   }
-  .legal-prose a:hover {
+  .legal-doc a:hover {
     color: var(--ink);
+  }
+
+  .legal-doc ul,
+  .legal-doc ol {
+    margin: 0 0 1.1rem 1.5rem;
+    padding-left: 0.5rem;
+  }
+  .legal-doc ul {
+    list-style: disc;
+  }
+  .legal-doc ol {
+    list-style: decimal;
+  }
+  .legal-doc li {
+    margin-bottom: 0.5rem;
+  }
+
+  .legal-doc code {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+  }
+
+  .legal-doc hr {
+    border: 0;
+    border-top: 0.7px solid var(--edge);
+    margin: 3rem 0;
+  }
+
+  /* CONSPICUOUS. See the note above before changing anything here. */
+  .legal-doc blockquote {
+    background-color: var(--paper-elevated);
+    border: 0.7px solid color-mix(in oklab, var(--edge) 55%, transparent);
+    border-left: 3px solid var(--accent-ink);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-paper);
+    padding: 1.35rem 1.5rem;
+    margin: 2rem 0;
+    color: var(--ink);
+  }
+  .legal-doc blockquote > :last-child {
+    margin-bottom: 0;
+  }
+  .legal-doc blockquote h2,
+  .legal-doc blockquote h3 {
+    margin-top: 0;
+  }
+  /* A nested quotation (e.g. the Civil Code 1542 text) is a citation, not a
+     conspicuous provision — step it back down so the distinction survives. */
+  .legal-doc blockquote blockquote {
+    background: transparent;
+    border: 0;
+    border-left: 2px solid var(--edge);
+    border-radius: 0;
+    box-shadow: none;
+    font-style: italic;
+    padding: 0.25rem 0 0.25rem 1rem;
+    margin: 1rem 0 0;
+  }
+
+  .legal-doc table {
+    display: block;
+    overflow-x: auto;
+    max-width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+    margin: 1.5rem 0;
+  }
+  .legal-doc th,
+  .legal-doc td {
+    border-bottom: 0.7px solid var(--edge);
+    padding: 0.7rem 1rem 0.7rem 0;
+    text-align: left;
+    vertical-align: top;
+  }
+  .legal-doc th {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink);
+    white-space: nowrap;
   }
 
   /* Surfaces — flat elevated cards (no glass, per brief). */

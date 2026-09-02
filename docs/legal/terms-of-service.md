@@ -791,7 +791,7 @@ Copyright agent: see Annex C
 
 ---
 
-# ANNEX A — ACCEPTABLE USE POLICY
+## ANNEX A — ACCEPTABLE USE POLICY
 
 This Annex forms part of the Agreement. You shall not, and shall not attempt to,
 do any of the following.
@@ -873,7 +873,7 @@ person.
 
 ---
 
-# ANNEX B — APPLE APP STORE ADDITIONAL TERMS
+## ANNEX B — APPLE APP STORE ADDITIONAL TERMS
 
 This Annex applies where you obtain the Covey application from the Apple App
 Store, and prevails over any inconsistent provision of the Agreement as regards
@@ -915,7 +915,7 @@ a third-party beneficiary.
 
 ---
 
-# ANNEX C — DMCA NOTICE PROCEDURE
+## ANNEX C — DMCA NOTICE PROCEDURE
 
 **C.1 Designated agent.**
 
@@ -959,7 +959,7 @@ material is infringing, or was removed by mistake, may be liable for damages und
 
 ---
 
-# ANNEX D — ENTITY PARTICULARS
+## ANNEX D — ENTITY PARTICULARS
 
 > **[TO BE CONFIRMED BY COUNSEL BEFORE PUBLICATION.]**
 >

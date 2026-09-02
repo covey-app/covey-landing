@@ -1,0 +1,53 @@
+---
+/*
+ * Chrome for a rendered legal instrument.
+ *
+ * The document supplies its own <h1> and its own metadata block, so this
+ * component adds only the eyebrow, a contents rail built from the document's
+ * own h2s, and the .legal-doc typography scope. It must not add legal text.
+ *
+ * Anchors come from Astro's markdown slugger, so every clause heading is
+ * linkable — which matters when a support reply or a court filing needs to cite
+ * one.
+ */
+interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+interface Props {
+  eyebrow: string;
+  headings: Heading[];
+}
+
+const { eyebrow, headings } = Astro.props;
+
+// Numbered sections and annexes only. h3 sub-clauses would swamp the rail.
+const sections = headings.filter((h) => h.depth === 2);
+---
+
+<div class="max-w-3xl mx-auto px-6 py-[var(--section-y)]">
+  <div class="eyebrow mb-6">{eyebrow}</div>
+
+  {
+    sections.length > 0 && (
+      <nav aria-label="Contents" class="card-sunken p-6 mb-12">
+        <div class="eyebrow mb-4">Contents</div>
+        <ul class="grid sm:grid-cols-2 gap-x-8 gap-y-2 text-sm text-ink-muted list-none">
+          {sections.map((h) => (
+            <li>
+              <a href={`#${h.slug}`} class="hover:text-ink transition-colors">
+                {h.text}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    )
+  }
+
+  <article class="legal-doc">
+    <slot />
+  </article>
+</div>
