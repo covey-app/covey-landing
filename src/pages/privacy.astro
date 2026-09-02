@@ -1,104 +1,723 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { SITE } from "../config";
-const lastUpdated = "August 18, 2026";
+
+/*
+ * Privacy Policy — rewritten 2026-09-01 against the actual product, not against
+ * a generic template. Every collection claim below was verified in
+ * ~/Documents/GitHub/covey (Supabase migrations + ios/Covey). See
+ * docs/legal-audit-2026-09-01.md for the evidence trail and the open items.
+ *
+ * Three rules for editing this file:
+ *
+ * 1. App Review 5.1.1(b) requires this text to match the privacy manifest and
+ *    the App Store nutrition labels. Adding a column, a table, or a vendor
+ *    means editing this page in the same change.
+ * 2. Do NOT reintroduce claims the product does not support. The two that were
+ *    wrong in the previous draft: device location (the app has no
+ *    NSLocation*UsageDescription and never calls requestWhenInUseAuthorization)
+ *    and Google Places (place search is Apple MapKit; the Google reference is a
+ *    deep link out to the Maps app).
+ * 3. `SITE.legal.version` is stamped into `policy_acceptances` by the iOS app.
+ *    Changing the substance of this page means bumping that version, the Swift
+ *    literal, and `current_policy_version()` together.
+ *
+ * Payments: paid plans are gated off at launch (`launch_paid_plans_enabled`
+ * defaults false, enforced in the DB). Nothing here may imply Covey charges.
+ */
+const lastUpdated = SITE.legal.effective;
+const entity = SITE.legal.entity;
+
+const toc: { id: string; label: string }[] = [
+  { id: "scope", label: "1. Who we are" },
+  { id: "you-give", label: "2. What you give us" },
+  { id: "automatic", label: "3. What we collect automatically" },
+  { id: "not-collected", label: "4. What we do not collect" },
+  { id: "how-we-use", label: "5. How we use it" },
+  { id: "ai", label: "6. AI features" },
+  { id: "legal-bases", label: "7. Legal bases" },
+  { id: "sharing", label: "8. Who we share it with" },
+  { id: "no-sale", label: "9. No sale, no sharing, no tracking" },
+  { id: "visibility", label: "10. What other people can see" },
+  { id: "cookies", label: "11. Cookies and local storage" },
+  { id: "retention", label: "12. How long we keep it" },
+  { id: "security", label: "13. Security" },
+  { id: "your-rights", label: "14. Your privacy rights" },
+  { id: "california", label: "15. California disclosures" },
+  { id: "other-states", label: "16. Other U.S. states" },
+  { id: "children", label: "17. Adults only" },
+  { id: "transfers", label: "18. Where data is processed" },
+  { id: "changes", label: "19. Changes to this policy" },
+  { id: "contact", label: "20. Contact" },
+];
+
+const processors: { name: string; role: string }[] = [
+  {
+    name: "Supabase",
+    role: "Authentication, the Postgres database, file storage, and realtime messaging. Substantially all Covey data lives here.",
+  },
+  {
+    name: "Apple",
+    role: "App Store distribution, Sign in with Apple, and Apple Push Notification service. Apple Maps supplies place search results inside the app. If you use Sign in with Apple and hide your email, we receive a private relay address instead of your real one.",
+  },
+  {
+    name: "Google",
+    role: "Sign in with Google, where you choose it. Separately, the Gemini API generates the optional AI text described in Section 6 — see that section for exactly what is sent.",
+  },
+  {
+    name: "Sentry",
+    role: "Crash reports, error traces, and performance diagnostics from the iOS app.",
+  },
+  {
+    name: "Netlify",
+    role: "Hosting for coveyapp.co and handling of the waitlist and contact form submissions on that site only. Netlify does not receive app data.",
+  },
+];
+
+const retention: { what: string; how_long: string }[] = [
+  {
+    what: "Account, profile, and preference data",
+    how_long: "Until you delete your account",
+  },
+  {
+    what: "Plans, posts, photos, and messages",
+    how_long: "Until you or the author deletes them, or you delete your account; copies already delivered to other people may persist in their threads",
+  },
+  {
+    what: "Identity verification documents and selfies",
+    how_long: "Retained while your account is active. We are shortening this to a fixed period after review — see Section 2.4",
+  },
+  {
+    what: "Reports, blocks, and moderation records",
+    how_long: "Kept after account deletion where needed to enforce a ban, investigate abuse, or defend a legal claim",
+  },
+  {
+    what: "Product analytics and behaviour logs",
+    how_long: "Your identifier is detached when you delete your account; the de-identified event remains",
+  },
+  {
+    what: "Consent records (which policy version you accepted, and when)",
+    how_long: "Kept after deletion as proof of consent, as data-protection law requires",
+  },
+  {
+    what: "Waitlist and contact form submissions on coveyapp.co",
+    how_long: "Up to 24 months after last contact, or until you ask us to delete them",
+  },
+];
+
+const ccpaCategories: {
+  category: string;
+  collected: string;
+  purpose: string;
+}[] = [
+  {
+    category: "Identifiers",
+    collected:
+      "Name, display name, username, email address, account ID, device ID, push token, IP address",
+    purpose: "Account creation, sign-in, notifications, security",
+  },
+  {
+    category: "Customer records (Cal. Civ. Code § 1798.80)",
+    collected: "Name, email, home city, occupation, photographs",
+    purpose: "Providing the service, support",
+  },
+  {
+    category: "Protected classification characteristics",
+    collected: "Age and date of birth, gender",
+    purpose:
+      "Enforcing the 18+ rule and the age and gender filters a plan host or dating profile sets",
+  },
+  {
+    category: "Commercial information",
+    collected: "Plans hosted or joined, places bookmarked, groups joined",
+    purpose: "Providing the service",
+  },
+  {
+    category: "Biometric information",
+    collected:
+      "A selfie submitted alongside your ID document, used by a human reviewer to confirm the ID is yours",
+    purpose: "Identity verification, fraud and impersonation prevention",
+  },
+  {
+    category: "Internet or network activity",
+    collected:
+      "Screens viewed, features used, session identifiers, app version, device type, crash and performance data",
+    purpose: "Operating, securing, debugging, and improving the service",
+  },
+  {
+    category: "Geolocation data",
+    collected:
+      "Addresses and coordinates of places you add to a plan, and an approximate region from your IP address. Not your device location — see Section 4",
+    purpose: "Showing plans on a map and telling attendees where to go",
+  },
+  {
+    category: "Audio, electronic, visual, or similar information",
+    collected:
+      "Profile photos, plan covers, post photos, chat photos, messages you send",
+    purpose: "Providing the service",
+  },
+  {
+    category: "Sensitive personal information",
+    collected:
+      "Government ID document and selfie; sexual orientation and gender identity, if you turn on dating; the contents of your messages to other people",
+    purpose: "See Section 15",
+  },
+  {
+    category: "Inferences",
+    collected:
+      "Interest and taste signals derived from what you pick during onboarding and what you interact with",
+    purpose: "Ranking what you see inside Covey",
+  },
+];
 ---
 
 <BaseLayout
   title="Privacy Policy"
-  description="How Covey collects, uses, and protects information across the app and website."
+  description="How Covey collects, uses, shares, retains, and protects your information, and the privacy rights you can exercise."
 >
   <div class="max-w-3xl mx-auto px-6 py-[var(--section-y)]">
     <div class="eyebrow mb-3">Privacy</div>
     <h1 class="display t-h1 mb-4">Privacy policy</h1>
     <p class="font-mono text-ink-muted text-xs uppercase tracking-[0.16em] mb-12">
-      Last updated {lastUpdated}
+      Effective {lastUpdated} · Version {SITE.legal.version}
     </p>
 
-    <div class="card p-6 mb-12">
+    <div class="card p-6 mb-10">
       <p class="text-ink-muted leading-relaxed">
-        <strong class="text-ink">Scope of this page:</strong> this policy is a
-        plain-language draft for Covey's product app and {SITE.domain}
-        marketing website. It covers account data, plans, messages, location,
-        analytics, payments, support requests, and deletion choices.
+        <strong class="text-ink">The short version.</strong> Covey is a free app
+        for making plans with people in real life. To run it we collect your
+        account and profile details, a government ID and selfie so we can check
+        you are a real adult, the plans, posts, photos and messages you create,
+        and how you use the app. We do not sell your information, we do not
+        share it for advertising, we do not track you across other companies'
+        apps, and
+        <strong class="text-ink">we do not collect your device's location</strong>.
+        You can delete your account from inside the app at any time.
+      </p>
+      <p class="text-ink-muted leading-relaxed mt-4">
+        This summary is for orientation only. The sections below are the policy.
       </p>
     </div>
 
-    <div class="space-y-10 text-ink-muted leading-relaxed text-lg">
-      <section>
-        <h2 class="title-mono text-2xl text-ink mb-3">What we collect</h2>
+    <nav aria-label="Table of contents" class="card-sunken p-6 mb-12">
+      <h2 class="eyebrow mb-4">On this page</h2>
+      <ol class="grid sm:grid-cols-2 gap-x-8 gap-y-2 text-sm text-ink-muted list-none">
+        {
+          toc.map((item) => (
+            <li>
+              <a href={`#${item.id}`} class="hover:text-ink transition-colors">
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ol>
+    </nav>
+
+    <div class="legal-prose space-y-10 text-ink-muted leading-relaxed text-lg">
+      <section id="scope" class="scroll-mt-28">
+        <h2 class="title-mono text-2xl text-ink mb-3">1. Who we are</h2>
         <p>
-          Covey collects information you give us, such as your name, email
-          address, profile details, city, support messages, waitlist details,
-          and anything you choose to add to a plan, recap, comment, or message.
-          If you create an account, we also receive account identifiers from
-          our authentication provider.
+          {entity}, {SITE.city}, is responsible for the personal information
+          described here — the "controller" under European law, the "business"
+          under California law. This policy covers the Covey iOS app, the
+          {" "}{SITE.domain} website including its waitlist and contact forms,
+          and our support and safety channels.
         </p>
         <p class="mt-4">
-          The app may process plan details, attendance, saved places,
-          bookmarks, chat messages, photos or media you upload, and approximate
-          or precise location when you choose to use location-based features.
-          Payment details are handled by Stripe; Covey does not store full card
-          numbers.
+          It does not cover services you reach through Covey but that other
+          companies run — a venue's website, a Spotify playlist someone linked,
+          the App Store. Those have their own policies.
         </p>
       </section>
 
-      <section>
-        <h2 class="title-mono text-2xl text-ink mb-3">How we use it</h2>
+      <section id="you-give" class="scroll-mt-28">
+        <h2 class="title-mono text-2xl text-ink mb-3">2. What you give us</h2>
+
+        <h3 class="title-mono text-xl text-ink mt-2 mb-2">2.1 Account</h3>
         <p>
-          We use this information to run Covey, create and show plans, deliver
-          messages, personalize recommendations, process payments, send service
-          updates, respond to support requests, investigate safety reports, and
-          understand whether the product is working. We use website and product
-          analytics to improve onboarding, performance, and reliability.
+          Your email address and the identifier from whichever sign-in method
+          you use — email and password, Sign in with Apple, or Sign in with
+          Google. If you use Sign in with Apple and choose to hide your email,
+          we receive Apple's private relay address rather than your real one.
+        </p>
+
+        <h3 class="title-mono text-xl text-ink mt-6 mb-2">2.2 Profile</h3>
+        <p>
+          Your display name, username, profile photo, short bio, home city,
+          occupation, and any social links you add. During onboarding you also
+          pick interests — activities, cuisines, dietary restrictions, music and
+          film genres, fashion styles, sports and skill levels, nightlife and
+          outdoor preferences — which we use to decide what to show you.
+        </p>
+
+        <h3 class="title-mono text-xl text-ink mt-6 mb-2">2.3 Date of birth and gender</h3>
+        <p>
+          We ask for your date of birth to enforce the 18+ rule and to apply the
+          age ranges that plan hosts and dating profiles set. We ask for gender
+          for the same filtering purpose. Both are stored separately from your
+          public profile.
+        </p>
+
+        <h3 class="title-mono text-xl text-ink mt-6 mb-2">2.4 Identity verification</h3>
+        <p>
+          Covey asks every new member to photograph a government-issued ID and
+          take a selfie before finishing onboarding. A member of our team
+          compares the two by eye to confirm the document is real, that it is
+          yours, and that you are over 18. We do not run automated facial
+          recognition, we do not create a faceprint or biometric template, and
+          we do not use these images for anything except this check and the
+          fraud, impersonation, and safety investigations that follow from it.
         </p>
         <p class="mt-4">
-          We do not sell your personal information. We do not use private
-          messages or non-public plan content for third-party advertising.
+          These images are stored in a private, access-controlled area that
+          ordinary members and other users cannot reach. They are never shown on
+          your profile and are never shared with other users.
+          <strong class="text-ink">
+            We are aware that keeping identity documents indefinitely is not
+            appropriate, and we are implementing a fixed retention period after
+            which the images are deleted and only the pass/fail outcome is kept.
+          </strong>
+          Until that ships, you can ask us to delete your submitted images at any
+          time using the contact details in Section 20.
+        </p>
+
+        <h3 class="title-mono text-xl text-ink mt-6 mb-2">2.5 Dating information</h3>
+        <p>
+          Dating is off by default. If you turn it on, we collect your gender
+          identity, the label you use for your sexual orientation, which genders
+          you are interested in, the age range you are looking for, your height,
+          and how often you work out.
+          <strong class="text-ink">
+            Sexual orientation and gender identity are sensitive information, and
+            we treat them that way:
+          </strong>
+          we use them only to decide who can see your dating profile and whose
+          dating profiles you see. We do not use them for advertising, we do not
+          sell them, and turning dating off stops them being used for matching.
+        </p>
+
+        <h3 class="title-mono text-xl text-ink mt-6 mb-2">2.6 What you create and send</h3>
+        <p>
+          Plans and their details, including the name, address, and coordinates
+          of every place you add to a plan; who you invite and who joins; posts
+          and recaps; photos you upload to your profile, plans, posts, and chats;
+          messages in plan chats and direct messages; groups you create or join;
+          bookmarks and saved places; and comments.
+        </p>
+
+        <h3 class="title-mono text-xl text-ink mt-6 mb-2">2.7 Safety and support</h3>
+        <p>
+          When you report someone or something, we collect your report, the
+          reason you give, and the evidence attached to it. When you block
+          someone, we record the block. When you contact support or send
+          feedback, we keep the correspondence.
+        </p>
+
+        <h3 class="title-mono text-xl text-ink mt-6 mb-2">2.8 Consent records</h3>
+        <p>
+          When you accept these documents, we record which version you accepted,
+          when, and through which sign-up method. This is how we demonstrate
+          consent, and the law requires us to be able to.
+        </p>
+
+        <h3 class="title-mono text-xl text-ink mt-6 mb-2">2.9 The website</h3>
+        <p>
+          The waitlist form on {SITE.domain} collects your email address, first
+          name, city, and your confirmation that you are 18 or older. The contact
+          form collects your name, email, subject, and message.
         </p>
       </section>
 
-      <section>
-        <h2 class="title-mono text-2xl text-ink mb-3">Who processes it</h2>
-        <p>
-          Covey uses service providers to operate the app and website. These
-          include Supabase for authentication, database, storage, and backend
-          infrastructure; Stripe for payments; hosting providers for the
-          website and app; and analytics or error-reporting tools that help us
-          understand usage and diagnose problems. These providers process data
-          for Covey so we can provide the service.
+      <section id="automatic" class="scroll-mt-28">
+        <h2 class="title-mono text-2xl text-ink mb-3">3. What we collect automatically</h2>
+        <ul class="mt-2 space-y-2 list-disc pl-6">
+          <li><strong class="text-ink">Usage:</strong> which screens you open, which features you use, and when — recorded as named events with a session identifier, your app version, and your device type. This runs on our own servers, not through an outside analytics company.</li>
+          <li><strong class="text-ink">Diagnostics:</strong> crash reports, error traces, and performance measurements, sent to Sentry.</li>
+          <li><strong class="text-ink">Connection data:</strong> your IP address and request timestamps, which our infrastructure records to serve requests, apply rate limits, and detect abuse. IP address also gives an approximate region — roughly city-level — nothing more precise.</li>
+          <li><strong class="text-ink">Push token:</strong> if you enable notifications, the Apple push token for your device, along with your device identifier, app version, and locale.</li>
+        </ul>
+      </section>
+
+      <section id="not-collected" class="scroll-mt-28">
+        <h2 class="title-mono text-2xl text-ink mb-3">4. What we do not collect</h2>
+        <div class="card p-5 mb-5">
+          <p class="text-base">
+            <strong class="text-ink">Covey does not collect your device's location.</strong>
+            The app never asks for location permission and cannot read your GPS.
+            When you see a map, it is showing places that people put into plans —
+            addresses chosen by a person from a search, not your position or
+            anyone else's.
+          </p>
+        </div>
+        <p>We also do not:</p>
+        <ul class="mt-4 space-y-2 list-disc pl-6">
+          <li>run advertising SDKs, ad networks, or third-party marketing trackers;</li>
+          <li>track you across other companies' apps and websites — which is why the app never shows Apple's App Tracking Transparency prompt;</li>
+          <li>read your contacts, address book, calendar, microphone, or health data;</li>
+          <li>connect to your Spotify account. Where a plan links a playlist or Blend, someone pasted a public share link — we never receive your Spotify credentials or listening history;</li>
+          <li>buy personal information from data brokers; or</li>
+          <li>collect payment card numbers or bank details. Covey is free, and we do not process payments.</li>
+        </ul>
+      </section>
+
+      <section id="how-we-use" class="scroll-mt-28">
+        <h2 class="title-mono text-2xl text-ink mb-3">5. How we use it</h2>
+        <ul class="mt-2 space-y-2 list-disc pl-6">
+          <li>Create and secure your account and sign you in.</li>
+          <li>Confirm you are a real adult, through the check in Section 2.4.</li>
+          <li>Run the product: create plans, show them to the right people, deliver messages and photos, and store what you make.</li>
+          <li>Decide what to show you — which plans, places, and people appear in your feed and on the map.</li>
+          <li>Apply the age, gender, and dating filters that you and other members set.</li>
+          <li>Send notifications about your plans, invitations, messages, and account.</li>
+          <li>Investigate reports, enforce our <a href="/terms">Terms</a>, and act on abuse, impersonation, fraud, and threats to safety.</li>
+          <li>Diagnose crashes, measure performance, and work out whether features are working.</li>
+          <li>Meet our legal obligations and establish, exercise, or defend legal claims.</li>
+        </ul>
+        <p class="mt-4">
+          We do not use your private messages or non-public plan content for
+          advertising, and we do not sell or rent any of it.
         </p>
       </section>
 
-      <section>
-        <h2 class="title-mono text-2xl text-ink mb-3">Location and visibility</h2>
+      <section id="ai" class="scroll-mt-28">
+        <h2 class="title-mono text-2xl text-ink mb-3">6. AI features</h2>
         <p>
-          Location features are meant to help people discover plans and places.
-          You can control device location permissions through your operating
-          system. Some plan, profile, and activity information may be visible to
-          other people depending on the feature, your relationship to those
-          people, and the privacy settings available in the app.
+          Some optional features generate text for you: a suggested profile bio,
+          a draft plan, a group description, chat icebreakers, and interpreting
+          what you type into search. These call Google's Gemini API from our
+          servers.
+        </p>
+        <p class="mt-4">What is sent, and what is not:</p>
+        <ul class="mt-4 space-y-2 list-disc pl-6">
+          <li>We send only what the feature needs — typically the interests you selected during onboarding, the text you typed, or the plan you are drafting.</li>
+          <li>We do not send your identity documents, your date of birth, your dating information, your direct messages, or your email address.</li>
+          <li>Requests go from our servers, not your device, so the API key never reaches the app and Google does not receive your Covey account identity.</li>
+          <li>AI output is a suggestion. It can be wrong, and you can edit or discard it. Text you keep becomes your content under the <a href="/terms#your-content">Terms</a>.</li>
+        </ul>
+      </section>
+
+      <section id="legal-bases" class="scroll-mt-28">
+        <h2 class="title-mono text-2xl text-ink mb-3">7. Legal bases</h2>
+        <p>
+          Covey is offered in the United States. Where the EU or UK GDPR applies
+          to you, our legal bases are:
+          <strong class="text-ink">contract</strong> — to provide the service you
+          signed up for; <strong class="text-ink">legitimate interests</strong> —
+          to keep the service secure, prevent abuse and impersonation, and
+          improve the product, balanced against your rights;
+          <strong class="text-ink">consent</strong> — for notifications, optional
+          AI features, and marketing email, each of which you can withdraw; and
+          <strong class="text-ink">legal obligation</strong> — for lawful
+          requests and record-keeping. For the identity documents and dating
+          information in Sections 2.4 and 2.5, which are special category data
+          under Article 9, we rely on your explicit consent, given when you
+          choose to submit them.
         </p>
       </section>
 
-      <section>
-        <h2 class="title-mono text-2xl text-ink mb-3">Deletion and choices</h2>
+      <section id="sharing" class="scroll-mt-28">
+        <h2 class="title-mono text-2xl text-ink mb-3">8. Who we share it with</h2>
+
+        <h3 class="title-mono text-xl text-ink mt-2 mb-2">8.1 Service providers</h3>
         <p>
-          You can ask us to access, correct, export, or delete information tied
-          to your account. Account deletion is available from the app when
-          signed in; you can also contact support if you need help. Deletion may
-          not remove information we must keep for security, fraud prevention,
-          payment records, legal obligations, backups, or abuse investigations.
+          These companies process personal information on our instructions, under
+          contract, only to deliver the service to us:
+        </p>
+        <ul class="mt-4 space-y-3 list-disc pl-6">
+          {
+            processors.map((p) => (
+              <li>
+                <strong class="text-ink">{p.name}</strong> — {p.role}
+              </li>
+            ))
+          }
+        </ul>
+
+        <h3 class="title-mono text-xl text-ink mt-6 mb-2">8.2 Other people on Covey</h3>
+        <p>
+          Covey is social, so some information is shared by design. Section 10
+          explains what other members can see.
+        </p>
+
+        <h3 class="title-mono text-xl text-ink mt-6 mb-2">8.3 Legal and safety</h3>
+        <p>
+          We may disclose information when we believe in good faith that it is
+          necessary to comply with law or valid legal process, to enforce our
+          Terms, to investigate abuse or fraud, or to protect the rights,
+          property, or safety of our members, the public, or {entity}. Where we
+          are legally permitted to tell you about a request for your data, we
+          will.
+        </p>
+
+        <h3 class="title-mono text-xl text-ink mt-6 mb-2">8.4 Business transfers</h3>
+        <p>
+          If {entity} is involved in a merger, acquisition, financing, or sale of
+          assets, personal information may transfer as part of that transaction.
+          We will give notice before your information becomes subject to a
+          materially different privacy policy.
+        </p>
+
+        <h3 class="title-mono text-xl text-ink mt-6 mb-2">8.5 Aggregated and de-identified data</h3>
+        <p>
+          We may share information that can no longer reasonably identify you. We
+          will keep it in that form and will not try to re-identify it.
         </p>
       </section>
 
-      <section>
-        <h2 class="title-mono text-2xl text-ink mb-3">Contact</h2>
+      <section id="no-sale" class="scroll-mt-28">
+        <h2 class="title-mono text-2xl text-ink mb-3">9. No sale, no sharing, no tracking</h2>
         <p>
-          Questions about this policy:
-          <a href={`mailto:${SITE.emails.support}`} class="text-accent-ink underline underline-offset-2 decoration-1">
-            {SITE.emails.support}
-          </a>.
+          We do not sell personal information, and we do not share it for
+          cross-context behavioural advertising, as the California Consumer
+          Privacy Act defines those terms. We have not done so in the preceding
+          twelve months, and we do not do so for anyone under 16. We do not track
+          you across other companies' apps and websites.
+        </p>
+      </section>
+
+      <section id="visibility" class="scroll-mt-28">
+        <h2 class="title-mono text-2xl text-ink mb-3">10. What other people can see</h2>
+        <ul class="mt-2 space-y-2 list-disc pl-6">
+          <li><strong class="text-ink">Your profile</strong> — display name, username, photo, bio, home city, occupation, interests, and social links — is visible to other members, subject to the visibility setting you choose.</li>
+          <li><strong class="text-ink">Plans</strong> are visible to whoever the plan is shared with. A public plan is visible to members browsing; a friends-only or invite-only plan is not.</li>
+          <li><strong class="text-ink">Your date of birth is never shared with other members.</strong> It is stored separately from your public profile and readable only by you. Where a plan or dating filter depends on age, our servers compute your age from it to decide whether you match — the date itself never leaves.</li>
+          <li><strong class="text-ink">Dating information</strong> is shown only to other members who have dating turned on and who fall within the filters you and they set.</li>
+          <li><strong class="text-ink">Your identity documents are never visible to anyone but our reviewers.</strong></li>
+          <li><strong class="text-ink">Messages</strong> go to the people in that thread. We can access message content when investigating a report or when the law requires it.</li>
+        </ul>
+        <div class="card p-5 mt-5">
+          <p class="text-base">
+            <strong class="text-ink">One thing to understand about photos.</strong>
+            Photos you send are stored at web addresses. Anyone who is given one
+            of those addresses — including someone who was in a chat with you and
+            saved the link — may still be able to open that image later, even
+            after they leave the conversation or you block them. Treat a photo
+            you send as something you cannot fully take back.
+          </p>
+        </div>
+      </section>
+
+      <section id="cookies" class="scroll-mt-28">
+        <h2 class="title-mono text-2xl text-ink mb-3">11. Cookies and local storage</h2>
+        <p>
+          {SITE.domain} stores one item in your browser,
+          <code class="font-mono text-base">covey-theme</code>, to remember
+          whether you chose light or dark mode. It stays on your device. Our
+          host, Netlify, sets the cookies it needs to serve the site and to catch
+          spam form submissions. There are no advertising cookies, tracking
+          pixels, or third-party analytics cookies on this website.
+        </p>
+        <p class="mt-4">
+          Because we neither sell nor share personal information, a Global
+          Privacy Control signal has nothing to opt you out of — but we treat one
+          as a valid opt-out request regardless.
+        </p>
+      </section>
+
+      <section id="retention" class="scroll-mt-28">
+        <h2 class="title-mono text-2xl text-ink mb-3">12. How long we keep it</h2>
+        <p>
+          We keep personal information only as long as we need it for the
+          purposes in this policy, then delete or de-identify it.
+        </p>
+        <div class="mt-5 overflow-x-auto">
+          <table class="w-full text-base border-collapse min-w-[30rem]">
+            <thead>
+              <tr class="border-b">
+                <th scope="col" class="text-left font-mono text-xs uppercase tracking-[0.14em] text-ink pb-3 pr-4">Data</th>
+                <th scope="col" class="text-left font-mono text-xs uppercase tracking-[0.14em] text-ink pb-3">Retention</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                retention.map((row) => (
+                  <tr class="border-b align-top">
+                    <td class="py-3 pr-4 text-ink">{row.what}</td>
+                    <td class="py-3">{row.how_long}</td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+        <p class="mt-5">
+          We may keep information longer where we must for a legal obligation, an
+          open safety investigation, a dispute, or to stop a banned account
+          returning.
+        </p>
+      </section>
+
+      <section id="security" class="scroll-mt-28">
+        <h2 class="title-mono text-2xl text-ink mb-3">13. Security</h2>
+        <p>
+          Traffic between the app and our servers uses TLS, and our infrastructure
+          provider encrypts stored data at rest. Access to data is enforced in the
+          database itself through row-level security rules, so one account cannot
+          read another's records even if the app is bypassed. Identity documents
+          sit in a private store reachable only by their owner and our reviewers.
+          Changes that touch authentication or data access get a security review
+          before they ship.
+        </p>
+        <p class="mt-4">
+          No system is perfectly secure and we do not promise that ours is. If we
+          become aware of a breach affecting your personal information, we will
+          notify you and the relevant authorities as the law requires. To report
+          a vulnerability, email
+          <a href={`mailto:${SITE.emails.safety}`}>{SITE.emails.safety}</a>.
+        </p>
+      </section>
+
+      <section id="your-rights" class="scroll-mt-28">
+        <h2 class="title-mono text-2xl text-ink mb-3">14. Your privacy rights</h2>
+        <p>Wherever you live, you can ask us to:</p>
+        <ul class="mt-4 space-y-2 list-disc pl-6">
+          <li><strong class="text-ink">Access</strong> the personal information we hold about you;</li>
+          <li><strong class="text-ink">Correct</strong> anything inaccurate;</li>
+          <li><strong class="text-ink">Delete</strong> your account and the information tied to it;</li>
+          <li><strong class="text-ink">Export</strong> your information in a portable, machine-readable format;</li>
+          <li><strong class="text-ink">Withdraw consent</strong> you gave — for notifications, AI features, dating, or marketing; and</li>
+          <li><strong class="text-ink">Object to or restrict</strong> certain processing, where the law gives you that right.</li>
+        </ul>
+        <p class="mt-4">
+          <strong class="text-ink">How to make a request.</strong> Delete your
+          account from your profile settings inside the app — see the
+          <a href="/deletion">deletion page</a> — or email
+          <a href={`mailto:${SITE.emails.support}`}>{SITE.emails.support}</a>
+          from the address on your account. We may ask for information to verify
+          your identity, and we use it only for that. An authorised agent may act
+          for you with written proof of authority.
+        </p>
+        <p class="mt-4">
+          <strong class="text-ink">What deletion does.</strong> Deleting your
+          account removes your profile, plans you host, your posts, your
+          messages, your bookmarks, and your preferences, and revokes your
+          sign-in. Section 12 lists what survives and why. Messages and photos
+          other people already received may remain in their threads.
+        </p>
+        <p class="mt-4">
+          <strong class="text-ink">Response times.</strong> We acknowledge
+          requests within 10 business days and respond within 45 days, which we
+          may extend once by a further 45 days where necessary. Under the GDPR we
+          respond within one month. Exercising these rights is free, and we will
+          not treat you worse for it.
+        </p>
+      </section>
+
+      <section id="california" class="scroll-mt-28">
+        <h2 class="title-mono text-2xl text-ink mb-3">15. California disclosures</h2>
+        <p>
+          This section supplements the rest of the policy for California
+          residents. In the preceding twelve months we collected the categories
+          below. In every case the sources are you, your device, other Covey
+          members, and the service providers in Section 8; the only recipients
+          are those same service providers. We disclosed personal information for
+          business purposes only. We sold and shared none of it.
+        </p>
+        <div class="mt-5 overflow-x-auto">
+          <table class="w-full text-base border-collapse min-w-[40rem]">
+            <thead>
+              <tr class="border-b">
+                <th scope="col" class="text-left font-mono text-xs uppercase tracking-[0.14em] text-ink pb-3 pr-4">Category</th>
+                <th scope="col" class="text-left font-mono text-xs uppercase tracking-[0.14em] text-ink pb-3 pr-4">Examples</th>
+                <th scope="col" class="text-left font-mono text-xs uppercase tracking-[0.14em] text-ink pb-3">Purpose</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                ccpaCategories.map((row) => (
+                  <tr class="border-b align-top">
+                    <td class="py-3 pr-4 text-ink">{row.category}</td>
+                    <td class="py-3 pr-4">{row.collected}</td>
+                    <td class="py-3">{row.purpose}</td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+        <p class="mt-5">
+          <strong class="text-ink">Sensitive personal information.</strong> We
+          collect four kinds: your government ID document and selfie; your sexual
+          orientation and gender identity, if you turn on dating; and the
+          contents of messages you send to other members. We use each of them
+          only to provide the service you asked for, to verify identity, and for
+          the security and fraud-prevention purposes the statute permits — never
+          to infer characteristics about you and never for advertising. Because
+          our use stays inside those permitted purposes, the right to limit the
+          use of sensitive personal information does not attach. You can still
+          turn dating off, delete your account, or ask us to delete your identity
+          images at any time.
+        </p>
+        <p class="mt-4">
+          Covey is an online business with a direct relationship with its
+          members, so requests are submitted in the app or by email at
+          <a href={`mailto:${SITE.emails.support}`}>{SITE.emails.support}</a>, as
+          Section 14 describes.
+        </p>
+      </section>
+
+      <section id="other-states" class="scroll-mt-28">
+        <h2 class="title-mono text-2xl text-ink mb-3">16. Other U.S. states</h2>
+        <p>
+          Residents of states with comprehensive privacy laws — including
+          Virginia, Colorado, Connecticut, Texas, Oregon, and Montana — have the
+          rights in Section 14, and may appeal a decision we make on a request by
+          replying to our response. We will decide an appeal within 45 days and
+          tell you how to contact your state attorney general if you remain
+          dissatisfied. Where those laws require opt-in consent to process
+          sensitive data, the consent you give when submitting identity documents
+          or enabling dating is that consent.
+        </p>
+      </section>
+
+      <section id="children" class="scroll-mt-28">
+        <h2 class="title-mono text-2xl text-ink mb-3">17. Adults only</h2>
+        <p>
+          Covey is for adults. You must be 18 or older. The app shows an
+          age confirmation before anything else, we ask for your date of birth,
+          and the identity check in Section 2.4 exists partly to confirm it. We
+          do not knowingly collect personal information from anyone under 18, and
+          we delete accounts we learn belong to a minor along with the data
+          attached to them. If you believe a minor has given us information,
+          email <a href={`mailto:${SITE.emails.safety}`}>{SITE.emails.safety}</a>.
+        </p>
+      </section>
+
+      <section id="transfers" class="scroll-mt-28">
+        <h2 class="title-mono text-2xl text-ink mb-3">18. Where data is processed</h2>
+        <p>
+          Covey is operated from the United States, and your information is
+          stored and processed there by us and our service providers. If you use
+          Covey from outside the United States, your information will be
+          transferred to and processed in a country whose data-protection law may
+          differ from your own. Where a transfer from the European Economic Area
+          or the United Kingdom needs a safeguard, we rely on the European
+          Commission's Standard Contractual Clauses and the UK Addendum with the
+          provider concerned.
+        </p>
+      </section>
+
+      <section id="changes" class="scroll-mt-28">
+        <h2 class="title-mono text-2xl text-ink mb-3">19. Changes to this policy</h2>
+        <p>
+          Each version of this policy carries a version stamp — this one is
+          {" "}<strong class="text-ink">{SITE.legal.version}</strong> — and we
+          record which version you accepted. If we make a material change, such
+          as collecting something new or using it for a new purpose, we will
+          publish the new version, give notice in the app or by email before it
+          takes effect, and ask you to accept it again. Where the law requires
+          fresh consent, we will ask for it rather than assume it.
+        </p>
+      </section>
+
+      <section id="contact" class="scroll-mt-28">
+        <h2 class="title-mono text-2xl text-ink mb-3">20. Contact</h2>
+        <p>
+          {entity}, {SITE.city}. Privacy questions and rights requests:
+          <a href={`mailto:${SITE.emails.support}`}>{SITE.emails.support}</a>.
+          Safety, minors, and vulnerability reports:
+          <a href={`mailto:${SITE.emails.safety}`}>{SITE.emails.safety}</a>.
         </p>
       </section>
     </div>

@@ -59,6 +59,16 @@ import { SITE } from "../config";
       <button type="submit" class="btn btn-primary btn-lg w-full justify-center mt-7">
         Join the flock
       </button>
+
+      {/* Notice at collection — CCPA requires this at or before the point of
+          collection, so it lives inside the form, not in the page footer. */}
+      <p class="text-sm text-ink-muted mt-5 leading-relaxed">
+        We use your email, name, and city only to manage the waitlist and send
+        your invite. See our
+        <a href="/privacy" class="text-accent-ink underline underline-offset-2 decoration-1">Privacy Policy</a>
+        and
+        <a href="/terms" class="text-accent-ink underline underline-offset-2 decoration-1">Terms</a>.
+      </p>
     </form>
 
     {

@@ -33,6 +33,28 @@ export const SITE = {
   appStoreUrl: null as string | null,
   playStoreUrl: null as string | null,
 
+  // Legal identity used by /terms and /privacy. `entity` must match the name
+  // on the App Store Connect account; `effective` is the
+  // date the current published version of both documents took effect — bump it
+  // (and the in-page "last updated") whenever either document changes
+  // materially, since the change-notice clauses reference it.
+  legal: {
+    entity: "Covey Co.",
+    governingLaw: "the State of California",
+    venue: "San Francisco County, California",
+    arbitrationForum: "the American Arbitration Association",
+    effective: "September 1, 2026",
+    // MUST equal `LegalPolicy.currentVersion` in covey/ios/Covey/App/
+    // LegalPolicy.swift and the literal returned by
+    // `public.current_policy_version()` in the Supabase migration. The three
+    // are a triple: the app stamps `policy_acceptances.policy_version` with
+    // this string, so a mismatch means the acceptance ledger points at text
+    // nobody was shown. `LegalPolicyTests` pins the Swift literal as a
+    // tripwire. Bumping this alone does not re-prompt existing users — that
+    // needs the re-consent flow described in docs/legal-audit-2026-09-01.md.
+    version: "2026-09-01",
+  },
+
   city: "San Francisco, CA",
   launchRegion: "US only, invite-only, iOS first",
 
