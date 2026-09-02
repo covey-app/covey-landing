@@ -1,7 +1,8 @@
 # Legal audit — Privacy Policy and Terms of Service
 
 **Date:** 1 September 2026
-**Scope:** `src/pages/privacy.astro`, `src/pages/terms.astro`
+**Scope:** `docs/legal/terms-of-service.md`, `docs/legal/privacy-policy.md` (authoritative
+text), and the published pages `src/pages/terms.astro`, `src/pages/privacy.astro`
 **Evidence base:** `~/Documents/GitHub/covey` (113 Supabase migrations, 8 non-Stripe edge
 functions, `ios/Covey`), plus this repo.
 
@@ -115,6 +116,15 @@ explain the versioning and commit to re-prompting on material change.
 Ordered by whether it blocks launch.
 
 ### 3.1 Blocking
+
+0. **Decide which text is the agreement.** Two versions of each document are now in
+   the repo: the formal instruments in `docs/legal/`, and the plain-language pages
+   served at `coveyapp.co/terms` and `/privacy`. `LegalPolicy.termsURL` points at
+   the web page, so that is what users actually assent to, and what
+   `policy_acceptances` stamps a version against. Publishing two differing texts of
+   the same agreement is an enforceability problem in its own right. See
+   `docs/legal/README.md` for the three options; (a) render the Markdown at those
+   routes is the recommendation.
 
 1. **Bump the policy version in all three places, together.**
    `SITE.legal.version` (done, `2026-09-01`) · `LegalPolicy.currentVersion` in
