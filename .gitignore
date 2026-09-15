@@ -23,3 +23,7 @@ Thumbs.db
 .cursor/
 .vercel
 .env*
+
+# The template is documentation, not a secret — it must survive the .env* rule
+# above, which is broad enough to swallow it.
+!.env.example
