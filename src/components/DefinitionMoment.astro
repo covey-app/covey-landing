@@ -94,10 +94,17 @@ const { class: className = "" } = Astro.props;
     gap: 0.75rem;
     align-items: baseline;
   }
+  /*
+   * The numerals use --accent-ink (the coffee-brown text sibling of the brand
+   * duo), not --clay. --clay is a fill token from the shared earth palette —
+   * it only clears 3.3:1 on white in light mode, below the 4.5:1 AA floor for
+   * normal-size text. Same rule as CategoryChip, which fills with --cat-* but
+   * sets text in --cat-*-ink.
+   */
   .dm-def dt {
     font-family: var(--font-mono);
     font-weight: 500;
-    color: var(--clay);
+    color: var(--accent-ink);
   }
   .dm-def dd {
     font-family: var(--font-sans);
