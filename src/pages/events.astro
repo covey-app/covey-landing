@@ -3,6 +3,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import WaitlistCTA from "../components/WaitlistCTA.astro";
 import CoveyMark from "../components/CoveyMark.astro";
 import EmptyState from "../components/EmptyState.astro";
+import { SITE } from "../config";
 ---
 
 <BaseLayout
@@ -27,7 +28,7 @@ import EmptyState from "../components/EmptyState.astro";
       title="Nothing on the calendar yet."
       body="We'll post real dates here the moment they're confirmed — no placeholder events, no maybes."
     >
-      <a href="/signup" class="btn btn-primary">Join the flock</a>
+      <a href={SITE.joinUrl} class="btn btn-primary">Join the flock</a>
       <a href="/about" class="btn btn-secondary">How Covey works</a>
     </EmptyState>
   </div>

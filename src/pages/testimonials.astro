@@ -3,6 +3,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import WaitlistCTA from "../components/WaitlistCTA.astro";
 import CoveyMark from "../components/CoveyMark.astro";
 import EmptyState from "../components/EmptyState.astro";
+import { SITE } from "../config";
 ---
 
 <BaseLayout
@@ -27,7 +28,7 @@ import EmptyState from "../components/EmptyState.astro";
       title="Nothing to show yet — honestly."
       body="Were you part of an early plan? If you'd be happy to share how it went, we'd love to feature your story here."
     >
-      <a href="/signup" class="btn btn-primary">Join the flock</a>
+      <a href={SITE.joinUrl} class="btn btn-primary">Join the flock</a>
       <a href="/contact" class="btn btn-secondary">Share your story</a>
     </EmptyState>
 

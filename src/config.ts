@@ -9,9 +9,8 @@ export const SITE = {
   url: "https://coveyapp.co",
 
   // The Expo app (separate covey-web repo) is the only thing on
-  // `app.coveyapp.co`; everything on the apex domain — including the waitlist
-  // at /signup — lives in this Astro site and must never be duplicated in the
-  // Expo tree.
+  // `app.coveyapp.co`; everything on the apex domain lives in this Astro site
+  // and must never be duplicated in the Expo tree.
   //
   // `appIsLive` is the single switch for cross-linking into the product: flip
   // it to true once the Expo static export is deployed and the header/footer
@@ -24,6 +23,11 @@ export const SITE = {
   browseUrl: "https://app.coveyapp.co/explore",
   // convenience explicit sign-in route for direct login links
   signInUrl: "https://app.coveyapp.co/login",
+
+  // Where the primary "Join the flock" CTA lands. The product takes new
+  // people straight into the app's login/signup on `go.coveyapp.co`; the
+  // waitlist form this site used to host at /signup is gone.
+  joinUrl: "https://go.coveyapp.co/login",
   appIsLive: false,
 
 

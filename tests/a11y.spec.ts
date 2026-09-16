@@ -5,7 +5,6 @@ const ROUTES = [
   "/",
   "/about",
   "/contact",
-  "/signup",
   "/testimonials",
   "/events",
   "/terms",
