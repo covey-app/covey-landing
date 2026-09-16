@@ -17,11 +17,10 @@ Astro view transitions). Everything remains usable with JavaScript disabled.
 | `/about` | About — story + four principles |
 | `/contact` | Contact — form (Netlify Forms) + linked emails |
 | `/events` | Upcoming Events — honest empty state until dates are confirmed |
-| `/signup` | Waitlist signup (invite-only launch) — form (Netlify Forms) |
 | `/testimonials` | Testimonials — honest empty state until real stories exist |
 | `/privacy` | Privacy policy (marketing site scope only) |
 | `/support` | Support contact — used for the App Store Connect Support URL |
-| `/thanks` | Post-submission confirmation (form `action`) |
+| `/thanks` | Post-submission confirmation (contact form `action`) |
 
 Testimonials and Events are intentionally kept out of the primary navigation
 until they hold real content; both remain linked from the footer.
@@ -55,7 +54,7 @@ Reusable components: `CoveyMark`, `DefinitionMoment`, `PlanCardMock`,
 - [ ] `public/og-image.png` currently reuses the hero bird illustration — swap for a dedicated 1200×630 share image once you have real app screenshots or branding to show.
 - [ ] Set up inboxes (or forwarding) for every address in `src/config.ts` — `hello@`, `press@`, `support@`, `safety@coveyapp.co`. GoDaddy sells email, or you can forward `@coveyapp.co` to an existing inbox via GoDaddy's free email forwarding.
 - [ ] Once `covey-web` is deployed at `app.coveyapp.co`, flip `appIsLive` in `src/config.ts` so the header/footer show "Browse plans" (`browseUrl`, no account needed) and "Sign in" (`appUrl`).
-- [ ] Once iOS is approved, set `appStoreUrl` in `src/config.ts` and add a real badge to `/signup`.
+- [ ] Once iOS is approved, set `appStoreUrl` in `src/config.ts` and add a real badge to the home page CTA.
 - [ ] Have the `/privacy` draft reviewed against your real data practices before submitting the URL to App Store Connect.
 
 
@@ -80,16 +79,16 @@ npm run tokens:generate   # rewrite src/styles/tokens.css from tokens.json
 Deployed on **Netlify** (see `netlify.toml`): build `npm run build`, publish
 `dist`. Security headers and the catch-all 404 are configured there.
 
-**Forms** use Netlify Forms — Netlify detects the two `data-netlify="true"`
-forms (`waitlist`, `contact`) at build time and captures submissions
-(**Site settings → Forms**). Both forms POST to `/thanks` and carry
-`data-astro-reload` so Astro's client router performs a full navigation and
-Netlify captures the POST. If you migrate off Netlify, replace the form
-backend (the `data-netlify` attribute + honeypot) before release — a POST to
-the static `/thanks` page will otherwise fail.
+**Forms** use Netlify Forms — Netlify detects the `data-netlify="true"`
+`contact` form at build time and captures submissions (**Site settings →
+Forms**). It POSTs to `/thanks` and carries `data-astro-reload` so Astro's
+client router performs a full navigation and Netlify captures the POST. If you
+migrate off Netlify, replace the form backend (the `data-netlify` attribute +
+honeypot) before release — a POST to the static `/thanks` page will otherwise
+fail.
 
-Waitlist emails land in Netlify Forms; export them (or wire a webhook) into
-whatever system actually sends invites — that pipeline lives outside this repo.
+There is no waitlist form on this site: the "Join the flock" CTA sends people
+straight to `joinUrl` (`go.coveyapp.co/login`) in the product.
 
 ## Domain
 
@@ -100,13 +99,13 @@ Policy and Support URLs in the iOS App Store Connect listing.
 ## Before you go live
 
 - [ ] Confirm the Netlify Forms submissions inbox/notifications are set up for
-      `waitlist` and `contact`, and submit each form once in production.
+      `contact`, and submit the form once in production.
 - [ ] Set up inboxes/forwarding for every address in `src/config.ts`
       (`hello@`, `press@`, `support@`, `safety@coveyapp.co`).
 - [ ] Once `covey-web` is deployed, set `appUrl`/`appIsLive` in
       `src/config.ts` so the "Open the app" link resolves.
 - [ ] Once iOS is approved, set `appStoreUrl` in `src/config.ts` and add a
-      real App Store badge to `/signup`.
+      real App Store badge to the home page CTA.
 - [ ] Have the `/privacy` draft reviewed against your real data practices
       before submitting the URL to App Store Connect.
 
@@ -148,8 +147,8 @@ should be able to ship on its own. The deploy split is:
 | `coveyapp.co` | this repo (Astro) | `npm run build` → `dist/` |
 | `app.coveyapp.co` | `covey-web` (Expo static export) | `npx expo export --platform web` → `dist/` |
 
-All marketing, legal, and waitlist pages live here; the product app hosts
-none of them and links back to this site instead. The connections are:
+All marketing and legal pages live here; the product app hosts none of them
+and links back to this site instead. The connections are:
 
 - **Brand / design tokens:** colors, radii, spacing, and font stacks are
   synced one-directionally from `covey-web`'s `lib/theme/` (itself ported
@@ -158,15 +157,15 @@ none of them and links back to this site instead. The connections are:
   `global.css`. Run `npm run tokens:verify` after theme changes over there.
   Landing-only values (CSS shadows, category palette, motion) stay
   hand-written in `global.css`. See `scripts/design-tokens/README.md`.
-- **Cross-links:** `src/config.ts` holds `appUrl` ("Sign in"), `browseUrl`
-  ("Browse plans" — published plans are viewable without an account), and
-  the `appIsLive` switch that hides both until the product deploy exists.
-  Update them there once, not scattered across pages.
+- **Cross-links:** `src/config.ts` holds `joinUrl` ("Join the flock" —
+  `go.coveyapp.co/login`), `appUrl` ("Sign in"), `browseUrl` ("Browse plans"
+  — published plans are viewable without an account), and the `appIsLive`
+  switch that hides the latter two until the product deploy exists. Update
+  them there once, not scattered across pages.
 - **App Store Connect:** once submitted, use `https://coveyapp.co/privacy`
   and `https://coveyapp.co/support` as your Privacy Policy URL and Support
   URL in `covey-ios`'s App Store Connect listing.
-- **Waitlist → invites:** waitlist emails land in Netlify Forms. Export
-  them (or wire a Netlify → Zapier/webhook integration) into whatever
-  system `covey-ios`/`covey-web` uses to actually send invites — that
-  pipeline lives outside this repo by design.
+- **Signup:** this site no longer collects emails. "Join the flock" hands
+  people to `joinUrl` (`go.coveyapp.co/login`) and the product owns signup
+  from there.
 

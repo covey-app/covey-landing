@@ -1,5 +1,6 @@
 ---
 import CoveyMark from "./CoveyMark.astro";
+import { SITE } from "../config";
 
 interface Props {
   eyebrow?: string;
@@ -21,7 +22,7 @@ const {
   <h2 class="display t-h2 mb-6">{heading}</h2>
   <p class="text-ink-muted max-w-xl mx-auto mb-10 leading-relaxed">{body}</p>
   <div class="flex justify-center gap-3 flex-wrap">
-    <a href="/signup" class="btn btn-primary btn-lg">Join the flock</a>
+    <a href={SITE.joinUrl} class="btn btn-primary btn-lg">Join the flock</a>
     <a href="/contact" class="btn btn-secondary btn-lg">Talk to us</a>
   </div>
 </section>

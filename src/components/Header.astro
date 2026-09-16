@@ -65,7 +65,7 @@ const isCurrent = (href: string) => normalize(href) === path;
           </>
         )
       }
-      <a href="/signup" class="btn btn-primary btn-sm hidden md:inline-flex">
+      <a href={SITE.joinUrl} class="btn btn-primary btn-sm hidden md:inline-flex">
 
         Join the flock
       </a>
@@ -121,7 +121,7 @@ const isCurrent = (href: string) => normalize(href) === path;
           </>
         )
       }
-      <a href="/signup" class="btn btn-primary w-full mt-3">Join the flock</a>
+      <a href={SITE.joinUrl} class="btn btn-primary w-full mt-3">Join the flock</a>
     </nav>
   </div>
 </header>

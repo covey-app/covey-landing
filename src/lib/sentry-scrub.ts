@@ -5,9 +5,9 @@
 // Sentry organisation; they must not disagree about what counts as sensitive.
 //
 // This site holds the least user content of the three — it is static pages
-// plus two Netlify forms — but the forms are the signup funnel, and /terms and
-// /privacy are the URLs App Review opens. Keeping the rules identical costs
-// nothing and means there is no third policy to reason about.
+// plus one Netlify contact form — but /terms and /privacy are the URLs App
+// Review opens. Keeping the rules identical costs nothing and means there is
+// no third policy to reason about.
 
 import type { ErrorEvent, EventHint } from "@sentry/core";
 
