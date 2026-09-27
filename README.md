@@ -13,48 +13,64 @@ Astro view transitions). Everything remains usable with JavaScript disabled.
 
 | Route | Purpose |
 | --- | --- |
-| `/` | Home — hero, category rail, why/what, how-it-works, itinerary proof, FAQ, CTA |
+| `/` | Home — hero with an example plan, what people plan, why once isn't enough, interactive plan demo, Coveys (repeat hangouts), safety, FAQ, CTA |
 | `/about` | About — story + four principles |
-| `/contact` | Contact — form (Netlify Forms) + linked emails |
+| `/contact` | Contact — form (Netlify Forms — see "Deployment") + linked emails |
 | `/events` | Upcoming Events — honest empty state until dates are confirmed |
-| `/testimonials` | Testimonials — honest empty state until real stories exist |
-| `/privacy` | Privacy policy (marketing site scope only) |
-| `/support` | Support contact — used for the App Store Connect Support URL |
+| `/testimonials` | Stories — honest empty state until real stories exist |
+| `/support`, `/safety`, `/status`, `/deletion` | Help pages; `/support` is the App Store Connect Support URL |
+| `/terms`, `/privacy` | Rendered from `docs/legal/*.md` (the authoritative text) |
+| `/signup`, `/waitlist` | Forward to the product's join screen (`joinUrl`). covey-web still links "Join the waitlist" to `/signup` |
+| `/sitemap.xml` | Generated from the page files at build time |
 | `/thanks` | Post-submission confirmation (contact form `action`) |
 
-Testimonials and Events are intentionally kept out of the primary navigation
-until they hold real content; both remain linked from the footer.
+Events and Stories stay out of the primary navigation until they hold real
+content; both remain linked from the footer.
 
-## Design system
+The home page's product claims are checked against covey-ios — see
+`docs/landing-audit-2026-09-26.md` §2 before adding one. Group size is
+host-set (six seats by default); there is no "2–10" cap.
 
-The visual language is a web translation of the current Covey iOS design
-system (see `covey/ios/Covey/Core/DesignSystem/*`). It lives entirely in
-`src/styles/global.css` as CSS custom properties + `@theme inline` tokens:
+## Design system — "the plan, printed"
 
-- **Surfaces:** near-white "paper" grounds, charcoal ink, flat elevated cards
-  (`.card`, `.card-pinned`, `.card-sunken`) with the app's exact shadow
-  elevations. No glassmorphism except the translucent sticky header.
-- **Type:** Geist Mono (titles/UI chrome), Instrument Sans (reading copy),
-  Manrope (friendly empty states). Headings use fluid `clamp()` scales
-  (`.t-hero`, `.t-h1`, `.t-h2`, `.t-h3`).
-- **Color:** a matcha-green + coffee-brown accent duo plus the nine activity
-  category colors (`--cat-*`), all with light/dark values.
-- **Brand mark:** the five-color "flock" dot cluster (`CoveyMark.astro`) — the
-  app has no bird illustration; the dots are the recurring signature.
-- **Motion:** restrained, reduced-motion-safe entrances, staggered reveals,
-  button/card feedback, and a shortened definition-moment bloom. All gated on
-  `prefers-reduced-motion`.
+A web translation of the Covey iOS design system
+(`covey/ios/Covey/Core/DesignSystem/*`). Tokens live in `src/styles/global.css`
+(CSS custom properties + `@theme inline`), with shared colors/radii/spacing
+generated into `src/styles/tokens.css` from covey-web.
 
-Reusable components: `CoveyMark`, `DefinitionMoment`, `PlanCardMock`,
-`CategoryChip`, `FormField`, `FormEnhance`, `EmptyState`, `ThemeToggle`.
+- **Type:** Geist Mono Variable (titles, labels, times, buttons; display titles
+  lowercase), Instrument Sans Variable (reading copy), Manrope (empty states
+  only). Self-hosted via Fontsource — no Google Fonts request.
+- **Color:** paper grounds, charcoal ink for every primary action, coffee
+  (`--accent-ink`) for accent words and links, matcha (`--accent`) for small
+  brand moments, and the nine category colors (`--cat-*`) only on stop orbs,
+  activity chips, and route marks.
+- **Logo:** the App Store icon — a quail (a covey is a flock of quail) —
+  shown as its icon tile (`AppIcon.astro`, assets in `public/brand/`, generated
+  from covey-ios `Assets.xcassets`). The five-dot cluster (`CoveyMark.astro`)
+  from the app's opening animation is a small punctuation mark, not the logo.
+- **Product UI in HTML, not screenshots:** `PlanInvite` (the app's "COVEY ·
+  THE PLAN" cover), `PlanDemo` (Itinerary / Map / Group, interactive),
+  `CoveyCard`, `CoveyJourney`. Example data lives in `src/lib/plans.ts` —
+  public places only, weekdays instead of dates, labeled "Example".
+- **Icons:** Lucide (ISC) inlined at build time via `src/lib/icons.ts` and
+  `Icon.astro` — zero client JS.
+- **Motion:** one signature moment (the hero plan assembling, ≤ 1.1s, CSS only)
+  over a quiet layer (section rises, demo crossfades, 0.97 press). Resting
+  styles are final states; everything respects `prefers-reduced-motion`.
+- **Cascade rule:** Astro scoped styles are unlayered and beat Tailwind v4's
+  layered utilities. Never pair a scoped `display` rule with a Tailwind
+  responsive `hidden`/`md:flex` on the same element — put the breakpoint in
+  the scoped CSS (see `Header.astro`).
 
-- [ ] Replace placeholder quotes in `src/pages/testimonials.astro` with real ones (has your permission to publish them).
+Reusable components: `AppIcon`, `Icon`, `PlanInvite`, `PlanDemo`, `CoveyCard`,
+`CoveyJourney`, `JoinCTA`, `CoveyMark`, `EmptyState`, `FormField`,
+`FormEnhance`, `ThemeToggle`, `RedirectPage`.
+
+- [ ] Replace placeholder quotes in `src/pages/testimonials.astro` with real ones (with permission to publish them).
 - [ ] Replace placeholder dates in `src/pages/events.astro` with confirmed events, or leave the empty-state copy as-is.
-- [ ] Once you have a real iOS screenshot, drop it at `public/screenshots/hero.png` — see the TODO comment in `src/pages/index.astro` for where to slot it in alongside (or instead of) the bird illustration card.
-- [ ] `public/og-image.png` currently reuses the hero bird illustration — swap for a dedicated 1200×630 share image once you have real app screenshots or branding to show.
-- [ ] Set up inboxes (or forwarding) for every address in `src/config.ts` — `hello@`, `press@`, `support@`, `safety@coveyapp.co`. GoDaddy sells email, or you can forward `@coveyapp.co` to an existing inbox via GoDaddy's free email forwarding.
-- [ ] Once `covey-web` is deployed at `app.coveyapp.co`, flip `appIsLive` in `src/config.ts` so the header/footer show "Browse plans" (`browseUrl`, no account needed) and "Sign in" (`appUrl`).
-- [ ] Once iOS is approved, set `appStoreUrl` in `src/config.ts` and add a real badge to the home page CTA.
+- [ ] Set up inboxes (or forwarding) for every address in `src/config.ts` — `hello@`, `press@`, `support@`, `safety@coveyapp.co`.
+- [ ] Once iOS is approved, set `appStoreUrl` in `src/config.ts` and add the App Store badge beside the primary CTA.
 - [ ] Have the `/privacy` draft reviewed against your real data practices before submitting the URL to App Store Connect.
 
 
@@ -76,8 +92,16 @@ npm run tokens:generate   # rewrite src/styles/tokens.css from tokens.json
 
 ## Deployment
 
-Deployed on **Netlify** (see `netlify.toml`): build `npm run build`, publish
-`dist`. Security headers and the catch-all 404 are configured there.
+**Production is served by Vercel** (`coveyapp.co` 308-redirects to
+`www.coveyapp.co`, the canonical origin — `SITE.url` and `site` in
+`astro.config.mjs`; response headers say `server: Vercel`). `vercel.json`
+carries the security headers and the `/signup` + `/waitlist` redirects.
+`netlify.toml` mirrors the same config in case the site moves back to Netlify.
+Build `npm run build`, publish `dist`.
+
+> **Verify the contact form.** It uses Netlify Forms (`data-netlify`), which
+> does nothing on Vercel. Submit it once in production; if nothing arrives,
+> move it to a Vercel-compatible backend before relying on it.
 
 **Forms** use Netlify Forms — Netlify detects the `data-netlify="true"`
 `contact` form at build time and captures submissions (**Site settings →
@@ -87,8 +111,10 @@ migrate off Netlify, replace the form backend (the `data-netlify` attribute +
 honeypot) before release — a POST to the static `/thanks` page will otherwise
 fail.
 
-There is no waitlist form on this site: the "Join the flock" CTA sends people
-straight to `joinUrl` (`go.coveyapp.co/login`) in the product.
+There is no waitlist form on this site: the "Join Covey" CTA sends people
+straight to `joinUrl` (`go.coveyapp.co/login`, which offers Apple/Google
+sign-in and "New to Covey? Create an account"). "Sign in" uses `signInUrl`,
+currently the same screen.
 
 ## Domain
 
@@ -98,16 +124,17 @@ Policy and Support URLs in the iOS App Store Connect listing.
 
 ## Before you go live
 
-- [ ] Confirm the Netlify Forms submissions inbox/notifications are set up for
-      `contact`, and submit the form once in production.
+- [ ] Submit the contact form once in production and confirm it arrives
+      (Netlify Forms does not run on Vercel — see "Deployment").
 - [ ] Set up inboxes/forwarding for every address in `src/config.ts`
       (`hello@`, `press@`, `support@`, `safety@coveyapp.co`).
-- [ ] Once `covey-web` is deployed, set `appUrl`/`appIsLive` in
-      `src/config.ts` so the "Open the app" link resolves.
 - [ ] Once iOS is approved, set `appStoreUrl` in `src/config.ts` and add a
       real App Store badge to the home page CTA.
 - [ ] Have the `/privacy` draft reviewed against your real data practices
       before submitting the URL to App Store Connect.
+
+The DNS notes below describe the original Netlify setup; production now runs
+on Vercel, whose dashboard shows its own records.
 
 **In Netlify:** Site settings → Domain management → Add a domain → enter
 `coveyapp.co`. Netlify will show you the exact records to add.
@@ -129,13 +156,10 @@ IP.
 Once DNS resolves, Netlify auto-provisions a free Let's Encrypt SSL
 certificate for `coveyapp.co` — no extra steps.
 
-**Decide your subdomain layout now** (recommended):
+**Subdomain layout:**
 
 - `coveyapp.co` → this repo (landing/marketing)
-- `app.coveyapp.co` → `covey-web` (the actual product web app)
-
-Update `appUrl` in `src/config.ts` once `covey-web` is live at that
-subdomain so the header/footer link out to it correctly.
+- `go.coveyapp.co` → `covey-web` (the product web app)
 
 ## Connecting to `covey-ios` and `covey-web`
 
@@ -145,7 +169,7 @@ should be able to ship on its own. The deploy split is:
 | Domain | Repo | Build |
 | --- | --- | --- |
 | `coveyapp.co` | this repo (Astro) | `npm run build` → `dist/` |
-| `app.coveyapp.co` | `covey-web` (Expo static export) | `npx expo export --platform web` → `dist/` |
+| `go.coveyapp.co` | `covey-web` (Expo static export) | `npx expo export --platform web` → `dist/` |
 
 All marketing and legal pages live here; the product app hosts none of them
 and links back to this site instead. The connections are:
@@ -157,15 +181,13 @@ and links back to this site instead. The connections are:
   `global.css`. Run `npm run tokens:verify` after theme changes over there.
   Landing-only values (CSS shadows, category palette, motion) stay
   hand-written in `global.css`. See `scripts/design-tokens/README.md`.
-- **Cross-links:** `src/config.ts` holds `joinUrl` ("Join the flock" —
-  `go.coveyapp.co/login`), `appUrl` ("Sign in"), `browseUrl` ("Browse plans"
-  — published plans are viewable without an account), and the `appIsLive`
-  switch that hides the latter two until the product deploy exists. Update
-  them there once, not scattered across pages.
+- **Cross-links:** `src/config.ts` holds `joinUrl` ("Join Covey" —
+  `go.coveyapp.co/login`), `signInUrl` (`go.coveyapp.co/login`), and
+  `browseUrl` (public plans, footer only). Update them there once, not
+  scattered across pages.
 - **App Store Connect:** once submitted, use `https://coveyapp.co/privacy`
   and `https://coveyapp.co/support` as your Privacy Policy URL and Support
   URL in `covey-ios`'s App Store Connect listing.
-- **Signup:** this site no longer collects emails. "Join the flock" hands
-  people to `joinUrl` (`go.coveyapp.co/login`) and the product owns signup
-  from there.
+- **Signup:** this site never collects emails. "Join Covey" hands people to
+  `joinUrl` (`go.coveyapp.co/login`) and the product owns signup from there.
 

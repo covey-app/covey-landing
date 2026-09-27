@@ -1,0 +1,36 @@
+---
+/*
+ * Icon — inline Lucide glyph from the build-time registry in lib/icons.ts.
+ * Decorative by default (aria-hidden); pass `label` when the icon is the only
+ * thing conveying meaning.
+ */
+import { iconBody, type IconName } from "../lib/icons";
+
+interface Props {
+  name: IconName;
+  size?: number;
+  stroke?: number;
+  label?: string;
+  class?: string;
+}
+
+const { name, size = 16, stroke = 2, label, class: className } = Astro.props;
+---
+
+<svg
+  class:list={["icon", className]}
+  xmlns="http://www.w3.org/2000/svg"
+  width={size}
+  height={size}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width={stroke}
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  aria-hidden={label ? undefined : "true"}
+  role={label ? "img" : undefined}
+  aria-label={label}
+  focusable="false"
+  set:html={iconBody(name)}
+/>

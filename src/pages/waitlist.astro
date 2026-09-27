@@ -1,0 +1,7 @@
+---
+// covey-web links here ("Join the waitlist"); forwards to account creation.
+import RedirectPage from "../components/RedirectPage.astro";
+import { SITE } from "../config";
+---
+
+<RedirectPage to={SITE.joinUrl} title="Join Covey" />

@@ -16,6 +16,21 @@
     Permissions-Policy = "camera=(), microphone=(), geolocation=()"
     Strict-Transport-Security = "max-age=63072000; includeSubDomains; preload"
 
+# The product (covey-web) still links "Join the waitlist" to coveyapp.co/signup.
+# The waitlist is gone; forward both paths to the product's join screen. Must sit above
+# the catch-all 404.
+[[redirects]]
+  from = "/signup"
+  to = "https://go.coveyapp.co/login"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/waitlist"
+  to = "https://go.coveyapp.co/login"
+  status = 302
+  force = true
+
 [[redirects]]
   from = "/*"
   to = "/404"

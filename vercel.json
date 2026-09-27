@@ -1,4 +1,8 @@
 {
+  "redirects": [
+    { "source": "/signup", "destination": "https://go.coveyapp.co/login", "permanent": false },
+    { "source": "/waitlist", "destination": "https://go.coveyapp.co/login", "permanent": false }
+  ],
   "headers": [
     {
       "source": "/(.*)",

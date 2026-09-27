@@ -1,0 +1,57 @@
+---
+/*
+ * JoinCTA — the closing call to action. The primary action hands people to
+ * the product (SITE.joinUrl → go.coveyapp.co/login, which covers sign-up and
+ * sign-in); there is no waitlist or email capture on this site, so the copy
+ * must never promise one. One button: a second one pointing at the same
+ * screen would be a choice without a difference.
+ */
+import AppIcon from "./AppIcon.astro";
+import { SITE, CITY_SHORT } from "../config";
+
+interface Props {
+  eyebrow?: string;
+  heading?: string;
+  body?: string;
+}
+const {
+  eyebrow = "Your first plan",
+  heading = "see you at the first stop.",
+  body = "Make an account, find a plan this week, and meet people you'll want to see again.",
+} = Astro.props;
+---
+
+<section class="join-cta reveal" aria-labelledby="join-cta-title">
+  <div class="max-w-3xl mx-auto px-5 sm:px-6 text-center">
+    <div class="flex justify-center mb-6">
+      <AppIcon size={80} class="join-quail" alt="The Covey app icon" />
+    </div>
+    <p class="eyebrow mb-4">{eyebrow}</p>
+    <h2 id="join-cta-title" class="display t-h2 mb-5 text-balance">{heading}</h2>
+    <p class="lede mx-auto mb-9">{body}</p>
+    <div class="flex justify-center">
+      <a href={SITE.joinUrl} class="btn btn-primary btn-lg w-full sm:w-auto">Join Covey</a>
+    </div>
+    <p class="mt-5 font-mono text-xs uppercase tracking-[0.14em] text-ink-muted">
+      Free · 18+ · {CITY_SHORT} first
+    </p>
+  </div>
+</section>
+
+<style>
+  .join-cta {
+    padding-block: var(--section-y);
+    border-top: 0.7px solid var(--edge);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.js-ready) .join-cta.is-visible :global(.join-quail) {
+      animation: quail-hop 0.6s var(--ease-pop) 0.15s both;
+    }
+  }
+  @keyframes quail-hop {
+    from {
+      opacity: 0;
+      transform: translateY(10px) rotate(-6deg);
+    }
+  }
+</style>

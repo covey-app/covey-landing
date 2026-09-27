@@ -1,6 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import WaitlistCTA from "../components/WaitlistCTA.astro";
+import JoinCTA from "../components/JoinCTA.astro";
 import CoveyMark from "../components/CoveyMark.astro";
 import EmptyState from "../components/EmptyState.astro";
 import { SITE } from "../config";
@@ -20,22 +20,18 @@ import { SITE } from "../config";
     </h1>
     <p class="text-ink-muted text-lg leading-relaxed max-w-2xl mb-12">
       Launch mixers, host meetups, and city-by-city rollout dates will land
-      here first. We haven't locked anything in yet — join the waitlist and
-      you'll hear about each event before it goes public.
+      here first. We haven't locked anything in yet. In the meantime, the
+      plans themselves are the events — anyone can host one.
     </p>
 
     <EmptyState
       title="Nothing on the calendar yet."
       body="We'll post real dates here the moment they're confirmed — no placeholder events, no maybes."
     >
-      <a href={SITE.joinUrl} class="btn btn-primary">Join the flock</a>
-      <a href="/about" class="btn btn-secondary">How Covey works</a>
+      <a href={SITE.joinUrl} class="btn btn-primary">Join Covey</a>
+      <a href="/#how" class="btn btn-secondary">How Covey works</a>
     </EmptyState>
   </div>
 
-  <WaitlistCTA
-    eyebrow="Don't miss it"
-    heading="Get notified about the next event."
-    body="Waitlist members hear about launch mixers and city rollouts before anyone else."
-  />
+  <JoinCTA />
 </BaseLayout>

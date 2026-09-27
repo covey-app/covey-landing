@@ -1,0 +1,1063 @@
+---
+/*
+ * PlanDemo — an interactive web rendition of the app's plan detail
+ * (covey-ios PlanDetailView: the Map | Itinerary | Group "brochure" panels,
+ * PlanItineraryPage, TimelineView, PlanMapPage, PlanGroupPage).
+ *
+ * Adapted for the web rather than shrunk into a phone frame: on wide screens
+ * the plan summary (badges, orbs, title, host, seats, join action) stays put
+ * on the left while the three views switch on the right, so every piece of
+ * text renders at reading size.
+ *
+ * Interaction:
+ *  - Plan picker: three example plans (buttons, aria-pressed).
+ *  - View tabs: WAI-ARIA tabs with arrow/Home/End keys, automatic activation.
+ *  - Demo join: plays the app's ink stamp ("JOINED" / "REQUESTED") and fills a
+ *    seat. Local only — the note under the button says nothing was sent.
+ *
+ * Without JavaScript the first plan's itinerary renders in full; the other
+ * plans and views are `hidden` and the controls are inert.
+ */
+import Icon from "./Icon.astro";
+import { EXAMPLE_PLANS, goingLabel, metaParts } from "../lib/plans";
+
+const views = [
+  { id: "itinerary", label: "Itinerary", icon: "list" as const },
+  { id: "map", label: "Map", icon: "map" as const },
+  { id: "group", label: "Group", icon: "messages" as const },
+];
+
+const catVars = (key: string) =>
+  `--c:var(--cat-${key}); --c-soft:var(--cat-${key}-soft); --c-ink:var(--cat-${key}-ink)`;
+
+// Smooth route through the stops for the map view (Catmull-Rom → cubic Bézier),
+// in the SVG's 100×60 coordinate space.
+function routePath(points: [number, number][]) {
+  const pts = points.map(([x, y]) => [x, (y * 60) / 100] as [number, number]);
+  if (pts.length < 2) return "";
+  let d = `M ${pts[0][0]} ${pts[0][1]}`;
+  for (let i = 0; i < pts.length - 1; i++) {
+    const p0 = pts[i - 1] ?? pts[i];
+    const p1 = pts[i];
+    const p2 = pts[i + 1];
+    const p3 = pts[i + 2] ?? p2;
+    const c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6];
+    const c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
+    d += ` C ${c1[0].toFixed(2)} ${c1[1].toFixed(2)}, ${c2[0].toFixed(2)} ${c2[1].toFixed(2)}, ${p2[0]} ${p2[1]}`;
+  }
+  return d;
+}
+
+const arrivalTone: Record<string, string> = {
+  Arrived: "outdoors",
+  "On the way": "sports",
+  "Running late": "arts",
+};
+const avatarTones = ["food", "sports", "arts", "outdoors", "fashion", "professional"];
+---
+
+<div class="demo" data-demo>
+  <div class="demo-picker" role="group" aria-label="Example plans">
+    <span class="eyebrow demo-picker-label">Try an example</span>
+    <div class="demo-picker-options">
+      {
+        EXAMPLE_PLANS.map((p, i) => (
+          <button
+            type="button"
+            class="demo-pick"
+            aria-pressed={i === 0 ? "true" : "false"}
+            data-pick={p.id}
+          >
+            <span class="demo-pick-orbs" aria-hidden="true">
+              {p.stops.map((s) => (
+                <span class="demo-pick-dot" style={`background-color:var(--cat-${s.category})`} />
+              ))}
+            </span>
+            {p.pick}
+          </button>
+        ))
+      }
+    </div>
+  </div>
+
+  <div class="demo-sheet">
+    {/* ---------- Left: plan summary (persistent across views) ---------- */}
+    <div class="demo-summary">
+      {
+        EXAMPLE_PLANS.map((p, i) => (
+          <div class="demo-plan" data-plan={p.id} hidden={i !== 0}>
+            <div class="demo-badges">
+              <span class="badge badge-neutral">{p.hangout}</span>
+              <span class:list={["badge", p.join === "Open" ? "badge-moss" : "badge-ink"]}>
+                {p.join === "Open" ? "Open" : "Request"}
+              </span>
+              <span class="badge badge-neutral">Public</span>
+            </div>
+            <div class="demo-orbs" aria-hidden="true">
+              {p.stops.map((s) => (
+                <span class="orb" style={`--orb:36px; ${catVars(s.category)}`}>
+                  <Icon name={s.icon} />
+                </span>
+              ))}
+            </div>
+            <p class="meta-line">
+              {metaParts(p).map((m) => (
+                <span>{m}</span>
+              ))}
+            </p>
+            <h3 class="demo-title">{p.title}</h3>
+            <p class="demo-desc">{p.description}</p>
+
+            <div class="demo-host">
+              <span class="demo-avatar" style={catVars("outdoors")} aria-hidden="true">
+                {p.host.initials}
+              </span>
+              <span class="flex flex-col">
+                <span class="eyebrow">Hosted by</span>
+                <span class="demo-host-name">{p.host.name}</span>
+              </span>
+            </div>
+
+            <div class="demo-action" data-action data-mode={p.join === "Open" ? "open" : "request"}>
+              <div class="demo-going">
+                <span class="demo-seats" aria-hidden="true">
+                  {Array.from({ length: p.seats }, (_, j) => (
+                    <span class:list={["seat", j < p.people.length && "is-taken"]} />
+                  ))}
+                </span>
+                <span class="demo-going-label" data-going data-base={p.people.length} data-seats={p.seats}>
+                  {goingLabel(p)}
+                </span>
+              </div>
+              <button type="button" class="btn btn-primary demo-join" data-join>
+                {p.join === "Open" ? "Join plan" : "Request to join"}
+              </button>
+              <p class="demo-note" data-note>
+                {p.join === "Open"
+                  ? "Open plans take one tap. Try it: this is an example, nothing is sent."
+                  : "The host approves requests. Try it: this is an example, nothing is sent."}
+              </p>
+              <span class="demo-stamp" data-stamp aria-hidden="true">
+                {p.join === "Open" ? "Joined" : "Requested"}
+              </span>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+
+    {/* ---------- Right: Itinerary | Map | Group ---------- */}
+    <div class="demo-views">
+      <div class="demo-tabs" role="tablist" aria-label="Plan views">
+        {
+          views.map((v) => (
+            <button
+              type="button"
+              role="tab"
+              id={`demo-tab-${v.id}`}
+              aria-controls={`demo-panel-${v.id}`}
+              aria-selected={v.id === "itinerary" ? "true" : "false"}
+              tabindex={v.id === "itinerary" ? 0 : -1}
+              class="demo-tab"
+              data-tab={v.id}
+            >
+              <Icon name={v.icon} size={15} />
+              {v.label}
+            </button>
+          ))
+        }
+      </div>
+
+      {/* Itinerary */}
+      <div role="tabpanel" id="demo-panel-itinerary" aria-labelledby="demo-tab-itinerary" class="demo-panel" data-panel="itinerary" tabindex="0">
+        {
+          EXAMPLE_PLANS.map((p, i) => (
+            <div class="demo-plan" data-plan={p.id} hidden={i !== 0}>
+              <p class="eyebrow mb-5">
+                Itinerary · {p.stops.length} stops
+              </p>
+              <ol class="timeline">
+                {p.stops.map((s, si) => (
+                  <li class="tl-stop" style={`--i:${si}; ${catVars(s.category)}`}>
+                    <span class="tl-rail" aria-hidden="true">
+                      <span class="orb" style="--orb:30px">
+                        <Icon name={s.icon} />
+                      </span>
+                    </span>
+                    <div class="tl-body">
+                      <p class="tl-time">{s.time}</p>
+                      <span class="act-chip">{s.activity}</span>
+                      <h4 class="tl-title">{s.title}</h4>
+                      <p class="tl-venue">{s.venue}</p>
+                      <p class="tl-area">{s.area}</p>
+                      {p.legs[si] && (
+                        <p class="tl-leg">
+                          <span class="tl-leg-icon" aria-hidden="true">
+                            <Icon name={p.legs[si].mode === "walk" ? "footprints" : "bus"} size={12} />
+                          </span>
+                          {p.legs[si].mode === "walk" ? "Walk" : "Bus"} · {p.legs[si].minutes} min
+                        </p>
+                      )}
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          ))
+        }
+      </div>
+
+      {/* Map */}
+      <div role="tabpanel" id="demo-panel-map" aria-labelledby="demo-tab-map" class="demo-panel" data-panel="map" tabindex="0" hidden>
+        {
+          EXAMPLE_PLANS.map((p, i) => (
+            <div class="demo-plan" data-plan={p.id} hidden={i !== 0}>
+              <div class="map" role="img" aria-label={`Route map: ${p.stops.map((s) => s.title).join(", then ")}.`}>
+                <svg class="map-art" viewBox="0 0 100 60" preserveAspectRatio="none" aria-hidden="true">
+                  <defs>
+                    <pattern id={`grid-${p.id}`} width="8" height="8" patternUnits="userSpaceOnUse">
+                      <path d="M 8 0 L 0 0 0 8" fill="none" class="map-grid" />
+                    </pattern>
+                  </defs>
+                  <rect width="100" height="60" fill={`url(#grid-${p.id})`} />
+                  <path d="M -2 44 C 18 38, 30 50, 52 46 S 86 36, 104 42" class="map-street" />
+                  <path d="M 58 -2 C 54 18, 62 34, 56 62" class="map-street" />
+                  <ellipse cx="22" cy="18" rx="16" ry="9" class="map-park" />
+                  <path d={routePath(p.stops.map((s) => s.at))} class="map-route" />
+                </svg>
+                {p.stops.map((s, si) => (
+                  <span class="map-pin" style={`left:${s.at[0]}%; top:${s.at[1]}%; --i:${si}`} aria-hidden="true">
+                    {si + 1}
+                  </span>
+                ))}
+                {p.legs.map((l, li) => {
+                  const a = p.stops[li].at;
+                  const b = p.stops[li + 1].at;
+                  return (
+                    <span class="map-leg" style={`left:${(a[0] + b[0]) / 2}%; top:${(a[1] + b[1]) / 2}%`} aria-hidden="true">
+                      <Icon name={l.mode === "walk" ? "footprints" : "bus"} size={11} />
+                      {l.minutes} min
+                    </span>
+                  );
+                })}
+              </div>
+              <p class="eyebrow mt-6 mb-3">Route · {p.stops.length} stops</p>
+              <ol class="route-list">
+                {p.legs.map((l, li) => (
+                  <li>
+                    <span class="route-legs">
+                      {p.stops[li].title} <Icon name="arrow-right" size={13} /> {p.stops[li + 1].title}
+                    </span>
+                    <span class="route-time">
+                      {l.minutes} min · {l.mode}
+                    </span>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          ))
+        }
+      </div>
+
+      {/* Group */}
+      <div role="tabpanel" id="demo-panel-group" aria-labelledby="demo-tab-group" class="demo-panel" data-panel="group" tabindex="0" hidden>
+        {
+          EXAMPLE_PLANS.map((p, i) => (
+            <div class="demo-plan" data-plan={p.id} hidden={i !== 0}>
+              <p class="eyebrow mb-4">
+                Attendees · {p.people.length} of {p.seats} going
+              </p>
+              <ul class="avatars" aria-label={`Going: ${p.people.map((x) => x.name).join(", ")}`}>
+                {p.people.map((x, xi) => (
+                  <li class="demo-avatar" style={catVars(avatarTones[xi % avatarTones.length])}>
+                    <span aria-hidden="true">{x.initials}</span>
+                  </li>
+                ))}
+                {Array.from({ length: p.seats - p.people.length }, () => (
+                  <li class="demo-avatar is-open" aria-hidden="true" />
+                ))}
+              </ul>
+              <p class="group-copy">
+                Seats fill on a first-come basis. The host can review and decline requests for request-only plans.
+              </p>
+
+              <p class="eyebrow mt-7 mb-3">Once you're going</p>
+              <div class="group-features">
+                <div class="group-feature">
+                  <Icon name="messages" size={18} />
+                  <span>
+                    <strong>Plan chat</strong>
+                    Message everyone going.
+                  </span>
+                </div>
+                <div class="group-feature">
+                  <Icon name="navigation" size={18} />
+                  <span>
+                    <strong>Arrivals</strong>
+                    Share your day-of status.
+                  </span>
+                </div>
+              </div>
+              <ul class="arrivals">
+                {p.people.map((x) => (
+                  <li>
+                    <span>{x.name}</span>
+                    <span class="act-chip" style={catVars(arrivalTone[x.arrival ?? "On the way"])}>
+                      {x.arrival}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+  <p class="sr-only" aria-live="polite" data-live></p>
+</div>
+
+<style>
+  .demo {
+    position: relative;
+  }
+
+  /* ---- Plan picker ---- */
+  .demo-picker {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1rem;
+    margin-bottom: 1rem;
+  }
+  .demo-picker-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .demo-pick {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    min-height: 44px;
+    padding: 0.5rem 0.9rem;
+    border-radius: 999px;
+    border: 0.7px solid color-mix(in oklab, var(--ink) 18%, transparent);
+    background-color: var(--paper-elevated);
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: 0.8125rem;
+    color: var(--ink);
+    cursor: pointer;
+    transition:
+      background-color var(--motion-snappy),
+      color var(--motion-snappy),
+      border-color var(--motion-snappy),
+      transform var(--motion-snappy);
+  }
+  @media (hover: hover) {
+    .demo-pick:hover {
+      border-color: color-mix(in oklab, var(--ink) 40%, transparent);
+    }
+  }
+  .demo-pick:active {
+    transform: scale(0.97);
+  }
+  .demo-pick[aria-pressed="true"] {
+    background-color: var(--ink);
+    color: var(--ink-inverse);
+    border-color: var(--ink);
+  }
+  .demo-pick-orbs {
+    display: inline-flex;
+  }
+  .demo-pick-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    box-shadow: 0 0 0 1.5px var(--paper-elevated);
+  }
+  .demo-pick-dot + .demo-pick-dot {
+    margin-left: -3px;
+  }
+  .demo-pick[aria-pressed="true"] .demo-pick-dot {
+    box-shadow: 0 0 0 1.5px var(--ink);
+  }
+
+  /* ---- Sheet ---- */
+  .demo-sheet {
+    display: grid;
+    grid-template-columns: 1fr;
+    border-radius: var(--radius-sheet);
+    background-color: var(--paper-elevated);
+    border: 0.7px solid color-mix(in oklab, var(--edge) 55%, transparent);
+    box-shadow: var(--shadow-pinned);
+    overflow: hidden;
+  }
+  @media (min-width: 960px) {
+    .demo-sheet {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    }
+  }
+  .demo-summary {
+    padding: 1.5rem;
+    border-bottom: 0.7px solid var(--edge);
+  }
+  @media (min-width: 640px) {
+    .demo-summary {
+      padding: 2rem;
+    }
+  }
+  @media (min-width: 960px) {
+    .demo-summary {
+      padding: 2.5rem;
+      border-bottom: 0;
+      border-right: 0.7px solid var(--edge);
+    }
+  }
+  .demo-views {
+    padding: 1.25rem 1.5rem 1.75rem;
+    background-color: color-mix(in oklab, var(--paper) 55%, var(--paper-elevated));
+    min-width: 0;
+  }
+  @media (min-width: 640px) {
+    .demo-views {
+      padding: 1.5rem 2rem 2rem;
+    }
+  }
+  @media (min-width: 960px) {
+    .demo-views {
+      padding: 1.75rem 2.5rem 2.5rem;
+    }
+  }
+
+  .demo-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .demo-orbs {
+    display: flex;
+    gap: 0.6rem;
+    margin: 1.1rem 0 0.9rem;
+  }
+  .demo-title {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: clamp(1.6rem, 1.4vw + 1.15rem, 2.1rem);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin: 0.7rem 0 0.75rem;
+    text-wrap: balance;
+  }
+  .demo-desc {
+    color: var(--ink-muted);
+    line-height: 1.6;
+    max-width: 30rem;
+  }
+  .demo-host {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+    padding: 0.85rem 1rem;
+    border-radius: var(--radius-md);
+    background-color: var(--paper);
+  }
+  /* Phones: the host is in the hero card; skip the extra row here. */
+  @media (max-width: 639px) {
+    .demo-host {
+      display: none;
+    }
+    .demo-orbs {
+      margin: 0.9rem 0 0.7rem;
+    }
+    .tl-body {
+      padding-bottom: 1.1rem;
+    }
+    .tl-leg {
+      margin-top: 0.5rem;
+    }
+    .tl-area {
+      display: none;
+    }
+  }
+  .demo-host-name {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .demo-avatar {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    background-color: var(--c-soft);
+    color: var(--c-ink);
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 0.8125rem;
+    border: 2px solid var(--paper-elevated);
+    flex: none;
+  }
+  .demo-avatar.is-open {
+    background-color: transparent;
+    border: 1.5px dashed color-mix(in oklab, var(--ink-subtle) 80%, transparent);
+  }
+
+  /* ---- Join action + ink stamp ---- */
+  .demo-action {
+    position: relative;
+    display: grid;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+  .demo-going {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .demo-seats {
+    display: flex;
+    gap: 4px;
+  }
+  .demo-seats .seat {
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    border: 1.2px solid color-mix(in oklab, var(--ink-subtle) 80%, transparent);
+    transition:
+      background-color var(--motion-snappy),
+      border-color var(--motion-snappy),
+      transform 0.3s var(--ease-pop);
+  }
+  .demo-seats .seat.is-taken {
+    background-color: var(--accent);
+    border-color: transparent;
+  }
+  .demo-seats .seat.is-new {
+    background-color: var(--cat-outdoors);
+    transform: scale(1.25);
+  }
+  .demo-going-label {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: 0.8125rem;
+    color: var(--accent);
+  }
+  .demo-join {
+    width: 100%;
+  }
+  .demo-join[data-done="true"] {
+    background-color: transparent;
+    color: var(--cat-outdoors-ink);
+    border: 1px solid color-mix(in oklab, var(--cat-outdoors) 55%, transparent);
+    box-shadow: none;
+  }
+  .demo-note {
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--ink-muted);
+  }
+  /* InkStamp.swift: bold, tracked caps in a 3pt rounded border, −9°. */
+  .demo-stamp {
+    position: absolute;
+    right: 0.5rem;
+    top: -0.5rem;
+    padding: 0.2rem 0.7rem;
+    border: 3px solid currentColor;
+    border-radius: 10px;
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 1.5rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: color-mix(in oklab, var(--cat-outdoors-ink) 88%, transparent);
+    transform: rotate(-9deg);
+    opacity: 0;
+    pointer-events: none;
+    mix-blend-mode: multiply;
+  }
+  .dark .demo-stamp {
+    mix-blend-mode: normal;
+  }
+  .demo-action[data-mode="request"] .demo-stamp {
+    color: color-mix(in oklab, var(--ink) 80%, transparent);
+  }
+  .demo-stamp.is-stamping {
+    animation: stamp 1.6s both;
+  }
+  @keyframes stamp {
+    0% {
+      opacity: 0;
+      transform: rotate(-9deg) scale(1.7);
+      animation-timing-function: var(--ease-pop);
+    }
+    18% {
+      opacity: 1;
+      transform: rotate(-9deg) scale(1);
+    }
+    80% {
+      opacity: 1;
+      transform: rotate(-9deg) scale(1);
+    }
+    100% {
+      opacity: 0;
+      transform: rotate(-9deg) scale(1);
+    }
+  }
+
+  /* ---- Tabs (BrochureFoldIndicator: ink active segment) ---- */
+  .demo-tabs {
+    display: inline-flex;
+    gap: 0.25rem;
+    padding: 0.25rem;
+    margin-bottom: 1.5rem;
+    border-radius: 14px;
+    background-color: var(--paper-sunken);
+    max-width: 100%;
+  }
+  .demo-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 40px;
+    padding: 0.45rem 0.85rem;
+    border-radius: 11px;
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    cursor: pointer;
+    transition:
+      background-color var(--motion-snappy),
+      color var(--motion-snappy);
+  }
+  .demo-tab:hover {
+    color: var(--ink);
+  }
+  @media (pointer: coarse) {
+    .demo-tab {
+      min-height: 44px;
+    }
+  }
+  .demo-tab[aria-selected="true"] {
+    background-color: var(--ink);
+    color: var(--ink-inverse);
+  }
+  .demo-panel {
+    border-radius: var(--radius-md);
+  }
+  .demo-panel:focus-visible {
+    outline-offset: 6px;
+  }
+
+  /* ---- Itinerary timeline (TimelineView: solid ink route thread) ---- */
+  .timeline {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .tl-stop {
+    display: grid;
+    grid-template-columns: 2.25rem 1fr;
+    column-gap: 0.9rem;
+  }
+  .tl-rail {
+    position: relative;
+    display: flex;
+    justify-content: center;
+  }
+  .tl-rail .orb {
+    position: relative;
+    z-index: 1;
+  }
+  .tl-stop:not(:last-child) .tl-rail::after {
+    content: "";
+    position: absolute;
+    top: 30px;
+    bottom: 0;
+    left: calc(50% - 0.75px);
+    width: 1.5px;
+    background-color: color-mix(in oklab, var(--ink) 82%, transparent);
+    border-radius: 2px;
+  }
+  .tl-body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.3rem;
+    padding-bottom: 1.5rem;
+    min-width: 0;
+  }
+  .tl-stop:last-child .tl-body {
+    padding-bottom: 0;
+  }
+  .tl-time {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    color: var(--ink-muted);
+    line-height: 30px;
+  }
+  .tl-title {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: 1.0625rem;
+    line-height: 1.3;
+    color: var(--ink);
+    margin-top: 0.2rem;
+  }
+  /* The app tints venues slate because they're tappable there. Here they
+     aren't links, so they stay ink — blue text that goes nowhere is a false
+     affordance (and slate on this surface is only 3.6:1). */
+  .tl-venue {
+    font-size: 0.875rem;
+    color: var(--ink);
+  }
+  .tl-area {
+    font-size: 0.8125rem;
+    color: var(--ink-muted);
+    margin-top: -0.2rem;
+  }
+  .tl-leg {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.8rem;
+    font-size: 0.8125rem;
+    color: var(--ink-muted);
+  }
+  .tl-leg-icon {
+    display: grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 999px;
+    background-color: var(--paper-elevated);
+    border: 0.8px solid color-mix(in oklab, var(--ink) 35%, transparent);
+    color: var(--ink);
+  }
+
+  /* ---- Map (PlanMapPage: ink numbered pins, ink route, leg capsules) ---- */
+  .map {
+    position: relative;
+    aspect-ratio: 5 / 3;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background-color: var(--paper-sunken);
+    border: 0.7px solid color-mix(in oklab, var(--edge) 80%, transparent);
+  }
+  .map-art {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .map-grid {
+    stroke: color-mix(in oklab, var(--ink) 7%, transparent);
+    stroke-width: 0.25;
+    vector-effect: non-scaling-stroke;
+  }
+  .map-street {
+    fill: none;
+    stroke: var(--paper-elevated);
+    stroke-width: 7;
+    vector-effect: non-scaling-stroke;
+    stroke-linecap: round;
+  }
+  .map-park {
+    fill: color-mix(in oklab, var(--cat-outdoors) 18%, transparent);
+  }
+  .map-route {
+    fill: none;
+    stroke: color-mix(in oklab, var(--ink) 80%, transparent);
+    stroke-width: 3.5;
+    vector-effect: non-scaling-stroke;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .map-pin {
+    position: absolute;
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    margin: -15px 0 0 -15px;
+    border-radius: 999px;
+    background-color: var(--ink);
+    color: var(--ink-inverse);
+    box-shadow:
+      0 0 0 2.5px var(--paper-elevated),
+      var(--shadow-paper);
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 0.8125rem;
+  }
+  .map-leg {
+    position: absolute;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    transform: translate(-50%, -50%);
+    padding: 0.25rem 0.55rem;
+    border-radius: 999px;
+    background-color: color-mix(in oklab, var(--paper-elevated) 88%, transparent);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border: 0.7px solid color-mix(in oklab, var(--edge) 80%, transparent);
+    box-shadow: var(--shadow-paper);
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+  .route-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.5rem;
+  }
+  .route-list li {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.25rem 1rem;
+    padding: 0.7rem 0.9rem;
+    border-radius: var(--radius-sm);
+    background-color: var(--paper-elevated);
+    font-size: 0.875rem;
+  }
+  .route-legs {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem;
+    color: var(--ink);
+  }
+  .route-legs :global(svg) {
+    color: var(--ink-subtle);
+  }
+  .route-time {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--ink-muted);
+  }
+
+  /* ---- Group ---- */
+  .avatars {
+    display: flex;
+    flex-wrap: wrap;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .avatars .demo-avatar + .demo-avatar {
+    margin-left: -6px;
+  }
+  .group-copy {
+    margin-top: 0.9rem;
+    font-size: 0.875rem;
+    line-height: 1.55;
+    color: var(--ink-muted);
+    max-width: 28rem;
+  }
+  .group-features {
+    display: grid;
+    gap: 0.5rem;
+  }
+  @media (min-width: 480px) {
+    .group-features {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .group-feature {
+    display: flex;
+    gap: 0.7rem;
+    align-items: flex-start;
+    padding: 0.85rem 0.95rem;
+    border-radius: var(--radius-sm);
+    background-color: var(--paper-elevated);
+    font-size: 0.8125rem;
+    line-height: 1.45;
+    color: var(--ink-muted);
+  }
+  .group-feature :global(svg) {
+    flex: none;
+    color: var(--ink);
+    margin-top: 0.1rem;
+  }
+  .group-feature strong {
+    display: block;
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: 0.875rem;
+    color: var(--ink);
+  }
+  .arrivals {
+    list-style: none;
+    margin: 0.75rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 0.35rem;
+  }
+  .arrivals li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 0.9rem;
+    border-radius: var(--radius-sm);
+    background-color: var(--paper-elevated);
+    font-size: 0.875rem;
+    color: var(--ink);
+  }
+
+  /* ---- State-change motion ---- */
+  @media (prefers-reduced-motion: no-preference) {
+    .demo-plan.is-entering,
+    .demo-panel.is-entering {
+      animation: demo-in 0.24s var(--ease-out) both;
+    }
+    .demo-plan.is-entering .tl-stop,
+    .demo-panel.is-entering .tl-stop {
+      animation: demo-in 0.28s var(--ease-out) both;
+      animation-delay: calc(var(--i) * 30ms);
+    }
+    .demo-panel.is-entering .map-pin {
+      animation: pin-in 0.34s var(--ease-pop) both;
+      animation-delay: calc(0.08s + var(--i) * 50ms);
+    }
+  }
+  @keyframes demo-in {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+  }
+  @keyframes pin-in {
+    from {
+      opacity: 0;
+      scale: 0.5;
+    }
+  }
+</style>
+
+<script>
+  function initDemo(root: HTMLElement) {
+    if (root.dataset.bound === "true") return;
+    root.dataset.bound = "true";
+
+    const picks = [...root.querySelectorAll<HTMLButtonElement>("[data-pick]")];
+    const tabs = [...root.querySelectorAll<HTMLButtonElement>("[data-tab]")];
+    const panels = [...root.querySelectorAll<HTMLElement>("[data-panel]")];
+    const live = root.querySelector<HTMLElement>("[data-live]");
+    let plan = picks[0]?.dataset.pick ?? "";
+
+    const replay = (el: Element) => {
+      el.classList.remove("is-entering");
+      void (el as HTMLElement).offsetWidth; // restart the animation
+      el.classList.add("is-entering");
+      el.addEventListener("animationend", () => el.classList.remove("is-entering"), { once: true });
+    };
+
+    const resetJoin = (scope: ParentNode) => {
+      scope.querySelectorAll<HTMLElement>("[data-action]").forEach((a) => {
+        const btn = a.querySelector<HTMLButtonElement>("[data-join]");
+        if (!btn || btn.dataset.done !== "true") return;
+        btn.dataset.done = "false";
+        btn.textContent = btn.dataset.label ?? btn.textContent;
+        a.querySelector(".seat.is-new")?.classList.remove("is-taken", "is-new");
+        const going = a.querySelector<HTMLElement>("[data-going]");
+        if (going) going.textContent = `${going.dataset.base}/${going.dataset.seats} going`;
+      });
+    };
+
+    const showPlan = (id: string) => {
+      if (id === plan) return;
+      resetJoin(root);
+      plan = id;
+      picks.forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.pick === id)));
+      root.querySelectorAll<HTMLElement>("[data-plan]").forEach((el) => {
+        const on = el.dataset.plan === id;
+        el.hidden = !on;
+        if (on && el.offsetParent !== null) replay(el);
+      });
+      const title = root.querySelector<HTMLElement>(`.demo-summary [data-plan="${id}"] .demo-title`)?.textContent;
+      if (live && title) live.textContent = `Showing example plan: ${title}.`;
+    };
+
+    const showView = (id: string, focus = false) => {
+      tabs.forEach((t) => {
+        const on = t.dataset.tab === id;
+        t.setAttribute("aria-selected", String(on));
+        t.tabIndex = on ? 0 : -1;
+        if (on && focus) t.focus();
+      });
+      panels.forEach((p) => {
+        const on = p.dataset.panel === id;
+        p.hidden = !on;
+        if (on) replay(p);
+      });
+    };
+
+    picks.forEach((b) => b.addEventListener("click", () => showPlan(b.dataset.pick!)));
+    tabs.forEach((t, i) => {
+      t.addEventListener("click", () => showView(t.dataset.tab!));
+      t.addEventListener("keydown", (e) => {
+        const n = tabs.length;
+        const to =
+          e.key === "ArrowRight" ? (i + 1) % n
+          : e.key === "ArrowLeft" ? (i - 1 + n) % n
+          : e.key === "Home" ? 0
+          : e.key === "End" ? n - 1
+          : -1;
+        if (to < 0) return;
+        e.preventDefault();
+        showView(tabs[to].dataset.tab!, true);
+      });
+    });
+
+    // Demo join — local only. Plays the ink stamp and fills a seat.
+    root.querySelectorAll<HTMLElement>("[data-action]").forEach((a) => {
+      const btn = a.querySelector<HTMLButtonElement>("[data-join]");
+      const stamp = a.querySelector<HTMLElement>("[data-stamp]");
+      const going = a.querySelector<HTMLElement>("[data-going]");
+      if (!btn) return;
+      btn.dataset.label = btn.textContent?.trim() ?? "";
+      btn.addEventListener("click", () => {
+        const request = a.dataset.mode === "request";
+        if (btn.dataset.done === "true") {
+          resetJoin(a.parentElement ?? a);
+          if (live) live.textContent = "Example reset.";
+          return;
+        }
+        btn.dataset.done = "true";
+        btn.textContent = request ? "Requested · tap to undo" : "You're going · tap to undo";
+        if (!request) {
+          const seat = a.querySelector(".seat:not(.is-taken)");
+          seat?.classList.add("is-taken", "is-new");
+          if (going) going.textContent = `${Number(going.dataset.base) + 1}/${going.dataset.seats} going`;
+        }
+        if (stamp) {
+          stamp.classList.remove("is-stamping");
+          void stamp.offsetWidth;
+          stamp.classList.add("is-stamping");
+        }
+        if (live) {
+          live.textContent = request
+            ? "Example: request sent to the host. Nothing was actually sent."
+            : "Example: you're going. Nothing was actually sent.";
+        }
+      });
+    });
+  }
+
+  const boot = () => document.querySelectorAll<HTMLElement>("[data-demo]").forEach(initDemo);
+  boot();
+  document.addEventListener("astro:page-load", boot);
+</script>

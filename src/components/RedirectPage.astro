@@ -1,0 +1,24 @@
+---
+/*
+ * RedirectPage — static fallback for paths that forward to the product.
+ * The host-level redirect (vercel.json / netlify.toml) normally answers first;
+ * this page covers any host without those rules and anyone with a cached link.
+ */
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+interface Props {
+  to: string;
+  title: string;
+}
+const { to, title } = Astro.props;
+---
+
+<BaseLayout title={title} description="Taking you to Covey." noIndex={true}>
+  <meta slot="head" http-equiv="refresh" content={`0; url=${to}`} />
+  <div class="max-w-xl mx-auto px-6 py-32 text-center">
+    <p class="eyebrow mb-4">One moment</p>
+    <h1 class="display t-h2 mb-6">taking you to covey.</h1>
+    <p class="text-ink-muted mb-8">If nothing happens, use the button below.</p>
+    <a href={to} class="btn btn-primary btn-lg">Continue to Covey</a>
+  </div>
+</BaseLayout>
