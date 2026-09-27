@@ -1,6 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import WaitlistCTA from "../components/WaitlistCTA.astro";
+import JoinCTA from "../components/JoinCTA.astro";
 import BirdDivider from "../components/BirdDivider.astro";
 import CoveyMark from "../components/CoveyMark.astro";
 import { SITE } from "../config";
@@ -14,12 +14,12 @@ const principles = [
   {
     n: "02",
     t: "Small on purpose.",
-    d: "Two to ten people. Anything bigger and the host stops being a host. We won't ship features that push capacity up for its own sake.",
+    d: "Hosts set the headcount, six seats by default. Small enough that everyone actually talks. We won't ship features that push capacity up for its own sake.",
   },
   {
     n: "03",
-    t: "Real life over feeds.",
-    d: "Covey should feel less like an app and more like a corkboard. Open it, find a plan, close it, go.",
+    t: "Again beats once.",
+    d: "One good night is a coincidence. Friendship is repetition — so recaps, Coveys, and recurring plans exist to make the second hangout the easy default.",
   },
   {
     n: "04",
@@ -54,15 +54,15 @@ const stats = [
       </p>
       <p class="text-lg text-ink-muted">
         Group chats stall. Apps optimize for swipes, not Saturdays. The good
-        plans live in someone's head and never leave it. We're building a
-        plan-first social app instead — hosts publish small itineraries, a wine
-        crawl, a bookstore loop, a sunrise hike, and a few seats stay open for
+        plans live in someone's head and never leave it. So we built Covey
+        around plans instead — a host publishes a small itinerary, a ramen run,
+        a bookstore loop, a sunrise hike, and a few seats stay open for
         whoever's curious.
       </p>
       <p class="text-lg text-ink-muted">
-        Plans are intentionally small. Two to ten people, a date, a few stops,
-        and a clear vibe. You're not joining a "community." You're showing up
-        at the first stop.
+        Plans are intentionally small: a handful of people, a few stops, and a
+        clear vibe. And when a group clicks, it doesn't have to end there — it
+        can become a Covey that keeps meeting up.
       </p>
     </div>
 
@@ -86,10 +86,10 @@ const stats = [
       <div>
         <div class="eyebrow mb-3">The shape we build around</div>
         <p class="text-xl md:text-2xl text-ink leading-snug">
-          A handful of people, one plan, one day — then everyone goes home.
-          The name is the brief; the{" "}
-          <a href="/#why-covey" class="underline decoration-edge underline-offset-4 hover:text-accent-ink hover:decoration-accent-ink transition-colors">home page</a>{" "}
-          has the bird story.
+          A covey is a small flock of quail. On Covey, it's the handful of
+          people you keep making plans with. The{" "}
+          <a href="/#coveys" class="underline decoration-edge underline-offset-4 hover:text-accent-ink hover:decoration-accent-ink transition-colors">home page</a>{" "}
+          shows how a group gets there.
         </p>
       </div>
     </div>
@@ -113,9 +113,9 @@ const stats = [
     </div>
   </div>
 
-  <WaitlistCTA
-    eyebrow="The city is the canvas."
-    heading="Want to be part of it?"
-    body="Join the waitlist and we'll email you the moment invites open in your city."
+  <JoinCTA
+    eyebrow="The city is the canvas"
+    heading="want to be part of it?"
+    body="Make an account on the web today. The iOS app is rolling out by invite."
   />
 </BaseLayout>

@@ -4,7 +4,7 @@ import sentry from "@sentry/astro";
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://coveyapp.co",
+  site: "https://www.coveyapp.co",
   // Astro's default HTML compression collapses the whitespace-only text node
   // between a word and an inline element, so prose like
   // `email <a>support@coveyapp.co</a> if ...` shipped as
@@ -14,6 +14,13 @@ export default defineConfig({
   // whitespace is negligible; the alternative is a `{" "}` around every inline
   // anchor on the site.
   compressHTML: false,
+  // Inline every stylesheet into the page. Most visits are a single landing
+  // page, so a separate render-blocking CSS request (a full round trip before
+  // first paint) costs more than the cross-page caching it buys. Measured in
+  // docs/landing-audit-2026-09-26.md §9.
+  build: {
+    inlineStylesheets: "always",
+  },
   // Client config lives in sentry.client.config.ts, which this integration
   // picks up by convention. There is no server config: the site is static, so
   // there is no server to instrument.

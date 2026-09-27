@@ -1,6 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import WaitlistCTA from "../components/WaitlistCTA.astro";
+import JoinCTA from "../components/JoinCTA.astro";
 import CoveyMark from "../components/CoveyMark.astro";
 import EmptyState from "../components/EmptyState.astro";
 import { SITE } from "../config";
@@ -28,7 +28,7 @@ import { SITE } from "../config";
       title="Nothing to show yet — honestly."
       body="Were you part of an early plan? If you'd be happy to share how it went, we'd love to feature your story here."
     >
-      <a href={SITE.joinUrl} class="btn btn-primary">Join the flock</a>
+      <a href={SITE.joinUrl} class="btn btn-primary">Join Covey</a>
       <a href="/contact" class="btn btn-secondary">Share your story</a>
     </EmptyState>
 
@@ -38,9 +38,5 @@ import { SITE } from "../config";
     </p>
   </div>
 
-  <WaitlistCTA
-    eyebrow="Your turn"
-    heading="Ready to host your own?"
-    body="Join the waitlist and we'll invite you the moment your city opens up."
-  />
+  <JoinCTA eyebrow="Your turn" heading="ready to host your own?" />
 </BaseLayout>

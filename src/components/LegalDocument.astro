@@ -25,6 +25,19 @@ const { eyebrow, headings } = Astro.props;
 
 // Numbered sections and annexes only. h3 sub-clauses would swamp the rail.
 const sections = headings.filter((h) => h.depth === 2);
+
+// Wrap each table in a focusable, labeled scroll region. The annex tables are
+// wider than a phone, so they scroll sideways inside themselves (the body must
+// never scroll at 320px) — and a scroll container keyboard users can't reach
+// fails WCAG 2.1.1 (axe: scrollable-region-focusable). Done on the rendered
+// HTML at build time: no client JS, no change to the Markdown processor or to
+// a single character of the legal text.
+const body = (await Astro.slots.render("default"))
+  .replaceAll(
+    "<table>",
+    '<div class="table-scroll" tabindex="0" role="region" aria-label="Table (scrolls sideways on small screens)"><table>',
+  )
+  .replaceAll("</table>", "</table></div>");
 ---
 
 <div class="max-w-3xl mx-auto px-6 py-[var(--section-y)]">
@@ -47,7 +60,5 @@ const sections = headings.filter((h) => h.depth === 2);
     )
   }
 
-  <article class="legal-doc">
-    <slot />
-  </article>
+  <article class="legal-doc" set:html={body} />
 </div>

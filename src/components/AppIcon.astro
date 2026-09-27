@@ -1,0 +1,47 @@
+---
+/*
+ * AppIcon — Covey's App Store icon (covey-ios Assets.xcassets/AppIcon): the
+ * quail — a covey is a flock of quail — in a pastel gradient on white. It's
+ * the mark people see on their home screen, so it is the site's logo, shown
+ * as the icon tile it really is. (The bare CoveyMark crop reads as a cut-off
+ * shape without the tile.) The five-dot cluster from the opening animation
+ * stays a small punctuation mark (CoveyMark.astro), not the logo.
+ *
+ * Decorative by default; pass `alt` where it stands alone.
+ */
+interface Props {
+  size?: number;
+  alt?: string;
+  class?: string;
+  eager?: boolean;
+}
+const { size = 32, alt = "", class: className, eager = false } = Astro.props;
+const src = size <= 32 ? "/brand/app-icon-64.webp" : size <= 64 ? "/brand/app-icon-128.webp" : "/brand/app-icon-256.webp";
+---
+
+<img
+  class:list={["app-icon", className]}
+  src={src}
+  width={size}
+  height={size}
+  alt={alt}
+  loading={eager ? "eager" : "lazy"}
+  decoding="async"
+  draggable="false"
+  style={`--s:${size}px`}
+/>
+
+<style>
+  /* iOS icon mask ≈ 22.4% corner radius, plus a hairline so white-on-paper
+     still reads as a tile. */
+  .app-icon {
+    width: var(--s);
+    height: var(--s);
+    border-radius: calc(var(--s) * 0.224);
+    box-shadow:
+      0 0 0 0.7px color-mix(in oklab, var(--ink) 12%, transparent),
+      var(--shadow-bead);
+    background-color: #fff;
+    flex: none;
+  }
+</style>

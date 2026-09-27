@@ -4,41 +4,37 @@
  */
 export const SITE = {
   name: "Covey",
-  tagline: "Anything, anytime, together.",
+  tagline: "Turn strangers into friends, one plan at a time.",
   domain: "coveyapp.co",
-  url: "https://coveyapp.co",
+  // Canonical origin. The apex (coveyapp.co) 308-redirects here on Vercel, so
+  // canonical/og URLs and the sitemap use www to avoid pointing at a redirect.
+  url: "https://www.coveyapp.co",
 
-  // The Expo app (separate covey-web repo) is the only thing on
-  // `app.coveyapp.co`; everything on the apex domain lives in this Astro site
+  // The product (the separate covey-web repo, Expo static export) is live on
+  // `go.coveyapp.co`; everything on the apex domain lives in this Astro site
   // and must never be duplicated in the Expo tree.
-  //
-  // `appIsLive` is the single switch for cross-linking into the product: flip
-  // it to true once the Expo static export is deployed and the header/footer
-  // "Browse plans" / "Sign in" links appear.
-  appUrl: "https://app.coveyapp.co",
+  appUrl: "https://go.coveyapp.co",
 
-  // Published plans are readable without an account (see
-  // docs/web-public-access.md in covey-web), so this is where marketing
-  // traffic that isn't ready to hand over an email should land.
-  browseUrl: "https://app.coveyapp.co/explore",
-  // convenience explicit sign-in route for direct login links
-  signInUrl: "https://app.coveyapp.co/login",
-
-  // Where the primary "Join the flock" CTA lands. The product takes new
-  // people straight into the app's login/signup on `go.coveyapp.co`; the
-  // waitlist form this site used to host at /signup is gone.
+  // Where the primary "Join Covey" CTA lands: the product's /login, which
+  // handles both paths (Apple / Google sign-in, plus "New to Covey? Create an
+  // account"). Product decision, 2026-09-26 — /signup exists if that changes.
   joinUrl: "https://go.coveyapp.co/login",
-  appIsLive: false,
+  // Returning members ("Sign in" in the header and mobile menu). Currently the
+  // same screen as joinUrl; kept separate so either can move independently.
+  signInUrl: "https://go.coveyapp.co/login",
 
+  // Published plans are readable without an account (the anon preview RPCs in
+  // covey-web). Linked from the footer only: the public feed is often empty
+  // this early, and an empty feed is a poor first impression from the hero.
+  browseUrl: "https://go.coveyapp.co/explore",
 
-  // Launch is invite-only on iOS first (see docs/launch/decision-matrix.md
-  // in the covey-ios repo) — no public App Store link yet. Once approved,
-  // set this and flip the Signup page over to the badge.
+  // Launch is invite-only on iOS (LaunchPolicy.accessModel in covey-ios) — no
+  // public App Store link yet. Once approved, set this and add the badge beside
+  // the primary CTA in JoinCTA.astro and the hero.
   appStoreUrl: null as string | null,
-  playStoreUrl: null as string | null,
 
   city: "San Francisco, CA",
-  launchRegion: "US only, invite-only, iOS first",
+  launchRegion: "US only, 18+, starting in San Francisco",
 
   emails: {
     hello: "hello@coveyapp.co",
@@ -51,3 +47,5 @@ export const SITE = {
     instagram: "https://instagram.com/coveyapp",
   },
 } as const;
+
+export const CITY_SHORT = SITE.city.split(",")[0];
