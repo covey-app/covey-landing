@@ -29,7 +29,7 @@
     "@tailwindcss/vite": "^4.0.0",
     "@types/node": "^26.1.1",
     "lucide-static": "^1.48.0",
-    "sharp": "^0.35.3",
+    "sharp": "^0.35.4",
     "tailwindcss": "^4.0.0",
     "typescript": "^7.0.2"
   }
