@@ -1,5 +1,16 @@
 ---
+import "@fontsource-variable/geist-mono";
+import "@fontsource-variable/instrument-sans";
+import "@fontsource-variable/manrope";
 import "../styles/global.css";
+// Preload the two faces used above the fold (Geist Mono: headline; Instrument
+// Sans: the lede, which is the LCP element on phones). Measured on a throttled
+// connection: dropping the body preload saved ~40ms of first paint but cost
+// ~140ms of LCP, because the lede re-rendered late on font swap.
+// `?url` resolves to the same hashed asset the Fontsource CSS references.
+import geistMonoUrl from "@fontsource-variable/geist-mono/files/geist-mono-latin-wght-normal.woff2?url";
+import instrumentSansUrl from "@fontsource-variable/instrument-sans/files/instrument-sans-latin-wght-normal.woff2?url";
+import { ClientRouter } from "astro:transitions";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import { SITE } from "../config";
@@ -18,10 +29,15 @@ const canonicalURL = new URL(Astro.url.pathname, SITE.url);
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#f4f4f4" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0e0e10" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="canonical" href={canonicalURL} />
     {noIndex && <meta name="robots" content="noindex" />}
+    <slot name="head" />
+    <ClientRouter />
 
     <title>{title} — {SITE.name}</title>
     <meta name="description" content={description} />
@@ -35,17 +51,124 @@ const canonicalURL = new URL(Astro.url.pathname, SITE.url);
     <meta name="twitter:title" content={`${title} — ${SITE.name}`} />
     <meta name="twitter:description" content={description} />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
-    />
+    <meta property="og:image:alt" content="Covey — turn strangers into friends, one plan at a time." />
+
+    <!-- Self-hosted fonts (Fontsource): no render-blocking third-party CSS,
+         and no visitor IPs sent to Google on every page view. -->
+    <link rel="preload" href={geistMonoUrl} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={instrumentSansUrl} as="font" type="font/woff2" crossorigin />
+
+    <!-- Theme bootstrap + toggle. Kept inline so it runs before paint and
+         survives ClientRouter / transition:persist without module scripts. -->
+    <script is:inline>
+      (function () {
+        var STORAGE_KEY = "covey-theme";
+
+        function preferDark() {
+          try {
+            var stored = localStorage.getItem(STORAGE_KEY);
+            if (stored === "dark") return true;
+            if (stored === "light") return false;
+          } catch (e) {}
+          return window.matchMedia("(prefers-color-scheme: dark)").matches;
+        }
+
+        function setThemeColor(dark) {
+          var color = dark ? "#0e0e10" : "#f4f4f4";
+          var meta = document.querySelector('meta[name="theme-color"]:not([media])');
+          if (!meta) {
+            meta = document.createElement("meta");
+            meta.setAttribute("name", "theme-color");
+            document.head.appendChild(meta);
+          }
+          meta.setAttribute("content", color);
+          // Keep media-tagged theme-color tags in sync too — iOS Safari
+          // otherwise keeps the system preference chrome color after a tap.
+          document.querySelectorAll('meta[name="theme-color"][media]').forEach(function (m) {
+            m.setAttribute("content", color);
+          });
+        }
+
+        function syncButtons(dark) {
+          document.querySelectorAll("[data-theme-toggle]").forEach(function (btn) {
+            btn.setAttribute("aria-pressed", String(dark));
+            btn.setAttribute(
+              "aria-label",
+              dark ? "Switch to light mode" : "Switch to dark mode",
+            );
+          });
+        }
+
+        function apply(dark, doc) {
+          doc = doc || document;
+          doc.documentElement.classList.toggle("dark", dark);
+          if (doc === document) {
+            try {
+              localStorage.setItem(STORAGE_KEY, dark ? "dark" : "light");
+            } catch (e) {}
+            setThemeColor(dark);
+            syncButtons(dark);
+          }
+        }
+
+        // Initial paint
+        apply(preferDark(), document);
+
+        if (!window.__coveyThemeInit) {
+          window.__coveyThemeInit = true;
+          var ignoreClickUntil = 0;
+
+          document.addEventListener(
+            "click",
+            function (e) {
+              var t = e.target;
+              if (!t || !t.closest) return;
+              if (!t.closest("[data-theme-toggle]")) return;
+              e.preventDefault();
+              // Skip the synthetic click that follows a touch pointerup.
+              if (Date.now() < ignoreClickUntil) return;
+              apply(!document.documentElement.classList.contains("dark"), document);
+            },
+            true,
+          );
+
+          // Finger taps: handle on pointerup so iOS doesn't wait on click.
+          document.addEventListener(
+            "pointerup",
+            function (e) {
+              if (e.pointerType !== "touch" && e.pointerType !== "pen") return;
+              var t = e.target;
+              if (!t || !t.closest) return;
+              if (!t.closest("[data-theme-toggle]")) return;
+              e.preventDefault();
+              ignoreClickUntil = Date.now() + 500;
+              apply(!document.documentElement.classList.contains("dark"), document);
+            },
+            true,
+          );
+
+          // Soft navigations swap a fresh <html> — re-apply before paint.
+          document.addEventListener("astro:before-swap", function (event) {
+            apply(preferDark(), event.newDocument);
+          });
+
+          document.addEventListener("astro:after-swap", function () {
+            syncButtons(document.documentElement.classList.contains("dark"));
+            setThemeColor(document.documentElement.classList.contains("dark"));
+          });
+
+          document.addEventListener("astro:page-load", function () {
+            syncButtons(document.documentElement.classList.contains("dark"));
+          });
+        }
+      })();
+    </script>
   </head>
   <body>
+    <a href="#main" class="skip-link">Skip to content</a>
     <div class="min-h-screen flex flex-col">
-      <Header />
-      <main class="flex-1">
+      <Header transition:persist />
+      <main id="main" class="flex-1" transition:animate="fade">
         <slot />
       </main>
       <Footer />
@@ -54,21 +177,56 @@ const canonicalURL = new URL(Astro.url.pathname, SITE.url);
     <script>
       // Progressive enhancement only — every .reveal element is already
       // visible without this script (see the base .reveal rule in
-      // global.css). This just adds a soft fade/slide-up as sections enter
-      // the viewport, so the site still works with JS disabled.
-      document.documentElement.classList.add("js-ready");
-      const observer = new IntersectionObserver(
-        (entries) => {
-          for (const entry of entries) {
-            if (entry.isIntersecting) {
-              entry.target.classList.add("is-visible");
-              observer.unobserve(entry.target);
+      // global.css). This adds a soft fade/slide-up as sections enter the
+      // viewport and firms the sticky header after a small scroll. Both are
+      // re-initialised on every view transition via astro:page-load.
+      function setupReveals() {
+        const prefersReducedMotion = window.matchMedia(
+          "(prefers-reduced-motion: reduce)",
+        ).matches;
+
+        const revealEls = document.querySelectorAll(
+          ".reveal, .reveal-stagger",
+        );
+        if (prefersReducedMotion) {
+          revealEls.forEach((el) => el.classList.add("is-visible"));
+          return;
+        }
+        document.documentElement.classList.add("js-ready");
+        const observer = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("is-visible");
+                observer.unobserve(entry.target);
+              }
             }
-          }
-        },
-        { threshold: 0.15 },
-      );
-      document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
+          },
+          { threshold: 0.1, rootMargin: "0px 0px -8% 0px" },
+        );
+        revealEls.forEach((el) => observer.observe(el));
+      }
+
+      // Sticky-header scrolled state — attach the scroll listener once; the
+      // header element persists across view transitions.
+      function setupHeaderScroll() {
+        const w = window as unknown as { __coveyHeaderScroll?: boolean };
+        if (w.__coveyHeaderScroll) return;
+        w.__coveyHeaderScroll = true;
+        const onScroll = () => {
+          const header = document.querySelector("[data-header]");
+          if (header) header.classList.toggle("is-scrolled", window.scrollY > 16);
+        };
+        onScroll();
+        window.addEventListener("scroll", onScroll, { passive: true });
+      }
+
+      // astro:page-load fires on the initial load and after every view
+      // transition when ClientRouter is present.
+      document.addEventListener("astro:page-load", () => {
+        setupReveals();
+        setupHeaderScroll();
+      });
     </script>
   </body>
 </html>

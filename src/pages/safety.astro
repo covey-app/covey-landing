@@ -1,0 +1,73 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { SITE } from "../config";
+
+const lastUpdated = "August 18, 2026";
+---
+
+<BaseLayout
+  title="Safety"
+  description="How Covey handles safety expectations, reports, and urgent concerns."
+>
+  <div class="max-w-3xl mx-auto px-6 py-[var(--section-y)]">
+    <div class="eyebrow mb-3">Safety</div>
+    <h1 class="display t-h1 mb-4">Safety at Covey</h1>
+    <p class="font-mono text-ink-muted text-xs uppercase tracking-[0.16em] mb-12">
+      Last updated {lastUpdated}
+    </p>
+
+    <div class="card p-6 mb-12">
+      <p class="text-ink-muted leading-relaxed">
+        Covey is built for people making plans in the real world. Use care when
+        meeting someone, choose public places when appropriate, and report
+        behavior that makes the community less safe.
+      </p>
+    </div>
+
+    <div class="space-y-10 text-ink-muted leading-relaxed text-lg">
+      <section>
+        <h2 class="title-mono text-2xl text-ink mb-3">Community expectations</h2>
+        <p>
+          Treat people with respect. Do not harass, threaten, discriminate,
+          impersonate others, share private information without consent, spam
+          people, or use Covey to coordinate illegal or dangerous activity.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="title-mono text-2xl text-ink mb-3">Reporting concerns</h2>
+        <p>
+          If something in the app feels unsafe, report it from the product when
+          available or email
+          <a href={`mailto:${SITE.emails.safety}`} class="text-accent-ink underline underline-offset-2 decoration-1">
+            {SITE.emails.safety}
+          </a>.
+          Include the account, plan, message, or screenshot context that would
+          help us understand what happened.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="title-mono text-2xl text-ink mb-3">What Covey may do</h2>
+        <p>
+          We may review reports, restrict content or visibility, warn users,
+          suspend accounts, preserve evidence, or contact support providers when
+          needed to investigate abuse, fraud, security issues, or policy
+          violations.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="title-mono text-2xl text-ink mb-3">Emergencies</h2>
+        <p>
+          Covey support is not an emergency service. If you or someone else is
+          in immediate danger, contact local emergency services first. For
+          non-emergency help with an account or plan, contact support at
+          <a href={`mailto:${SITE.emails.support}`} class="text-accent-ink underline underline-offset-2 decoration-1">
+            {SITE.emails.support}
+          </a>.
+        </p>
+      </section>
+    </div>
+  </div>
+</BaseLayout>

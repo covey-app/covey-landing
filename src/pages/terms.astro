@@ -1,0 +1,24 @@
+---
+/*
+ * /terms renders the authoritative instrument at docs/legal/terms-of-service.md.
+ *
+ * This page holds NO legal text of its own, deliberately. Publishing a second,
+ * differently-worded version of an agreement is an enforceability problem: the
+ * app links users here to accept, `policy_acceptances` stamps a version against
+ * whatever is served, and a conflict between two published texts is resolved
+ * against the drafter. One source of truth is the whole point — amend the
+ * Markdown, never this file. See docs/legal/README.md.
+ */
+import BaseLayout from "../layouts/BaseLayout.astro";
+import LegalDocument from "../components/LegalDocument.astro";
+import { Content, getHeadings } from "../../docs/legal/terms-of-service.md";
+---
+
+<BaseLayout
+  title="Terms of Service"
+  description="The Covey Terms of Service — the binding agreement governing eligibility, verification, user content, safety, disclaimers, and dispute resolution."
+>
+  <LegalDocument eyebrow="Terms" headings={getHeadings()}>
+    <Content />
+  </LegalDocument>
+</BaseLayout>

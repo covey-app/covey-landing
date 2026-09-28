@@ -1,0 +1,27 @@
+---
+/*
+ * EmptyState — a friendly "nothing here yet" surface. Uses Manrope (the app's
+ * friendly voice) for the title rather than a mono chrome title, mirroring the
+ * iOS empty-state treatment. Actions are passed via the default slot.
+ */
+import CoveyMark from "./CoveyMark.astro";
+
+interface Props {
+  title: string;
+  body: string;
+  dotSize?: number;
+  class?: string;
+}
+const { title, body, dotSize = 10, class: className = "" } = Astro.props;
+---
+
+<div class:list={["card-sunken p-10 md:p-14 text-center", className]}>
+  <div class="flex justify-center mb-6">
+    <CoveyMark variant="dots" dotSize={dotSize} />
+  </div>
+  <h2 class="font-friendly font-semibold text-2xl text-ink mb-3">{title}</h2>
+  <p class="text-ink-muted leading-relaxed max-w-md mx-auto mb-8">{body}</p>
+  <div class="flex justify-center gap-3 flex-wrap">
+    <slot />
+  </div>
+</div>

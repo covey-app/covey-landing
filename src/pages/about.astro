@@ -1,7 +1,8 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import WaitlistCTA from "../components/WaitlistCTA.astro";
+import JoinCTA from "../components/JoinCTA.astro";
 import BirdDivider from "../components/BirdDivider.astro";
+import CoveyMark from "../components/CoveyMark.astro";
 import { SITE } from "../config";
 
 const principles = [
@@ -13,12 +14,12 @@ const principles = [
   {
     n: "02",
     t: "Small on purpose.",
-    d: "Two to ten people. Anything bigger and the host stops being a host. We won't ship features that push capacity up for its own sake.",
+    d: "Hosts set the headcount, six seats by default. Small enough that everyone actually talks. We won't ship features that push capacity up for its own sake.",
   },
   {
     n: "03",
-    t: "Real life over feeds.",
-    d: "Covey should feel less like an app and more like a corkboard. Open it, find a plan, close it, go.",
+    t: "Again beats once.",
+    d: "One good night is a coincidence. Friendship is repetition — so recaps, Coveys, and recurring plans exist to make the second hangout the easy default.",
   },
   {
     n: "04",
@@ -38,73 +39,72 @@ const stats = [
   title="About"
   description="Covey is a plan-first social app built around real-world itineraries and small-group meetups, launching invite-only on iOS."
 >
-  <div class="max-w-4xl mx-auto px-6 py-24">
-    <div class="eyebrow mb-3 flex items-center gap-2">
-      <img src="/images/bird-mark.png" alt="" class="bird-icon is-clay w-3.5 h-3.5" />
+  <div class="max-w-4xl mx-auto px-6 py-[var(--section-y)]">
+    <div class="eyebrow mb-3 flex items-center gap-2.5">
+      <CoveyMark variant="dots" dotSize={6} />
       About
     </div>
-    <h1 class="display text-5xl md:text-6xl mb-10">A new shape for going out.</h1>
+    <h1 class="display t-h1 mb-8">A new shape for going out.</h1>
 
-    <div class="space-y-8 text-lg text-warm-gray leading-relaxed">
-      <p>
+    <div class="space-y-6 leading-relaxed">
+      <p class="text-xl md:text-2xl text-ink leading-snug max-w-3xl">
         Covey started with a simple frustration: most ways to meet people
-        online have nothing to do with what you actually want to{" "}
-        <em class="text-ink not-italic font-serif italic">do</em>. Group
-        chats stall. Apps optimize for swipes, not Saturdays. The good plans
-        live in someone's head and never leave it.
+        online have nothing to do with what you actually want to
+        <em class="not-italic text-accent-ink font-medium">do</em>.
       </p>
-      <p>
-        We're building a plan-first social app. Hosts publish small
-        itineraries — a wine crawl, a bookstore loop, a sunrise hike — and a
-        few seats stay open for whoever's curious.
+      <p class="text-lg text-ink-muted">
+        Group chats stall. Apps optimize for swipes, not Saturdays. The good
+        plans live in someone's head and never leave it. So we built Covey
+        around plans instead — a host publishes a small itinerary, a ramen run,
+        a bookstore loop, a sunrise hike, and a few seats stay open for
+        whoever's curious.
       </p>
-      <p>
-        Plans are intentionally small. Two to ten people, a date, a few
-        stops, and a clear vibe. You're not joining a "community." You're
-        showing up at the first stop.
+      <p class="text-lg text-ink-muted">
+        Plans are intentionally small: a handful of people, a few stops, and a
+        clear vibe. And when a group clicks, it doesn't have to end there — it
+        can become a Covey that keeps meeting up.
       </p>
     </div>
 
-    <div class="mt-20 grid sm:grid-cols-3 gap-8">
+    <div class="mt-16 grid sm:grid-cols-3 gap-5 reveal-stagger">
       {
         stats.map((s, i) => (
-          <div class="paper-edge p-6 card-hover" style={`--card-tilt: ${i === 1 ? "0deg" : i === 0 ? "-1deg" : "1deg"}`}>
-            <div class="font-serif text-3xl text-ink">{s.k}</div>
+          <div class="card p-6 reveal-item" style={`--i:${i}`}>
+            <div class="font-mono font-semibold text-2xl md:text-3xl text-ink tracking-tight text-balance">{s.k}</div>
             <div class="eyebrow mt-2">{s.v}</div>
           </div>
         ))
       }
     </div>
 
-    <BirdDivider flip />
+    <BirdDivider />
 
-    <div class="paper-pinned p-8 md:p-10 my-4 flex flex-col md:flex-row gap-8 items-center">
-      <img
-        src="/images/bird-mark.png"
-        alt=""
-        class="bird-icon is-moss w-16 h-16 object-contain shrink-0"
-      />
+    <div class="card-pinned p-8 md:p-12 my-4 flex flex-col md:flex-row gap-8 items-center" style="border-radius: var(--radius-sheet)">
+      <div class="shrink-0">
+        <CoveyMark variant="dots" dotSize={16} />
+      </div>
       <div>
-        <div class="eyebrow mb-2">Where the name comes from</div>
-        <p class="font-serif text-xl text-ink leading-relaxed">
-          A covey is a small flock of quail — never a crowd, always moving
-          together. It's the same shape we're building the app around: a
-          handful of people, one plan, one day.
+        <div class="eyebrow mb-3">The shape we build around</div>
+        <p class="text-xl md:text-2xl text-ink leading-snug">
+          A covey is a small flock of quail. On Covey, it's the handful of
+          people you keep making plans with. The{" "}
+          <a href="/#coveys" class="underline decoration-edge underline-offset-4 hover:text-accent-ink hover:decoration-accent-ink transition-colors">home page</a>{" "}
+          shows how a group gets there.
         </p>
       </div>
     </div>
 
-    <div class="mt-20">
+    <div class="mt-16">
       <div class="eyebrow mb-3">What we believe</div>
-      <h2 class="display text-4xl mb-10">Four principles we build around.</h2>
-      <ol class="space-y-10">
+      <h2 class="display t-h2 mb-8">Four principles we build around.</h2>
+      <ol class="space-y-8">
         {
           principles.map((p) => (
-            <li class="grid md:grid-cols-12 gap-8 border-t border-edge pt-10">
-              <span class="md:col-span-2 font-serif italic text-clay text-5xl">{p.n}</span>
+            <li class="grid md:grid-cols-12 gap-4 md:gap-8 border-t pt-8">
+              <span class="md:col-span-2 font-mono font-semibold text-accent-ink text-3xl md:text-4xl tracking-tight">{p.n}</span>
               <div class="md:col-span-10">
-                <h3 class="font-serif text-2xl text-ink mb-3">{p.t}</h3>
-                <p class="text-warm-gray text-lg leading-relaxed max-w-2xl">{p.d}</p>
+                <h3 class="title-mono text-xl md:text-2xl text-ink mb-2">{p.t}</h3>
+                <p class="text-ink-muted text-lg leading-relaxed max-w-2xl">{p.d}</p>
               </div>
             </li>
           ))
@@ -113,9 +113,9 @@ const stats = [
     </div>
   </div>
 
-  <WaitlistCTA
-    eyebrow="The city is the canvas."
-    heading="Want to be part of it?"
-    body="Join the waitlist and we'll email you the moment invites open in your city."
+  <JoinCTA
+    eyebrow="The city is the canvas"
+    heading="want to be part of it?"
+    body="Make an account on the web today. The iOS app is rolling out by invite."
   />
 </BaseLayout>

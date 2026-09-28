@@ -4,23 +4,37 @@
  */
 export const SITE = {
   name: "Covey",
-  tagline: "Make a plan. Open a few spots. Meet people through it.",
+  tagline: "Turn strangers into friends, one plan at a time.",
   domain: "coveyapp.co",
-  url: "https://coveyapp.co",
+  // Canonical origin. The apex (coveyapp.co) 308-redirects here on Vercel, so
+  // canonical/og URLs and the sitemap use www to avoid pointing at a redirect.
+  url: "https://www.coveyapp.co",
 
-  // TODO: confirm the live URL for the covey-web app once it's deployed,
-  // then flip `appIsLive` to true so header/footer nav links to it.
-  appUrl: "https://app.coveyapp.co",
-  appIsLive: false,
+  // The product (the separate covey-web repo, Expo static export) is live on
+  // `go.coveyapp.co`; everything on the apex domain lives in this Astro site
+  // and must never be duplicated in the Expo tree.
+  appUrl: "https://go.coveyapp.co",
 
-  // Launch is invite-only on iOS first (see docs/launch/decision-matrix.md
-  // in the covey-ios repo) — no public App Store link yet. Once approved,
-  // set this and flip the Signup page over to the badge.
+  // Where the primary "Join Covey" CTA lands: the product's /login, which
+  // handles both paths (Apple / Google sign-in, plus "New to Covey? Create an
+  // account"). Product decision, 2026-09-26 — /signup exists if that changes.
+  joinUrl: "https://go.coveyapp.co/login",
+  // Returning members ("Sign in" in the header and mobile menu). Currently the
+  // same screen as joinUrl; kept separate so either can move independently.
+  signInUrl: "https://go.coveyapp.co/login",
+
+  // Published plans are readable without an account (the anon preview RPCs in
+  // covey-web). Linked from the footer only: the public feed is often empty
+  // this early, and an empty feed is a poor first impression from the hero.
+  browseUrl: "https://go.coveyapp.co/explore",
+
+  // Launch is invite-only on iOS (LaunchPolicy.accessModel in covey-ios) — no
+  // public App Store link yet. Once approved, set this and add the badge beside
+  // the primary CTA in JoinCTA.astro and the hero.
   appStoreUrl: null as string | null,
-  playStoreUrl: null as string | null,
 
   city: "San Francisco, CA",
-  launchRegion: "US only, invite-only, iOS first",
+  launchRegion: "US only, 18+, starting in San Francisco",
 
   emails: {
     hello: "hello@coveyapp.co",
@@ -32,14 +46,6 @@ export const SITE = {
   social: {
     instagram: "https://instagram.com/coveyapp",
   },
-
-  // Vercel has no built-in form backend (unlike Netlify Forms), so both
-  // forms POST straight to Formspree instead — keeps the site static with
-  // zero client-side JS. Create a free account at https://formspree.io,
-  // add each form once, and swap these two IDs for the real ones it gives
-  // you. Until then these are inert placeholders.
-  forms: {
-    waitlistEndpoint: "https://formspree.io/f/REPLACE_WITH_WAITLIST_FORM_ID",
-    contactEndpoint: "https://formspree.io/f/REPLACE_WITH_CONTACT_FORM_ID",
-  },
 } as const;
+
+export const CITY_SHORT = SITE.city.split(",")[0];

@@ -1,0 +1,84 @@
+---
+/*
+ * FormField — a boxed "paper" field with a persistent label, optional hint,
+ * required marker, and an inline error slot. The global focus ring is kept
+ * intact (no outline-none). Validation JS (in the parent form) flips
+ * aria-invalid on the control to reveal .field-error.
+ */
+type FieldType = "text" | "email" | "textarea" | "select";
+
+interface Props {
+  type?: FieldType;
+  name: string;
+  label: string;
+  required?: boolean;
+  autocomplete?: string;
+  placeholder?: string;
+  hint?: string;
+  error?: string;
+  rows?: number;
+  options?: string[];
+  inputmode?: "text" | "email" | "tel" | "numeric" | "decimal" | "search" | "url" | "none";
+}
+
+const {
+  type = "text",
+  name,
+  label,
+  required = false,
+  autocomplete,
+  placeholder,
+  hint,
+  error = "This field is required.",
+  rows = 6,
+  options = [],
+  inputmode,
+} = Astro.props;
+
+const id = `field-${name}`;
+const errorId = `${id}-error`;
+const hintId = hint ? `${id}-hint` : undefined;
+const describedBy = [hintId, errorId].filter(Boolean).join(" ") || undefined;
+---
+
+<div class="field">
+  <label class="field-label" for={id}>
+    <span class="eyebrow">{label}</span>
+    {required ? <span class="field-req" aria-hidden="true">required</span> : <span class="field-req">optional</span>}
+  </label>
+
+  {
+    type === "textarea" ? (
+      <textarea
+        id={id}
+        name={name}
+        rows={rows}
+        required={required}
+        placeholder={placeholder}
+        aria-describedby={describedBy}
+        class="field-control"
+      />
+    ) : type === "select" ? (
+      <select id={id} name={name} required={required} aria-describedby={describedBy} class="field-control">
+        {options.map((o) => (
+          <option>{o}</option>
+        ))}
+      </select>
+    ) : (
+      <input
+        id={id}
+        type={type}
+        name={name}
+        required={required}
+        autocomplete={autocomplete}
+        placeholder={placeholder}
+        inputmode={inputmode}
+        aria-describedby={describedBy}
+        class="field-control"
+      />
+    )
+  }
+
+  {hint && <p id={hintId} class="field-hint">{hint}</p>}
+  <p id={errorId} class="field-error" role="alert">{error}</p>
+</div>

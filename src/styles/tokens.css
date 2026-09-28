@@ -1,0 +1,107 @@
+/*
+ * GENERATED FILE — DO NOT EDIT.
+ * Source: scripts/design-tokens/tokens.json
+ * Regenerate: npm run tokens:generate   Verify: npm run tokens:verify
+ *
+ * These are the tokens shared with the Expo app (covey-web repo:
+ * lib/theme/colors.ts, lib/theme/typography.ts). Landing-only values —
+ * shadows, the activity category palette, motion — stay hand-written in
+ * global.css.
+ */
+
+:root {
+  color-scheme: light;
+
+  --background: #F4F4F4;
+  --paper-elevated: #FFFFFF;
+  --paper: #EDEDED;
+  --paper-sunken: #E5E5E5;
+  --vellum: rgba(255,255,255,0.78);
+  --ink: #1C1C1E;
+  --ink-muted: #6B6B70;
+  --ink-subtle: #9A9AA0;
+  --ink-inverse: #FFFFFF;
+  --edge: #E3E3E1;
+  --hairline: rgba(227,227,225,0.55);
+  --accent: #112100;
+  --accent-ink: #6F4E37;
+  --accent-strong: #0A1900;
+  --accent-soft: #E2EAD7;
+  --accent-pale: #EDF2E5;
+  --moss: #3DB078;
+  --moss-soft: #DDF1E5;
+  --slate: #5C7BD9;
+  --slate-soft: #E1E8FA;
+  --clay: #C77A5A;
+  --clay-soft: #F4DCCB;
+  --ochre: #E2A634;
+  --ochre-soft: #FAEBC8;
+  --rose: #E0386F;
+  --rose-soft: #FBE0EA;
+  --danger: #E04339;
+
+  /* Font stacks — CoveyFontFamily */
+  --ff-mono: "Geist Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --ff-sans: "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
+  --ff-friendly: "Manrope", ui-sans-serif, system-ui, sans-serif;
+
+  /* Radii — CoveyRadius */
+  --rad-chip: 999px;
+  --rad-xs: 6px;
+  --rad-small: 12px;
+  --rad-medium: 18px;
+  --rad-large: 20px;
+  --rad-sheet: 28px;
+  --rad-image: 18px;
+  --rad-button: 14px;
+  --rad-icon: 14px;
+
+  /* Spacing — CoveySpacing (8-pt system) */
+  --space-xxs: 4px;
+  --space-xs: 8px;
+  --space-sm: 12px;
+  --space-md: 16px;
+  --space-lg: 20px;
+  --space-xl: 24px;
+  --space-xxl: 32px;
+  --space-xxxl: 40px;
+  --space-huge: 56px;
+  --space-screen-h: 20px;
+  --space-screen-v: 20px;
+  --space-tab-bar-inset: 76px;
+  --space-card-sm: 16px;
+  --space-card-md: 20px;
+  --space-card-lg: 28px;
+}
+
+.dark {
+  color-scheme: dark;
+
+  --background: #0E0E10;
+  --paper-elevated: #1A1A1D;
+  --paper: #141416;
+  --paper-sunken: #202024;
+  --vellum: rgba(20,20,22,0.62);
+  --ink: #F2F2F3;
+  --ink-muted: #B6B7BD;
+  --ink-subtle: #6F7079;
+  --ink-inverse: #0E0E10;
+  --edge: #2A2A2E;
+  --hairline: rgba(42,42,46,0.85);
+  --accent: #A7C98A;
+  --accent-ink: #CDA987;
+  --accent-strong: #BBD79F;
+  --accent-soft: #1E2A12;
+  --accent-pale: #161E0E;
+  --moss: #7CDDA8;
+  --moss-soft: #163022;
+  --slate: #9AB3FF;
+  --slate-soft: #1B2440;
+  --clay: #E69877;
+  --clay-soft: #3D2415;
+  --ochre: #F2C062;
+  --ochre-soft: #3B2C13;
+  --rose: #F2769E;
+  --rose-soft: #3E1626;
+  --danger: #FF7264;
+}

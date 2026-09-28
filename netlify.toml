@@ -1,0 +1,37 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# Netlify auto-detects the <form data-netlify="true"> tag in contact.astro at
+# build time — no functions or serverless code needed. The form POSTs to
+# /thanks and carries data-astro-reload so Astro's client router does a full
+# navigation and Netlify captures the submission.
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+    Strict-Transport-Security = "max-age=63072000; includeSubDomains; preload"
+
+# The product (covey-web) still links "Join the waitlist" to coveyapp.co/signup.
+# The waitlist is gone; forward both paths to the product's join screen. Must sit above
+# the catch-all 404.
+[[redirects]]
+  from = "/signup"
+  to = "https://go.coveyapp.co/login"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/waitlist"
+  to = "https://go.coveyapp.co/login"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/*"
+  to = "/404"
+  status = 404

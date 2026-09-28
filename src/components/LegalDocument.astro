@@ -1,0 +1,64 @@
+---
+/*
+ * Chrome for a rendered legal instrument.
+ *
+ * The document supplies its own <h1> and its own metadata block, so this
+ * component adds only the eyebrow, a contents rail built from the document's
+ * own h2s, and the .legal-doc typography scope. It must not add legal text.
+ *
+ * Anchors come from Astro's markdown slugger, so every clause heading is
+ * linkable — which matters when a support reply or a court filing needs to cite
+ * one.
+ */
+interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+interface Props {
+  eyebrow: string;
+  headings: Heading[];
+}
+
+const { eyebrow, headings } = Astro.props;
+
+// Numbered sections and annexes only. h3 sub-clauses would swamp the rail.
+const sections = headings.filter((h) => h.depth === 2);
+
+// Wrap each table in a focusable, labeled scroll region. The annex tables are
+// wider than a phone, so they scroll sideways inside themselves (the body must
+// never scroll at 320px) — and a scroll container keyboard users can't reach
+// fails WCAG 2.1.1 (axe: scrollable-region-focusable). Done on the rendered
+// HTML at build time: no client JS, no change to the Markdown processor or to
+// a single character of the legal text.
+const body = (await Astro.slots.render("default"))
+  .replaceAll(
+    "<table>",
+    '<div class="table-scroll" tabindex="0" role="region" aria-label="Table (scrolls sideways on small screens)"><table>',
+  )
+  .replaceAll("</table>", "</table></div>");
+---
+
+<div class="max-w-3xl mx-auto px-6 py-[var(--section-y)]">
+  <div class="eyebrow mb-6">{eyebrow}</div>
+
+  {
+    sections.length > 0 && (
+      <nav aria-label="Contents" class="card-sunken p-6 mb-12">
+        <div class="eyebrow mb-4">Contents</div>
+        <ul class="grid sm:grid-cols-2 gap-x-8 gap-y-2 text-sm text-ink-muted list-none">
+          {sections.map((h) => (
+            <li>
+              <a href={`#${h.slug}`} class="hover:text-ink transition-colors">
+                {h.text}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    )
+  }
+
+  <article class="legal-doc" set:html={body} />
+</div>

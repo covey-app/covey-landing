@@ -1,79 +1,112 @@
 ---
-import { SITE } from "../config";
+import AppIcon from "./AppIcon.astro";
+import { SITE, CITY_SHORT } from "../config";
 
-const cols = [
+const cols: { title: string; links: { href: string; label: string }[] }[] = [
+  {
+    title: "Product",
+    links: [
+      { href: "/#how", label: "How it works" },
+      { href: "/#coveys", label: "Coveys" },
+      { href: SITE.browseUrl, label: "Browse public plans" },
+      { href: SITE.signInUrl, label: "Sign in" },
+    ],
+  },
   {
     title: "Company",
     links: [
       { href: "/about", label: "About" },
-      { href: "/testimonials", label: "Testimonials" },
-      { href: "/events", label: "Upcoming events" },
+      { href: "/events", label: "Events" },
+      { href: "/testimonials", label: "Stories" },
       { href: "/contact", label: "Contact" },
+      { href: `mailto:${SITE.emails.press}`, label: "Press & investors" },
     ],
   },
   {
-    title: "Legal",
+    title: "Help & legal",
     links: [
-      { href: "/privacy", label: "Privacy" },
       { href: "/support", label: "Support" },
+      { href: "/safety", label: "Safety" },
+      { href: "/terms", label: "Terms" },
+      { href: "/privacy", label: "Privacy" },
+      { href: "/deletion", label: "Account deletion" },
+      { href: "/status", label: "Status" },
     ],
   },
-] as const;
+];
 ---
 
-<footer class="mt-32 border-t border-edge/60">
-  <div class="max-w-7xl mx-auto px-6 py-16 grid md:grid-cols-12 gap-12">
-    <div class="md:col-span-6 space-y-4">
-      <div class="flex items-center gap-2">
-        <img src="/images/bird-mark.png" alt="" class="bird-icon w-7 h-7 object-contain" />
-        <div class="font-serif italic text-3xl text-ink">{SITE.name}</div>
-      </div>
-      <p class="text-sm text-warm-gray max-w-sm leading-relaxed">
-        {SITE.tagline} Launching invite-only on iOS, {SITE.city} first.
-      </p>
-      <p class="text-xs text-warm-gray max-w-sm leading-relaxed italic font-serif">
-        A "covey" is a small flock of birds that moves together. That's the whole idea.
-      </p>
-      <a
-        href={`mailto:${SITE.emails.hello}`}
-        class="inline-block text-xs uppercase tracking-[0.18em] text-warm-gray hover:text-ink"
-      >
-        {SITE.emails.hello}
+<footer class="border-t">
+  <div class="max-w-7xl mx-auto px-5 sm:px-6 py-10 sm:py-14 grid md:grid-cols-12 gap-8">
+    <div class="md:col-span-4 space-y-5">
+      <a href="/" class="inline-flex items-center gap-2 min-h-11" aria-label="Covey — home">
+        <AppIcon size={32} />
+        <span class="font-mono font-semibold text-[1.4rem] tracking-[-0.03em] text-ink">Covey</span>
       </a>
+      <p class="text-sm text-ink-muted max-w-xs leading-relaxed">
+        {SITE.tagline} Starting in {CITY_SHORT}, for adults 18+.
+      </p>
+      <div class="flex flex-wrap items-center gap-x-6 gap-y-1 text-sm">
+        <a href={`mailto:${SITE.emails.hello}`} class="footer-link">{SITE.emails.hello}</a>
+        <a href={SITE.social.instagram} target="_blank" rel="noreferrer" class="footer-link">
+          Instagram <span class="sr-only">(opens in a new tab)</span>
+        </a>
+      </div>
     </div>
 
-    {
-      cols.map((c) => (
-        <div class="md:col-span-2">
-          <div class="eyebrow mb-4">{c.title}</div>
-          <ul class="space-y-2 text-sm text-warm-gray">
-            {c.links.map((l) => (
-              <li>
-                <a href={l.href} class="hover:text-ink transition-colors">
-                  {l.label}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))
-    }
-
-    <div class="md:col-span-2 flex md:justify-end items-start">
-      <a
-        href={SITE.social.instagram}
-        target="_blank"
-        rel="noreferrer"
-        class="text-xs uppercase tracking-[0.18em] text-warm-gray hover:text-ink"
-      >
-        Instagram
-      </a>
+    <div class="md:col-span-8 grid grid-cols-2 sm:grid-cols-3 gap-x-8 gap-y-6">
+      {
+        cols.map((c, i) => (
+          <div class:list={[i === 2 && "col-span-2 sm:col-span-1"]}>
+            <h2 class="eyebrow mb-2">{c.title}</h2>
+            <ul class:list={["text-sm", i === 2 && "legal-list"]}>
+              {c.links.map((l) => (
+                <li>
+                  <a href={l.href} class="footer-link">
+                    {l.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
     </div>
   </div>
-  <div class="border-t border-edge/40">
-    <div class="max-w-7xl mx-auto px-6 py-6 text-[10px] uppercase tracking-[0.2em] text-warm-gray flex justify-between flex-wrap gap-2">
+  <div class="border-t">
+    <div class="max-w-7xl mx-auto px-5 sm:px-6 py-6 font-mono text-xs uppercase tracking-[0.14em] text-ink-muted flex justify-between flex-wrap gap-2">
       <span>{SITE.city}</span>
       <span>© {new Date().getFullYear()} {SITE.name} Co. · All rights reserved.</span>
     </div>
   </div>
 </footer>
+
+<style>
+  /* 44px rows on touch (WCAG 2.5.8 / Fitts); compact rows for a mouse. */
+  .footer-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: var(--ink-muted);
+    transition: color var(--motion-snappy);
+  }
+  .footer-link:hover {
+    color: var(--ink);
+  }
+  @media (pointer: fine) {
+    .footer-link {
+      min-height: 32px;
+    }
+  }
+  /* Help & legal spans the row on phones, so its six links sit two-up. */
+  .legal-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 2rem;
+  }
+  @media (min-width: 640px) {
+    .legal-list {
+      display: block;
+    }
+  }
+</style>

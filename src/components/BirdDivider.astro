@@ -1,16 +1,10 @@
 ---
-interface Props {
-  flip?: boolean;
-}
-const { flip = false } = Astro.props;
+// A quiet section divider — a hairline rule flanking the flock dot cluster.
+import CoveyMark from "./CoveyMark.astro";
 ---
 
-<div class="flex items-center justify-center gap-4 py-2 opacity-70">
+<div class="flex items-center justify-center gap-4 py-2">
   <span class="h-px w-16 md:w-32 bg-edge"></span>
-  <img
-    src="/images/bird-mark.png"
-    alt=""
-    class:list={["bird-icon w-4 h-4 object-contain", flip && "-scale-x-100"]}
-  />
+  <CoveyMark variant="dots" dotSize={6} />
   <span class="h-px w-16 md:w-32 bg-edge"></span>
 </div>
