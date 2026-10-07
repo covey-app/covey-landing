@@ -6,7 +6,7 @@ The public marketing site for Covey — `coveyapp.co`. Built with
 Kept as a separate, minimal repo from `covey-ios` and `covey-web` so the
 marketing site can deploy independently and stay fast. Pages are static HTML
 with a small amount of progressive-enhancement JavaScript (theme toggle,
-scroll reveals, a sticky-header state, the mobile menu, form validation, and
+scroll reveals, a sticky-header state, the mobile menu, and
 Astro view transitions). Everything remains usable with JavaScript disabled.
 
 ## Pages
@@ -15,14 +15,13 @@ Astro view transitions). Everything remains usable with JavaScript disabled.
 | --- | --- |
 | `/` | Home — hero with an example plan, what people plan, why once isn't enough, interactive plan demo, Coveys (repeat hangouts), safety, FAQ, CTA |
 | `/about` | About — story + four principles |
-| `/contact` | Contact — form (Netlify Forms — see "Deployment") + linked emails |
+| `/contact` | Contact — email addresses only (no form) |
 | `/events` | Upcoming Events — honest empty state until dates are confirmed |
 | `/testimonials` | Stories — honest empty state until real stories exist |
 | `/support`, `/safety`, `/status`, `/deletion` | Help pages; `/support` is the App Store Connect Support URL |
 | `/terms`, `/privacy` | Rendered from `docs/legal/*.md` (the authoritative text) |
 | `/signup`, `/waitlist` | Forward to the product's join screen (`joinUrl`). covey-web still links "Join the waitlist" to `/signup` |
 | `/sitemap.xml` | Generated from the page files at build time |
-| `/thanks` | Post-submission confirmation (contact form `action`) |
 
 Events and Stories stay out of the primary navigation until they hold real
 content; both remain linked from the footer.
@@ -64,8 +63,8 @@ generated into `src/styles/tokens.css` from covey-web.
   the scoped CSS (see `Header.astro`).
 
 Reusable components: `AppIcon`, `Icon`, `PlanInvite`, `PlanDemo`, `CoveyCard`,
-`CoveyJourney`, `JoinCTA`, `CoveyMark`, `EmptyState`, `FormField`,
-`FormEnhance`, `ThemeToggle`, `RedirectPage`.
+`CoveyJourney`, `JoinCTA`, `CoveyMark`, `EmptyState`, `ThemeToggle`,
+`RedirectPage`.
 
 - [ ] Replace placeholder quotes in `src/pages/testimonials.astro` with real ones (with permission to publish them).
 - [ ] Replace placeholder dates in `src/pages/events.astro` with confirmed events, or leave the empty-state copy as-is.
@@ -96,20 +95,13 @@ npm run tokens:generate   # rewrite src/styles/tokens.css from tokens.json
 `www.coveyapp.co`, the canonical origin — `SITE.url` and `site` in
 `astro.config.mjs`; response headers say `server: Vercel`). `vercel.json`
 carries the security headers and the `/signup` + `/waitlist` redirects.
-`netlify.toml` mirrors the same config in case the site moves back to Netlify.
 Build `npm run build`, publish `dist`.
 
-> **Verify the contact form.** It uses Netlify Forms (`data-netlify`), which
-> does nothing on Vercel. Submit it once in production; if nothing arrives,
-> move it to a Vercel-compatible backend before relying on it.
-
-**Forms** use Netlify Forms — Netlify detects the `data-netlify="true"`
-`contact` form at build time and captures submissions (**Site settings →
-Forms**). It POSTs to `/thanks` and carries `data-astro-reload` so Astro's
-client router performs a full navigation and Netlify captures the POST. If you
-migrate off Netlify, replace the form backend (the `data-netlify` attribute +
-honeypot) before release — a POST to the static `/thanks` page will otherwise
-fail.
+**There are no forms.** The old Netlify Forms contact form did nothing on
+Vercel and was removed; `/contact` and `/support` list `mailto:` addresses
+instead. Adding a form means choosing a Vercel-compatible backend and updating
+the privacy policy (§ 4.14 says the website collects nothing typed into it)
+first.
 
 There is no waitlist form on this site: the "Join Covey" CTA sends people
 straight to `joinUrl` (`go.coveyapp.co/login`, which offers Apple/Google
@@ -118,20 +110,20 @@ currently the same screen.
 
 ## Domain
 
-`coveyapp.co` is registered at GoDaddy with DNS pointed at Netlify. Use
-`https://coveyapp.co/privacy` and `https://coveyapp.co/support` as the Privacy
-Policy and Support URLs in the iOS App Store Connect listing.
+`coveyapp.co` is registered at GoDaddy and served by Vercel. Use
+`https://www.coveyapp.co/privacy` and `https://www.coveyapp.co/support` as the
+Privacy Policy and Support URLs in the iOS App Store Connect listing.
 
 ## Before you go live
 
-- [ ] Submit the contact form once in production and confirm it arrives
-      (Netlify Forms does not run on Vercel — see "Deployment").
 - [ ] Set up inboxes/forwarding for every address in `src/config.ts`
-      (`hello@`, `press@`, `support@`, `safety@coveyapp.co`).
-- [ ] Once iOS is approved, set `appStoreUrl` in `src/config.ts` and add a
-      real App Store badge to the home page CTA.
-- [ ] Have the `/privacy` draft reviewed against your real data practices
-      before submitting the URL to App Store Connect.
+      (`hello@`, `press@`, `support@`, `safety@`, `privacy@coveyapp.co`).
+- [ ] Replace `{{LEGAL_ENTITY}}`, `{{POSTAL_ADDRESS}}` and `{{DMCA_AGENT}}`
+      in `docs/legal/` (see `docs/legal/README.md`). Do not deploy the legal
+      pages to production with the placeholders in them.
+- [ ] Once Apple approves the iOS app and the listing is live, set
+      `appStoreUrl` in `src/config.ts`. Every "coming soon to the App Store"
+      line switches to "on the App Store" from that one value.
 
 The DNS notes below describe the original Netlify setup; production now runs
 on Vercel, whose dashboard shows its own records.

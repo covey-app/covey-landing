@@ -5,7 +5,7 @@
 import type { APIRoute } from "astro";
 import { SITE } from "../config";
 
-const EXCLUDE = new Set(["/404", "/thanks", "/signup", "/waitlist"]);
+const EXCLUDE = new Set(["/404", "/signup", "/waitlist"]);
 
 export const GET: APIRoute = () => {
   const pages = Object.keys(import.meta.glob("./**/*.astro"))

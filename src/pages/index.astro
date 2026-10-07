@@ -9,7 +9,7 @@ import AppIcon from "../components/AppIcon.astro";
 import Icon from "../components/Icon.astro";
 import type { IconName } from "../lib/icons";
 import { EXAMPLE_PLANS, SAMPLE_PLANS } from "../lib/plans";
-import { SITE, CITY_SHORT } from "../config";
+import { SITE, CITY_SHORT, APP_STORE } from "../config";
 
 /*
  * Every product claim on this page traces to shipped behavior in covey-ios —
@@ -56,7 +56,7 @@ const steps: { t: string; d: string; icon: IconName }[] = [
 
 const extras: { t: string; d: string; icon: IconName }[] = [
   { t: "Friends & group chats", d: "Add the people you click with and keep talking after the plan.", icon: "messages" },
-  { t: "“When is everyone free?”", d: "Cross-check friends’ availability and start a plan in the gap.", icon: "calendar-plus" },
+  { t: "Recaps", d: "Post photos from the plan afterwards, so the day doesn’t end at the last stop.", icon: "camera" },
   { t: "Streaks", d: "“3-week streak. Host or join by Sunday to keep it.”", icon: "flame" },
 ];
 
@@ -72,8 +72,8 @@ const safety: { t: string; d: string; icon: IconName }[] = [
     icon: "badge-check",
   },
   {
-    t: "Adults, verified",
-    d: "Covey is 18+, with identity verification in the app.",
+    t: "18+",
+    d: "Covey is for adults 18 and over. Plans built around drinks are 21+.",
     icon: "shield-check",
   },
   {
@@ -102,7 +102,7 @@ const faqs = [
   },
   {
     q: "Where is Covey available?",
-    a: `Covey is starting in ${CITY_SHORT}, for adults 18 and over in the US. You can create an account on the web today; the iOS app is rolling out by invite.`,
+    a: `Covey is starting in ${CITY_SHORT}, for adults 18 and over in the US. You can create an account on the web today. ${APP_STORE.sentence}`,
   },
   {
     q: "Is it a dating app?",
@@ -136,7 +136,7 @@ const faqs = [
           </a>
         </div>
         <p class="mt-5 font-mono text-xs uppercase tracking-[0.14em] text-ink-muted" style="--i:4">
-          Free · 18+ · On the web now, iOS by invite
+          Free · 18+ · {APP_STORE.short}
         </p>
       </div>
 
@@ -295,7 +295,7 @@ const faqs = [
     <div class="grid lg:grid-cols-12 gap-10 lg:gap-16">
       <div class="lg:col-span-4">
         <p class="eyebrow mb-4">Built for showing up</p>
-        <h2 id="safety-title" class="display t-h2 mb-6 text-balance">small, verified, public first.</h2>
+        <h2 id="safety-title" class="display t-h2 mb-6 text-balance">small, 18+, public first.</h2>
         <p class="lede mb-6">Meeting new people should feel easy, not risky.</p>
         <a href="/safety" class="text-link font-mono text-sm inline-flex items-center min-h-11">Read our safety guidelines</a>
       </div>

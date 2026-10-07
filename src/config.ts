@@ -28,9 +28,12 @@ export const SITE = {
   // this early, and an empty feed is a poor first impression from the hero.
   browseUrl: "https://go.coveyapp.co/explore",
 
-  // Launch is invite-only on iOS (LaunchPolicy.accessModel in covey-ios) — no
-  // public App Store link yet. Once approved, set this and add the badge beside
-  // the primary CTA in JoinCTA.astro and the hero.
+  // The iPhone app is public (no invite gate) and listed on the App Store as
+  // `appStoreName`. Leave `appStoreUrl` null until Apple approves the build and
+  // the listing is live: while it is null every page says the app is "coming
+  // soon to the App Store" and claims nothing else. Setting it switches that
+  // copy (see APP_STORE below) to a live "Download on the App Store" link.
+  appStoreName: "Covey: Do It Together",
   appStoreUrl: null as string | null,
 
   city: "San Francisco, CA",
@@ -41,6 +44,7 @@ export const SITE = {
     press: "press@coveyapp.co",
     support: "support@coveyapp.co",
     safety: "safety@coveyapp.co",
+    privacy: "privacy@coveyapp.co",
   },
 
   social: {
@@ -49,3 +53,21 @@ export const SITE = {
 } as const;
 
 export const CITY_SHORT = SITE.city.split(",")[0];
+
+/**
+ * App Store availability copy, derived from `SITE.appStoreUrl` so that one
+ * value flips every page from "coming soon" to "available" on approval day.
+ * Never claim the app is live while `appStoreUrl` is null.
+ */
+const appStoreLive = SITE.appStoreUrl !== null;
+export const APP_STORE = {
+  name: SITE.appStoreName,
+  url: SITE.appStoreUrl,
+  live: appStoreLive,
+  /** Short, for the mono caption lines ("Free · 18+ · …"). */
+  short: appStoreLive ? "On the web and the App Store" : "On the web now, iPhone app coming soon",
+  /** A full sentence naming the store listing. */
+  sentence: appStoreLive
+    ? `The iPhone app, “${SITE.appStoreName}”, is on the App Store.`
+    : `The iPhone app, “${SITE.appStoreName}”, is coming soon to the App Store.`,
+} as const;

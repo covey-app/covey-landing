@@ -2,12 +2,30 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { SITE } from "../config";
 
-const lastUpdated = "August 18, 2026";
+/*
+ * Every statement on this page maps to something the 1.0 app does (App Store
+ * audit 2026-10-07, F-14). Before adding a claim, find the code path that
+ * implements it; before removing a feature, remove its line here.
+ *
+ *   Report paths      covey-ios PublicProfileView "Report profile",
+ *                     PlanDetailView "Report plan", PlanChatView and
+ *                     ChatThreadView "Report message", ChatThreadView
+ *                     "Report user", CoveyDetailView "Report Covey",
+ *                     FeedPostCard "Report recap", PlaceDetailView
+ *                     "Report place"
+ *   24-hour review    public.safety_policy (served to both clients)
+ *   Blocking          block_user; blocked senders hidden in plan and group chats
+ *   Automated checks  Gemini text and image checks; high risk is hidden
+ *                     automatically and queued for a person
+ *   21+ drinks        plan minimum-age rule for alcohol-centred plans
+ *   Appeals           SuspendedView's "Appeal" opens this page (AppRouter)
+ */
+const lastUpdated = "October 15, 2026";
 ---
 
 <BaseLayout
   title="Safety"
-  description="How Covey handles safety expectations, reports, and urgent concerns."
+  description="How Covey keeps plans safe: in-app reporting, human review within 24 hours, blocking, automated checks, and what happens to people who break the rules."
 >
   <div class="max-w-3xl mx-auto px-6 py-[var(--section-y)]">
     <div class="eyebrow mb-3">Safety</div>
@@ -18,54 +36,115 @@ const lastUpdated = "August 18, 2026";
 
     <div class="card p-6 mb-12">
       <p class="text-ink-muted leading-relaxed">
-        Covey is built for people making plans in the real world. Use care when
-        meeting someone, choose public places when appropriate, and report
-        behavior that makes the community less safe.
+        Covey is built for people making plans in the real world. We have zero
+        tolerance for objectionable content and abusive behavior: content that
+        breaks our rules is removed, and the people who post it are suspended
+        or banned.
       </p>
     </div>
 
     <div class="space-y-10 text-ink-muted leading-relaxed text-lg">
       <section>
+        <h2 class="title-mono text-2xl text-ink mb-3">Who Covey is for</h2>
+        <p>
+          Covey is for adults 18 and over. Plans built around drinks are open
+          only to people 21 and over, and a host can't lower that.
+        </p>
+      </section>
+
+      <section>
         <h2 class="title-mono text-2xl text-ink mb-3">Community expectations</h2>
         <p>
           Treat people with respect. Do not harass, threaten, discriminate,
-          impersonate others, share private information without consent, spam
-          people, or use Covey to coordinate illegal or dangerous activity.
+          impersonate others, share private information without consent, post
+          sexual or violent content, spam people, or use Covey to coordinate
+          illegal or dangerous activity. The full rules are the Acceptable Use
+          Policy in our
+          <a href="/terms" class="text-accent-ink underline underline-offset-2 decoration-1">Terms of Service</a>.
         </p>
       </section>
 
       <section>
-        <h2 class="title-mono text-2xl text-ink mb-3">Reporting concerns</h2>
-        <p>
-          If something in the app feels unsafe, report it from the product when
-          available or email
-          <a href={`mailto:${SITE.emails.safety}`} class="text-accent-ink underline underline-offset-2 decoration-1">
-            {SITE.emails.safety}
-          </a>.
-          Include the account, plan, message, or screenshot context that would
-          help us understand what happened.
+        <h2 class="title-mono text-2xl text-ink mb-3">Report something in the app</h2>
+        <p class="mb-4">Every report is read by a person on our team. You can report:</p>
+        <ul class="list-disc pl-6 space-y-2">
+          <li>a person, with <strong class="text-ink font-medium">Report profile</strong> on their profile, or <strong class="text-ink font-medium">Report user</strong> in a chat;</li>
+          <li>a message, by pressing and holding it and choosing <strong class="text-ink font-medium">Report message</strong>;</li>
+          <li>a plan, with <strong class="text-ink font-medium">Report plan</strong> on the plan;</li>
+          <li>a Covey, with <strong class="text-ink font-medium">Report Covey</strong> on the Covey's page;</li>
+          <li>a recap, with <strong class="text-ink font-medium">Report recap</strong> in its menu;</li>
+          <li>a place, with <strong class="text-ink font-medium">Report place</strong> on the place.</li>
+        </ul>
+        <p class="mt-4">
+          Pick a reason and add anything that helps us understand what
+          happened. If you can't report from the app, email
+          <a href={`mailto:${SITE.emails.safety}`} class="text-accent-ink underline underline-offset-2 decoration-1">{SITE.emails.safety}</a>
+          and name the account, plan or message involved.
         </p>
       </section>
 
       <section>
-        <h2 class="title-mono text-2xl text-ink mb-3">What Covey may do</h2>
+        <h2 class="title-mono text-2xl text-ink mb-3">What happens next</h2>
         <p>
-          We may review reports, restrict content or visibility, warn users,
-          suspend accounts, preserve evidence, or contact support providers when
-          needed to investigate abuse, fraud, security issues, or policy
-          violations.
+          We review every report within 24 hours. Reports involving an
+          immediate risk to someone's safety go to the front of the queue. When
+          something breaks our rules, we remove it and suspend or permanently
+          ban the account responsible. A suspended account can't message, post,
+          create plans or invite anyone.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="title-mono text-2xl text-ink mb-3">Blocking</h2>
+        <p>
+          Block someone from their profile or from a chat. They can't message
+          you, send you a friend request or invite you, and they aren't told.
+          Their messages are hidden from you, including in plan and group chats
+          you're both in.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="title-mono text-2xl text-ink mb-3">Automated checks</h2>
+        <p>
+          Profiles, plans, Coveys, recaps, messages and photos are checked
+          automatically for content that breaks our rules. Anything flagged as
+          high risk is hidden straight away and sent to a person, who decides
+          whether it stays down. A check never suspends or bans anyone on its
+          own. Section 8 of our
+          <a href="/privacy" class="text-accent-ink underline underline-offset-2 decoration-1">Privacy Policy</a>
+          explains how these checks work.
+        </p>
+      </section>
+
+      <section id="appeals">
+        <h2 class="title-mono text-2xl text-ink mb-3">Appeals</h2>
+        <p>
+          If your content was removed or your account was suspended and you
+          think we got it wrong, email
+          <a href={`mailto:${SITE.emails.support}?subject=Appeal`} class="text-accent-ink underline underline-offset-2 decoration-1">{SITE.emails.support}</a>
+          with "Appeal" in the subject, from the email address on your account.
+          Someone who wasn't involved in the original decision will review it.
+          You can still report other people while your account is suspended.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="title-mono text-2xl text-ink mb-3">Before you meet</h2>
+        <p>
+          Meet in a public place the first time, tell a friend where you're
+          going, get yourself there and back, and never send money to someone
+          you met on Covey. Covey doesn't run background checks on anyone.
         </p>
       </section>
 
       <section>
         <h2 class="title-mono text-2xl text-ink mb-3">Emergencies</h2>
         <p>
-          Covey support is not an emergency service. If you or someone else is
-          in immediate danger, contact local emergency services first. For
-          non-emergency help with an account or plan, contact support at
-          <a href={`mailto:${SITE.emails.support}`} class="text-accent-ink underline underline-offset-2 decoration-1">
-            {SITE.emails.support}
-          </a>.
+          Covey is not an emergency service. If you or someone else is in
+          immediate danger, call 911 first. For non-emergency help with an
+          account or plan, email
+          <a href={`mailto:${SITE.emails.support}`} class="text-accent-ink underline underline-offset-2 decoration-1">{SITE.emails.support}</a>.
         </p>
       </section>
     </div>

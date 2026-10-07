@@ -1,92 +1,62 @@
 ---
+/*
+ * Contact by email only. The site used to carry a Netlify Forms contact form,
+ * which does nothing on Vercel (where the site is hosted), so messages sent
+ * through it were silently lost. Every channel here is a mailto link to an
+ * inbox that exists. If a form comes back, it needs a Vercel-compatible
+ * backend and a privacy policy update (§4.14) first.
+ */
 import BaseLayout from "../layouts/BaseLayout.astro";
 import CoveyMark from "../components/CoveyMark.astro";
-import FormField from "../components/FormField.astro";
-import FormEnhance from "../components/FormEnhance.astro";
 import { SITE } from "../config";
 
-const contactRows = [
-  { label: "Hello", value: SITE.emails.hello, href: `mailto:${SITE.emails.hello}` },
-  { label: "Press", value: SITE.emails.press, href: `mailto:${SITE.emails.press}` },
-  { label: "City", value: SITE.city, href: null },
+const channels = [
+  { label: "Support", value: SITE.emails.support, body: "Your account, the app, or the website." },
+  { label: "Safety", value: SITE.emails.safety, body: "Reporting a person or content, and urgent safety concerns." },
+  { label: "Privacy", value: SITE.emails.privacy, body: "Data requests and privacy questions." },
+  { label: "Press", value: SITE.emails.press, body: "Media inquiries." },
+  { label: "Hello", value: SITE.emails.hello, body: "Partnerships, hosting, or just to say hi." },
 ];
 ---
 
 <BaseLayout
   title="Contact"
-  description="Get in touch with the Covey team — press, partnerships, support, or just to say hi."
+  description="Get in touch with the Covey team by email — support, safety, privacy, press, or just to say hi."
 >
-  <div class="max-w-5xl mx-auto px-6 py-[var(--section-y)] grid md:grid-cols-12 gap-12 lg:gap-16 items-start">
-    <div class="md:col-span-5 space-y-6">
-      <div class="eyebrow flex items-center gap-2.5">
-        <CoveyMark variant="dots" dotSize={6} />
-        Contact
-      </div>
-      <h1 class="display t-h1">Say hi.</h1>
-      <p class="text-ink-muted text-lg leading-relaxed">
-        For press, partnerships, host applications, or general questions — drop
-        us a note. We read everything and try to reply within a few days.
-      </p>
-
-      <dl class="space-y-4 pt-6 border-t">
-        {
-          contactRows.map((row) => (
-            <div class="flex justify-between items-baseline gap-4">
-              <dt class="eyebrow">{row.label}</dt>
-              <dd class="font-mono text-sm text-ink">
-                {row.href ? (
-                  <a href={row.href} class="hover:text-accent-ink transition-colors underline decoration-transparent hover:decoration-current underline-offset-4">
-                    {row.value}
-                  </a>
-                ) : (
-                  row.value
-                )}
-              </dd>
-            </div>
-          ))
-        }
-      </dl>
+  <div class="max-w-3xl mx-auto px-6 py-[var(--section-y)]">
+    <div class="eyebrow flex items-center gap-2.5 mb-3">
+      <CoveyMark variant="dots" dotSize={6} />
+      Contact
     </div>
+    <h1 class="display t-h1 mb-6">Say hi.</h1>
+    <p class="text-ink-muted text-lg leading-relaxed mb-12">
+      Email whichever inbox fits. A person reads everything and we try to reply
+      within a few days. We use what you send only to answer you; see our
+      <a href="/privacy" class="text-accent-ink underline underline-offset-2 decoration-1">Privacy Policy</a>.
+    </p>
 
-    <div class="md:col-span-7">
-      <form
-        name="contact"
-        method="POST"
-        data-netlify="true"
-        netlify-honeypot="bot-field"
-        action="/thanks"
-        data-astro-reload
-        data-enhance
-        novalidate
-        class="card p-7 sm:p-8"
-      >
-        <input type="hidden" name="form-name" value="contact" />
-        <p class="hidden">
-          <label>Don't fill this out if you're human: <input name="bot-field" /></label>
-        </p>
+    <dl class="space-y-6 border-t pt-8">
+      {
+        channels.map((row) => (
+          <div class="grid sm:grid-cols-12 gap-1 sm:gap-6 items-baseline">
+            <dt class="eyebrow sm:col-span-3">{row.label}</dt>
+            <dd class="sm:col-span-9">
+              <a
+                href={`mailto:${row.value}`}
+                class="font-mono text-sm text-ink hover:text-accent-ink transition-colors underline decoration-transparent hover:decoration-current underline-offset-4 break-all"
+              >
+                {row.value}
+              </a>
+              <p class="text-ink-muted leading-relaxed mt-1">{row.body}</p>
+            </dd>
+          </div>
+        ))
+      }
+    </dl>
 
-        <FormField name="name" label="Your name" required autocomplete="name" error="Please enter your name." />
-        <FormField type="email" name="email" label="Email" required autocomplete="email" inputmode="email" error="Enter a valid email so we can reply." />
-        <FormField
-          type="select"
-          name="subject"
-          label="Subject"
-          options={["General question", "Press", "Partnership", "Host application", "Support"]}
-        />
-        <FormField type="textarea" name="message" label="Message" required rows={6} error="Add a short message so we know how to help." />
-
-        <button type="submit" class="btn btn-primary btn-lg w-full mt-7">
-          Send message
-        </button>
-
-        {/* Notice at collection — CCPA requires this at or before the point
-            of collection, so it lives inside the form, not in the page footer. */}
-        <p class="text-sm text-ink-muted mt-5 leading-relaxed">
-          We use what you send here only to answer you. See our
-          <a href="/privacy" class="text-accent-ink underline underline-offset-2 decoration-1">Privacy Policy</a>.
-        </p>
-      </form>
-    </div>
+    <p class="mt-12 text-ink-muted leading-relaxed">
+      Covey is based in {SITE.city}. If someone is in immediate danger, call 911
+      first.
+    </p>
   </div>
-  <FormEnhance />
 </BaseLayout>

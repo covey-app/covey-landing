@@ -3,7 +3,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import JoinCTA from "../components/JoinCTA.astro";
 import BirdDivider from "../components/BirdDivider.astro";
 import CoveyMark from "../components/CoveyMark.astro";
-import { SITE } from "../config";
+import { SITE, APP_STORE } from "../config";
 
 const principles = [
   {
@@ -31,13 +31,13 @@ const principles = [
 const stats = [
   { k: "2025", v: "Founded" },
   { k: SITE.city.split(",")[0], v: "First city" },
-  { k: "Invite-only", v: "iOS launch" },
+  { k: "18+", v: "Adults only" },
 ];
 ---
 
 <BaseLayout
   title="About"
-  description="Covey is a plan-first social app built around real-world itineraries and small-group meetups, launching invite-only on iOS."
+  description={`Covey is a plan-first social app built around real-world itineraries and small-group meetups, on the web and ${APP_STORE.live ? "on" : "coming soon to"} the App Store as “${APP_STORE.name}”.`}
 >
   <div class="max-w-4xl mx-auto px-6 py-[var(--section-y)]">
     <div class="eyebrow mb-3 flex items-center gap-2.5">
@@ -116,6 +116,6 @@ const stats = [
   <JoinCTA
     eyebrow="The city is the canvas"
     heading="want to be part of it?"
-    body="Make an account on the web today. The iOS app is rolling out by invite."
+    body={`Make an account on the web today. ${APP_STORE.sentence}`}
   />
 </BaseLayout>
