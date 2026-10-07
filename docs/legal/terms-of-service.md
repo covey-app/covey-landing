@@ -1,17 +1,21 @@
 # COVEY TERMS OF SERVICE
 
-**Provider:** Covey, Inc., a Delaware corporation *(entity name, form, and registered address to be confirmed — see Annex D)*
+**Provider:** {{LEGAL_ENTITY}}, {{POSTAL_ADDRESS}}
 **Document:** Terms of Service (the "**Agreement**")
-**Version:** 2026-09-01
-**Effective Date:** 1 September 2026
-**Supersedes:** Version 2026-08-23
-**Publication URL:** https://coveyapp.co/terms
+**Version:** 2026-10-15
+**Effective Date:** 15 October 2026
+**Supersedes:** Version 2026-09-01
+**Publication URL:** https://www.coveyapp.co/terms
 
 ---
 
 > ## NOTICE TO THE USER
 >
 > **THIS IS A BINDING LEGAL AGREEMENT. READ IT BEFORE YOU ACCEPT.**
+>
+> **SECTION 9.3 (ZERO TOLERANCE)** STATES THAT COVEY HAS NO TOLERANCE FOR
+> OBJECTIONABLE CONTENT OR ABUSIVE USERS. CONTENT THAT BREAKS THE RULES IS
+> REMOVED, AND ACCOUNTS THAT POST IT OR ABUSE OTHERS ARE SUSPENDED OR BANNED.
 >
 > **SECTION 10 (NO SCREENING; NO ENDORSEMENT)** STATES THAT COVEY DOES NOT
 > CONDUCT CRIMINAL BACKGROUND CHECKS OR SEX-OFFENDER REGISTRY SEARCHES ON ITS
@@ -25,7 +29,7 @@
 > YOU TO ONE HUNDRED UNITED STATES DOLLARS (US$100).
 >
 > **SECTION 20 (DISPUTE RESOLUTION; ARBITRATION; CLASS ACTION WAIVER)** REQUIRES
-> MOST DISPUTES TO BE RESOLVED BY INDIVIDUAL BINDING ARBITRATION AND WAIVES YOUR
+> THAT MOST DISPUTES BE RESOLVED BY INDIVIDUAL BINDING ARBITRATION AND WAIVES YOUR
 > RIGHT TO A JURY TRIAL AND TO PARTICIPATE IN A CLASS ACTION. **YOU MAY OPT OUT
 > OF SECTION 20 WITHIN THIRTY (30) DAYS UNDER SECTION 20.6 WITHOUT ANY OTHER
 > CONSEQUENCE TO YOUR ACCOUNT.**
@@ -34,7 +38,7 @@
 
 ## RECITALS
 
-**A.** Covey, Inc. ("**Covey**", "**we**", "**us**", or "**our**") operates a
+**A.** {{LEGAL_ENTITY}} ("**Covey**", "**we**", "**us**", or "**our**") operates a
 mobile application and related website through which individuals discover, plan,
 and coordinate in-person social activities, and, at the User's election, seek
 romantic connections.
@@ -88,15 +92,17 @@ language model and presented to a User by the Service, as described in Section 8
 including its title, description, times, stops, locations, and participant list.
 
 1.11 "**Privacy Policy**" means the Covey Privacy Policy published at
-https://coveyapp.co/privacy, as amended from time to time.
+https://www.coveyapp.co/privacy, as amended from time to time.
 
-1.12 "**Service**" means the Covey mobile application, the website at
-coveyapp.co, and all features, functionality, content, and support that Covey
-makes available through them.
+1.12 "**Service**" means the Covey mobile application, distributed on the Apple
+App Store as "Covey: Do It Together", Covey's web application, the website at
+www.coveyapp.co, and all features, functionality, content, and support that
+Covey makes available through them.
 
 1.13 "**User Content**" means Content that you submit, upload, transmit, post, or
 otherwise make available through the Service, including your profile information,
-Plans, posts, photographs, messages, comments, group descriptions, and reports.
+Plans, posts and recaps, photographs, messages, Covey Group names and
+descriptions, and reports.
 
 1.14 "**Version**" means the version identifier appearing in the header of this
 Agreement, which is recorded against your Account when you accept.
@@ -106,6 +112,9 @@ Agreement, which is recorded against your Account when you accept.
 (c) headings are for convenience only and do not affect interpretation;
 (d) a reference to a Section or Annex is to a Section or Annex of this Agreement;
 and (e) a reference to a statute includes any amendment or re-enactment of it.
+
+1.16 "**Covey Group**" means a standing group of Users created through the
+Service in order to make Plans together.
 
 ---
 
@@ -148,8 +157,8 @@ years of age**;
 &nbsp;&nbsp;&nbsp;&nbsp;3.1.2 you have the legal capacity to enter into a binding
 contract;
 
-&nbsp;&nbsp;&nbsp;&nbsp;3.1.3 the date of birth and identity document you provide
-are genuine and are your own;
+&nbsp;&nbsp;&nbsp;&nbsp;3.1.3 the date of birth you declare is accurate, and any
+identity document you present for verification is genuine and is your own;
 
 &nbsp;&nbsp;&nbsp;&nbsp;3.1.4 you are not required to register as a sex offender
 with any government entity in any jurisdiction;
@@ -177,13 +186,16 @@ knowingly permit any person under eighteen (18) to create an Account, and will
 terminate any Account it learns belongs to such a person and delete the associated
 data.
 
-3.4 **Territory.** The Service is presently offered only in the United States, on
-an invitation basis. Covey may limit, prioritise, suspend, or withdraw invitations
-in its sole discretion and may restrict availability by territory.
+3.4 **Territory.** The Service is presently offered only in the United States.
+Covey may restrict availability by territory.
 
 3.5 **Breach of eligibility.** A breach of any representation in Section 3.1 is a
 material breach of this Agreement entitling Covey to terminate your Account
 immediately and without notice under Section 16.
+
+3.6 **Alcohol.** Plans centred on alcohol are open only to Users who are at least
+twenty-one (21) years of age. A host cannot lower that minimum, and you must not
+attempt to join such a Plan if you are under twenty-one (21).
 
 ---
 
@@ -199,8 +211,7 @@ authorised by you. You must notify Covey at support@coveyapp.co promptly upon
 becoming aware of any unauthorised access.
 
 4.3 **One Account per person.** You may hold one Account. You must not sell, rent,
-lend, share, or transfer your Account, your credentials, or any invitation issued
-to you.
+lend, share, or transfer your Account or your credentials.
 
 4.4 **No liability for unauthorised access.** Covey is not liable for any loss
 arising from unauthorised use of your Account, except to the extent caused by
@@ -210,38 +221,47 @@ Covey's own failure to comply with Applicable Law.
 
 ## 5. IDENTITY VERIFICATION AND ITS LIMITS
 
-5.1 **The process.** Before completing onboarding, you must photograph a
-government-issued identity document and capture a facial photograph
-("**Selfie**"). A member of Covey's personnel visually compares the two in order
-to form a view as to whether the document appears genuine, whether it appears to
-relate to you, and whether it indicates that you are at least eighteen (18) years
-of age.
+5.1 **Optional.** Covey may offer optional identity verification. It is not
+offered in every version of the Service, and you are never required to complete
+it in order to use the Service.
 
-5.2 **Data handling.** The handling, storage, retention, and deletion of the
-identity document and Selfie are governed by the Privacy Policy. Covey does not
-perform automated facial recognition and does not generate or store a biometric
-template or faceprint from the Selfie.
+5.2 **The process.** Where it is offered and you choose to complete it, identity
+verification is performed by Stripe, Inc. through its Stripe Identity service.
+Stripe asks you to photograph a government-issued identity document and to take
+a live photograph of your face ("**Selfie**"), and uses automated facial
+comparison to determine whether the Selfie matches the photograph on the
+document and whether the document appears genuine. That comparison involves
+biometric processing by Stripe. You are asked for your consent in the
+verification flow before any image is captured.
 
-> ### 5.3 CONSPICUOUS NOTICE — WHAT IDENTITY VERIFICATION IS NOT
+5.3 **Data handling.** The document image and the Selfie go directly to Stripe and
+are held by Stripe; Covey does not receive or store them, or any biometric data
+derived from them. Covey receives only the outcome of the verification and your
+date of birth as read from the document. The Privacy Policy, in particular its
+Sections 4.5 and 4.5A, governs the handling, retention, and deletion of this
+information.
+
+> ### 5.4 CONSPICUOUS NOTICE — WHAT IDENTITY VERIFICATION IS NOT
 >
-> **IDENTITY VERIFICATION IS A VISUAL INSPECTION OF A DOCUMENT AND NOTHING MORE.
-> IT IS NOT A CRIMINAL BACKGROUND CHECK, A SEX-OFFENDER REGISTRY SEARCH, A
-> REFERENCE CHECK, A CREDIT CHECK, OR ANY ASSESSMENT WHATSOEVER OF ANY PERSON'S
-> CHARACTER, PROPENSITIES, CRIMINAL HISTORY, OR INTENTIONS.**
+> **IDENTITY VERIFICATION IS AN AUTOMATED CHECK, PERFORMED BY A THIRD PARTY, THAT
+> A SELFIE MATCHES THE PHOTOGRAPH ON A PRESENTED DOCUMENT AND THAT THE DOCUMENT
+> APPEARS GENUINE. IT IS NOT A CRIMINAL BACKGROUND CHECK, A SEX-OFFENDER REGISTRY
+> SEARCH, A REFERENCE CHECK, A CREDIT CHECK, OR ANY ASSESSMENT WHATSOEVER OF ANY
+> PERSON'S CHARACTER, PROPENSITIES, CRIMINAL HISTORY, OR INTENTIONS.**
 >
 > **ANY INDICATOR, BADGE, OR LABEL DISPLAYED BY THE SERVICE INDICATING THAT A
-> USER HAS COMPLETED IDENTITY VERIFICATION MEANS ONLY THAT A DOCUMENT WAS
-> PRESENTED AND VISUALLY REVIEWED. IT IS NOT A REPRESENTATION, WARRANTY,
-> CERTIFICATION, OR ENDORSEMENT BY COVEY THAT THE USER IS WHO THEY CLAIM TO BE,
-> IS TRUTHFUL, IS OF GOOD CHARACTER, OR IS SAFE TO MEET. YOU MUST NOT RELY ON IT
-> AS SUCH.**
+> USER HAS COMPLETED IDENTITY VERIFICATION MEANS ONLY THAT SUCH A CHECK RETURNED A
+> MATCH. IT IS NOT A REPRESENTATION, WARRANTY, CERTIFICATION, OR ENDORSEMENT BY
+> COVEY THAT THE USER IS WHO THEY SAY THEY ARE, IS TRUTHFUL, IS OF GOOD CHARACTER,
+> OR IS SAFE TO MEET. YOU MUST NOT RELY ON IT AS SUCH. MOST USERS WILL NOT HAVE
+> COMPLETED IDENTITY VERIFICATION.**
 
-5.4 **Assumption of no duty.** By conducting Identity Verification, Covey does not
+5.5 **Assumption of no duty.** By offering identity verification, Covey does not
 assume, and expressly disclaims, any duty to detect fraudulent, altered, or
 misappropriated documents, or any duty of care to any User in respect of the
 identity, character, or conduct of any other User.
 
-5.5 **Fraudulent submission.** Submitting a forged, altered, or borrowed identity
+5.6 **Fraudulent submission.** Submitting a forged, altered, or borrowed identity
 document, or one belonging to another person, is a material breach of this
 Agreement resulting in immediate permanent termination, and may constitute a
 criminal offence.
@@ -259,11 +279,14 @@ non-commercial purposes.
 its licensors. Nothing in this Agreement transfers to you any right, title, or
 interest in the Covey Materials.
 
-6.3 **No charge.** Covey provides the Service free of charge. Covey does not levy
-subscription fees, does not sell in-application products, and does not process
-payments. Nothing in the Service constitutes an offer to sell you anything. If
-Covey introduces paid features, it will publish amended terms and obtain your
-acceptance before any charge arises.
+6.3 **No charge; no payments.** Covey provides the Service free of charge. Covey
+does not levy subscription fees and does not sell in-application products.
+Payments are not offered in this version of the Service: you cannot pay for a
+Plan through the Service, and hosts cannot receive payouts through it. Nothing in
+the Service constitutes an offer to sell you anything. If Covey introduces paid
+Plans or any other paid feature, it will first publish amended terms, including
+the refund terms that will apply, and obtain your acceptance under Section 23
+before any charge arises.
 
 6.4 **Transactions between Users.** Covey is not a party to, and assumes no
 responsibility for, any financial arrangement between Users or between a User and
@@ -271,8 +294,8 @@ any venue, host, or third party, including the sharing of costs, the purchase of
 tickets, cover charges, or deposits. Covey neither holds nor transmits any such
 funds.
 
-6.5 **Nature of the Service.** The Service is provided on an early-access basis.
-Covey may add, modify, suspend, or discontinue any part of it at any time. Covey
+6.5 **Nature of the Service.** Covey may add, modify, suspend, or discontinue any
+part of the Service at any time. Covey
 does not warrant any level of availability or uptime, and does not warrant that
 User Content will be preserved. Where a modification materially diminishes the
 Service, Covey will use reasonable efforts to give prior notice through the
@@ -325,10 +348,12 @@ without attribution, compensation, or obligation to you.
 ## 8. AI-GENERATED OUTPUT
 
 8.1 **Nature of Model Output.** Certain optional features of the Service produce
-Model Output, including suggested profile biographies, draft Plans, group
-descriptions, conversation prompts, and interpretations of search queries. The
-Privacy Policy identifies the third-party model provider and specifies precisely
-what data is transmitted and what is not.
+Model Output using Google's Gemini service, including suggested profile
+biographies, draft Plans from the plan co-pilot, Covey Group descriptions,
+conversation ice-breakers, onboarding suggestions, and interpretations of search
+queries. These features are used only if you agree to them when the Service asks,
+and you may withdraw that agreement in the application's settings. Section 8 of
+the Privacy Policy specifies what data each feature sends and what it does not.
 
 8.2 **No review; no warranty.** Model Output is generated automatically and is not
 reviewed by any person before it is presented to you. **MODEL OUTPUT MAY BE
@@ -344,6 +369,14 @@ authored it.
 8.4 **No ownership claim.** Covey does not assert ownership of Model Output
 presented to you.
 
+8.5 **Automated safety checks.** Separately from the features in Section 8.1,
+Covey uses automated systems, including Google's Gemini service, to check User
+Content, including profile text, Plans, Covey Groups, recaps, messages, and
+images, against the Acceptable Use Policy. These checks are a condition of using
+the Service and are described in Section 8.7 of the Privacy Policy. Content a
+check classifies as high risk may be hidden automatically pending review by a
+person under Section 12.
+
 ---
 
 ## 9. ACCEPTABLE USE
@@ -353,15 +386,21 @@ incorporated into and forms part of this Agreement.
 
 9.2 Breach of the Acceptable Use Policy is a material breach of this Agreement.
 
+> **9.3 ZERO TOLERANCE. COVEY HAS NO TOLERANCE FOR OBJECTIONABLE CONTENT OR FOR
+> ABUSIVE USERS. CONTENT THAT VIOLATES THE ACCEPTABLE USE POLICY WILL BE REMOVED,
+> AND USERS WHO POST IT, OR WHO HARASS, THREATEN, OR OTHERWISE ABUSE OTHER USERS,
+> WILL HAVE THEIR ACCOUNTS SUSPENDED OR PERMANENTLY BANNED.** Covey acts on
+> reports within twenty-four (24) hours, as described in Section 12.
+
 ---
 
 ## 10. NO SCREENING; NO ENDORSEMENT
 
 > **10.1 COVEY DOES NOT CONDUCT CRIMINAL BACKGROUND CHECKS, SEX-OFFENDER REGISTRY
-> SEARCHES, REFERENCE CHECKS, OR ANY OTHER SCREENING OF ITS USERS. THE IDENTITY
-> VERIFICATION DESCRIBED IN SECTION 5 CONFIRMS ONLY THAT A DOCUMENT WAS PRESENTED
-> AND VISUALLY REVIEWED. IT CONFIRMS NOTHING ABOUT ANY PERSON'S HISTORY,
-> CHARACTER, PROPENSITIES, OR INTENTIONS.**
+> SEARCHES, REFERENCE CHECKS, OR ANY OTHER SCREENING OF ITS USERS. THE OPTIONAL
+> IDENTITY VERIFICATION DESCRIBED IN SECTION 5 CONFIRMS ONLY THAT AN AUTOMATED
+> CHECK MATCHED A SELFIE TO A PRESENTED DOCUMENT. IT CONFIRMS NOTHING ABOUT ANY
+> PERSON'S HISTORY, CHARACTER, PROPENSITIES, OR INTENTIONS.**
 >
 > **10.2 COVEY DOES NOT VERIFY STATEMENTS THAT USERS MAKE ABOUT THEMSELVES AND
 > DOES NOT VET PLANS, HOSTS, VENUES, ACTIVITIES, OR LOCATIONS.**
@@ -426,14 +465,17 @@ emergency services. Non-emergency safety concerns should be reported under Secti
 ## 12. REPORTING, BLOCKING, MODERATION, AND ENFORCEMENT
 
 12.1 **User tools.** The Service enables you to block any other User, which
-prevents that User from contacting you or viewing your Content, and to report a
-User, message, Plan, post, photograph, place, group, or comment, together with
-supporting context.
+prevents that User from messaging you, sending you friend requests, or inviting
+you, and hides that User and their messages from you, including in conversations
+you share; and to report a User, message, Plan, Covey Group, recap, photograph, or
+place, together with supporting context. Every report is reviewed by a person.
 
-12.2 **No obligation to monitor.** Covey has no obligation to monitor, review, or
-moderate Content, and does not undertake to do so. Any moderation Covey performs
-is undertaken voluntarily and does not create a duty to perform it in any
-particular case, to any standard, or at all.
+12.2 **Moderation and its limits.** Covey reviews reports and checks User Content
+automatically as described in Section 8.5. Covey cannot review all Content before
+it appears and does not warrant that all Content breaching this Agreement will be
+detected or removed. Covey's moderation does not create a duty to any User to
+perform it in any particular case or to any particular standard, beyond the
+commitments stated in this Section 12.
 
 12.3 **Enforcement measures.** Where Covey determines, in its reasonable
 discretion, that a User has breached this Agreement or Applicable Law, or that
@@ -444,7 +486,13 @@ Account permanently; preserve records; and report the matter to law enforcement 
 other competent authority.
 
 12.4 **Interim action.** Covey may act before completing an investigation where the
-apparent risk warrants it.
+apparent risk warrants it, including by hiding Content automatically under
+Section 8.5 pending review by a person.
+
+12.4A **Response time.** Covey reviews reports within twenty-four (24) hours of
+receipt. Where Content breaches this Agreement, Covey removes it and takes action
+against the Account responsible under Section 12.3. Reports involving an immediate
+risk to a person's safety are prioritised.
 
 12.5 **Notice and reconsideration.** Where practicable and lawful, Covey will
 inform the affected User of the measure taken. A User may request reconsideration
@@ -518,10 +566,12 @@ Covey Materials.
 terminated in accordance with this Section 16.
 
 16.2 **Termination by you.** You may terminate this Agreement at any time by
-deleting your Account through the account settings within the application. Account
-deletion removes your profile, the Plans you host, your posts, your messages, your
-bookmarks, and your preferences, and revokes your authentication credentials,
-subject to the retention provisions of the Privacy Policy.
+deleting your Account within the application, at Profile → Settings → Account →
+Delete account. Deletion takes effect immediately: it removes your profile, the
+Plans you host, your posts and recaps, your messages, your bookmarks, and your
+preferences, and revokes your authentication credentials. Photographs and other
+files you uploaded are removed from storage within twenty-four (24) hours. Some
+records are retained as the Privacy Policy describes.
 
 16.3 **Termination or suspension by Covey.** Covey may suspend or terminate your
 Account and this Agreement, with or without notice, if: (a) you breach this
@@ -783,9 +833,10 @@ in the event of any conflict with a translation.
 
 ## 25. CONTACT
 
-Covey, Inc.
-San Francisco, California, United States
+{{LEGAL_ENTITY}}
+{{POSTAL_ADDRESS}}
 General and legal enquiries: support@coveyapp.co
+Privacy: privacy@coveyapp.co
 Trust and safety: safety@coveyapp.co
 Copyright agent: see Annex C
 
@@ -793,8 +844,10 @@ Copyright agent: see Annex C
 
 ## ANNEX A — ACCEPTABLE USE POLICY
 
-This Annex forms part of the Agreement. You shall not, and shall not attempt to,
-do any of the following.
+This Annex forms part of the Agreement. Covey has no tolerance for objectionable
+content or abusive users (Section 9.3): Content that breaches this Annex is
+removed, and Accounts responsible are suspended or permanently banned. You shall
+not, and shall not attempt to, do any of the following.
 
 **A.1 Conduct toward other persons**
 
@@ -848,8 +901,8 @@ A.4.2 Scrape, crawl, harvest, index, or bulk-collect Content, profiles,
 photographs, or contact details, whether manually or by automated means.
 
 A.4.3 Access the Service through any unauthorised client, robot, or automated
-system, or circumvent any rate limit, invitation gate, verification requirement,
-or access control.
+system, or circumvent any rate limit, age requirement, verification requirement,
+block, or access control.
 
 A.4.4 Use any other User's Content to train a machine-learning model, or to
 develop a product competitive with the Service.
@@ -917,16 +970,12 @@ a third-party beneficiary.
 
 ## ANNEX C — DMCA NOTICE PROCEDURE
 
-**C.1 Designated agent.**
+**C.1 Designated agent.** Notifications of claimed infringement and
+counter-notifications must be sent to Covey's designated agent:
 
-> **[TO BE COMPLETED.** Covey has not yet designated an agent with the United
-> States Copyright Office. Registration is required to secure the safe harbour
-> under 17 U.S.C. § 512(c). Insert the designated agent's name, postal address,
-> telephone number, and email address here, and register the same details at
-> dmca.copyright.gov.**]**
->
-> Interim contact pending registration: support@coveyapp.co, subject line "DMCA
-> Notice".
+{{DMCA_AGENT}}
+
+Email: support@coveyapp.co, with the subject line "DMCA Notice".
 
 **C.2 Contents of a notification.** A notification of claimed infringement must be
 a written communication that includes substantially the following:
@@ -961,24 +1010,16 @@ material is infringing, or was removed by mistake, may be liable for damages und
 
 ## ANNEX D — ENTITY PARTICULARS
 
-> **[TO BE CONFIRMED BY COUNSEL BEFORE PUBLICATION.]**
->
-> The following particulars are drafted on instruction that Covey is a Delaware
-> corporation. Each must be verified against the certificate of incorporation and
-> the App Store Connect account, which must match.
->
-> | Particular | Value |
-> |---|---|
-> | Registered name | Covey, Inc. *(confirm exact registered name, including punctuation and suffix)* |
-> | Entity form | Corporation |
-> | State of incorporation | Delaware |
-> | Registered office / agent | *to be inserted* |
-> | Principal place of business | San Francisco, California *(insert full street address)* |
-> | Notice address for legal process | *to be inserted* |
->
-> Where "Covey, Inc." appears in this Agreement, it must be replaced throughout
-> with the confirmed registered name before publication.
+| Particular | Value |
+|---|---|
+| Provider | {{LEGAL_ENTITY}} |
+| Address for notices and legal process | {{POSTAL_ADDRESS}} |
+| Email for notices | support@coveyapp.co |
+
+The Provider named above is the party to this Agreement, the controller named in
+the Privacy Policy, and the seller of the Covey application on the Apple App
+Store.
 
 ---
 
-*End of Terms of Service, Version 2026-09-01.*
+*End of Terms of Service, Version 2026-10-15.*
