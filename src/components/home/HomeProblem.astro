@@ -1,0 +1,184 @@
+---
+/*
+ * The problem, told in beats. A full-bleed inverted band (ink ground in
+ * light mode, paper in dark) pinned while you scroll through it; each beat
+ * lights up in turn from --p (src/lib/motion.ts, data-progress="pin").
+ * Phones and reduced motion: no pin, every beat fully visible.
+ */
+---
+
+<section class="problem" data-progress="pin" aria-labelledby="problem-title">
+  <div class="problem-pin">
+    <div class="wrap problem-inner">
+      <h2 id="problem-title" class="kicker problem-kicker">Why Covey exists</h2>
+      <ol class="beats">
+        <li class="beat" style="--n:0">you meet someone great.</li>
+        <li class="beat" style="--n:1">you swap numbers.</li>
+        <li class="beat is-turn" style="--n:2">you never see them again.</li>
+      </ol>
+
+      <div class="fact" style="--n:3">
+        <div class="hours" aria-hidden="true">
+          {Array.from({ length: 50 }, (_, i) => <span class:list={["hour", i < 3 && "is-on"]} style={`--h:${i}`} />)}
+        </div>
+        <p class="fact-text">
+          <strong>About 50 hours together</strong> turns someone you've met
+          into a casual friend.<sup><a href="#ref-hall" id="ref-hall-cite" aria-label="Source">1</a></sup>
+          One good night covers three. The rest comes from showing up again.
+        </p>
+      </div>
+
+      <p class="answer" style="--n:4">
+        covey is built for the <span>second</span> hangout.
+      </p>
+      <p id="ref-hall" class="ref">
+        <a href="#ref-hall-cite" aria-label="Back to the claim">1.</a>
+        Hall, J. A. (2019). How many hours does it take to make a friend?
+        <em>Journal of Social and Personal Relationships</em>.
+        <a href="https://doi.org/10.1177/0265407518761225" rel="noreferrer">doi:10.1177/0265407518761225</a>
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .problem {
+    --p: 1;
+    position: relative;
+    background: var(--ink);
+    color: var(--ink-inverse);
+    --muted: color-mix(in oklab, var(--ink-inverse) 62%, var(--ink));
+    --turn: #f6a28f;
+    --grad: linear-gradient(90deg, #f6a28f, #c99ad6 55%, #9cc85f);
+  }
+  /* In dark mode the band inverts to paper, so the accents darken to keep
+     their contrast against it. */
+  :global(.dark) .problem {
+    --turn: #a8361f;
+    --grad: linear-gradient(90deg, #a8361f, #7b3f8f 55%, #3f6b17);
+  }
+  .problem-inner {
+    padding-block: clamp(4rem, 9vw, 7rem);
+  }
+  .problem-kicker {
+    color: var(--muted);
+    margin-bottom: 2rem;
+  }
+  .beats {
+    list-style: none;
+    margin: 0 0 3rem;
+    padding: 0;
+    display: grid;
+    gap: 0.4em;
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: clamp(2.1rem, 6.2vw, 5.6rem);
+    line-height: 0.98;
+    letter-spacing: -0.055em;
+    text-transform: lowercase;
+  }
+  .beat.is-turn {
+    color: var(--turn);
+  }
+  .fact {
+    display: grid;
+    gap: 1.25rem;
+    max-width: 40rem;
+    margin-bottom: 3rem;
+  }
+  .hours {
+    display: grid;
+    grid-template-columns: repeat(25, 1fr);
+    gap: 6px;
+    max-width: 30rem;
+  }
+  .hour {
+    aspect-ratio: 1;
+    border-radius: 99px;
+    border: 1.3px solid color-mix(in oklab, var(--ink-inverse) 35%, transparent);
+  }
+  .hour.is-on {
+    border-color: transparent;
+    background: #f6a28f;
+  }
+  .hour.is-on:nth-child(2) {
+    background: #9cc85f;
+  }
+  .hour.is-on:nth-child(3) {
+    background: #7ca1e5;
+  }
+  .fact-text {
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    color: var(--muted);
+  }
+  .fact-text strong {
+    color: var(--ink-inverse);
+    font-weight: 600;
+  }
+  .fact-text sup a {
+    font-family: var(--font-mono);
+    color: var(--ink-inverse);
+    padding: 0 0.15em;
+  }
+  .answer {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: clamp(1.75rem, 4vw, 3.4rem);
+    line-height: 1.02;
+    letter-spacing: -0.05em;
+    text-transform: lowercase;
+    max-width: 18ch;
+  }
+  .answer span {
+    background: var(--grad);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .ref {
+    margin-top: 2.5rem;
+    font-size: 0.75rem;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+  .ref a {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  /* Pinned telling (wide screens with motion): the band is three screens
+     tall, its content sticks, and beats light up from --p. */
+  @media (min-width: 900px) and (prefers-reduced-motion: no-preference) {
+    .problem {
+      height: 280vh;
+    }
+    .problem-pin {
+      position: sticky;
+      top: 4rem;
+      height: calc(100vh - 4rem);
+      display: grid;
+      align-items: center;
+      overflow: hidden;
+    }
+    .problem-inner {
+      padding-block: 2rem;
+    }
+    .beat,
+    .fact,
+    .answer {
+      --v: clamp(0, calc(var(--p) * 6 - var(--n) - 0.15), 1);
+      opacity: calc(0.12 + var(--v) * 0.88);
+      transform: translateY(calc((1 - var(--v)) * 18px));
+      transition:
+        opacity 0.25s linear,
+        transform 0.25s linear;
+    }
+    .hour:not(.is-on) {
+      opacity: calc(0.3 + clamp(0, calc(var(--p) * 6 - 3 - var(--h) * 0.02), 1) * 0.7);
+    }
+    .ref {
+      opacity: calc(clamp(0, calc(var(--p) * 6 - 4.3), 1));
+    }
+  }
+</style>

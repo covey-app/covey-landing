@@ -1,37 +1,7 @@
 ---
-import BaseLayout from "../layouts/BaseLayout.astro";
-import JoinCTA from "../components/JoinCTA.astro";
-import CoveyMark from "../components/CoveyMark.astro";
-import EmptyState from "../components/EmptyState.astro";
-import { SITE } from "../config";
+// /events was a placeholder for launch events; /activities is the living guide
+// to what's on. vercel.json redirects first; this covers other hosts.
+import RedirectPage from "../components/RedirectPage.astro";
 ---
 
-<BaseLayout
-  title="Upcoming Events"
-  description="Covey launch mixers, host meetups, and city rollout events — dates coming soon."
->
-  <div class="max-w-4xl mx-auto px-6 py-[var(--section-y)]">
-    <div class="eyebrow mb-3 flex items-center gap-2.5">
-      <CoveyMark variant="dots" dotSize={6} />
-      Upcoming events
-    </div>
-    <h1 class="display t-h1 mb-6 text-balance">
-      Meet the people building the first plans.
-    </h1>
-    <p class="text-ink-muted text-lg leading-relaxed max-w-2xl mb-12">
-      Launch mixers, host meetups, and city-by-city rollout dates will land
-      here first. We haven't locked anything in yet. In the meantime, the
-      plans themselves are the events — anyone can host one.
-    </p>
-
-    <EmptyState
-      title="Nothing on the calendar yet."
-      body="We'll post real dates here the moment they're confirmed — no placeholder events, no maybes."
-    >
-      <a href={SITE.joinUrl} class="btn btn-primary">Join Covey</a>
-      <a href="/#how" class="btn btn-secondary">How Covey works</a>
-    </EmptyState>
-  </div>
-
-  <JoinCTA />
-</BaseLayout>
+<RedirectPage to="/activities" title="Activities" />

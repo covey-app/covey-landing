@@ -1,0 +1,30 @@
+---
+// No-JS success for the newsletter form: /api/newsletter redirects here.
+import BaseLayout from "../../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Check your inbox" description="Confirm your Covey Weekly subscription." noIndex={true} page="newsletter">
+  <section class="nl-page wrap">
+    <p class="kicker">Covey Weekly</p>
+    <h1 class="t-display">check your inbox.</h1>
+    <p>We sent a link to confirm your subscription. Tap it, and the next edition is yours. Nothing arrived? Check spam, or try again in a few minutes.</p>
+    <a href="/newsletter" class="arrow-link">Back to Covey Weekly</a>
+  </section>
+</BaseLayout>
+
+<style>
+  .nl-page {
+    display: grid;
+    gap: 1.1rem;
+    max-width: 44rem;
+    padding-block: clamp(3rem, 9vw, 7rem);
+  }
+  .nl-page h1 {
+    color: var(--ink);
+  }
+  .nl-page p:not(.kicker) {
+    font-size: var(--fs-lede);
+    line-height: 1.6;
+    color: var(--ink-muted);
+  }
+</style>

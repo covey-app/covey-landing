@@ -1,0 +1,216 @@
+---
+/*
+ * How it works — three steps, told as sticky storytelling on wide screens:
+ * the stage (HowStage) stays pinned while the steps scroll past, and the
+ * step in the middle of the viewport sets its composition. On phones each
+ * step carries its own static frame.
+ */
+import HowStage from "./HowStage.astro";
+import Icon from "../Icon.astro";
+
+const steps = [
+  {
+    n: "01",
+    t: "find a plan worth leaving the house for.",
+    d: "Browse small plans around the city — a run then coffee, a ramen crawl, a sunset walk — or post your own in a few taps. You see exactly where, when, and who's going.",
+  },
+  {
+    n: "02",
+    t: "take one of a few seats.",
+    d: "Hosts set the headcount, six by default, so everyone actually talks. Open plans take one tap; request-to-join plans go to the host first.",
+  },
+  {
+    n: "03",
+    t: "then do it again.",
+    d: "When a group clicks, make it a Covey: a standing group with a recurring plan, so the second hangout doesn't depend on someone remembering to ask.",
+  },
+] as const;
+
+const safety = ["Small by design", "Hosts approve requests", "18+, ID-verified", "Public places first"];
+---
+
+<section class="how wrap" aria-labelledby="how-title">
+  <div class="how-head" data-reveal>
+    <p class="kicker">How Covey works</p>
+    <h2 id="how-title" class="t-title">three steps.<br />then it's a habit.</h2>
+  </div>
+
+  <div class="how-grid">
+    <div class="how-stage-col" aria-hidden="true">
+      <div class="how-sticky">
+        <HowStage live step={1} />
+      </div>
+    </div>
+
+    <ol class="how-steps">
+      {
+        steps.map((s, i) => (
+          <li class="how-step" data-how-step={i + 1}>
+            <div class="how-step-frame">
+              <HowStage step={(i + 1) as 1 | 2 | 3} />
+            </div>
+            <span class="how-n">{s.n}</span>
+            <h3 class="how-t">{s.t}</h3>
+            <p class="how-d">{s.d}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+
+  <ul class="how-safety" data-reveal>
+    {
+      safety.map((s) => (
+        <li>
+          <Icon name="shield-check" size={16} />
+          {s}
+        </li>
+      ))
+    }
+    <li><a href="/safety" class="arrow-link">How we keep it safe</a></li>
+  </ul>
+</section>
+
+<style>
+  .how {
+    padding-block: clamp(4.5rem, 10vw, 8rem) clamp(3rem, 6vw, 5rem);
+    /* Floating actors can drift past the stage edge; never let that scroll the page. */
+    overflow-x: clip;
+  }
+  .how-head {
+    display: grid;
+    gap: 1rem;
+    margin-bottom: clamp(2.5rem, 6vw, 4.5rem);
+  }
+  .how-stage-col {
+    display: none;
+  }
+  .how-steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 3.5rem;
+  }
+  .how-step-frame {
+    width: min(100%, 26rem);
+    margin-bottom: 1.5rem;
+  }
+  .how-n {
+    display: block;
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: var(--accent-ink);
+    margin-bottom: 0.6rem;
+  }
+  .how-t {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: clamp(1.6rem, 3vw, 2.5rem);
+    line-height: 1.02;
+    letter-spacing: -0.045em;
+    color: var(--ink);
+    margin-bottom: 0.9rem;
+    max-width: 16ch;
+  }
+  .how-d {
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    color: var(--ink-muted);
+    max-width: 30rem;
+  }
+  .how-safety {
+    list-style: none;
+    margin: clamp(3rem, 6vw, 4.5rem) 0 0;
+    padding: 1.5rem 0 0;
+    border-top: 0.7px solid var(--edge);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1.75rem;
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    color: var(--ink-muted);
+  }
+  .how-safety li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+  }
+  .how-safety :global(svg) {
+    color: var(--accent-ink);
+  }
+
+  @media (min-width: 900px) {
+    .how-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 0.85fr);
+      gap: clamp(2.5rem, 6vw, 6rem);
+    }
+    .how-stage-col {
+      display: block;
+    }
+    .how-sticky {
+      position: sticky;
+      top: calc(50vh - min(22rem, 40vw) / 2 + 1.5rem);
+      width: min(100%, 34rem);
+    }
+    .how-step-frame {
+      display: none;
+    }
+    .how-steps {
+      gap: 0;
+    }
+    /* The current step is marked with an accent rule, not by fading the
+       others — dimmed text would fail contrast. */
+    .how-step {
+      position: relative;
+      min-height: 72vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding-left: 1.5rem;
+    }
+    .how-step::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 50%;
+      width: 3px;
+      height: 0;
+      border-radius: 3px;
+      background: var(--accent-ink);
+      transform: translateY(-50%);
+      transition: height 0.5s var(--ease-spring);
+    }
+    .how-step.is-current::before {
+      height: 9rem;
+    }
+  }
+</style>
+
+<script>
+  function initHow() {
+    const stage = document.querySelector<HTMLElement>("[data-how-stage].is-live");
+    const steps = Array.from(document.querySelectorAll<HTMLElement>("[data-how-step]"));
+    if (!stage || !steps.length || stage.dataset.bound) return;
+    stage.dataset.bound = "true";
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (!e.isIntersecting) continue;
+          const n = (e.target as HTMLElement).dataset.howStep!;
+          stage.dataset.step = n;
+          steps.forEach((s) => s.classList.toggle("is-current", s === e.target));
+        }
+      },
+      // A thin band across the middle of the viewport picks the current step.
+      { rootMargin: "-45% 0px -45% 0px" },
+    );
+    steps.forEach((s) => io.observe(s));
+    steps[0].classList.add("is-current");
+  }
+  initHow();
+  document.addEventListener("astro:page-load", initHow);
+</script>

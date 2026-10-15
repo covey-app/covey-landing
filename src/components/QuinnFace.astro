@@ -1,0 +1,75 @@
+---
+/*
+ * QuinnFace — Quinn's bust with the seven expressions from
+ * COVEYcharacter-dev (artboards 9 = "pink", 10 = "green"). The busts are
+ * identical apart from eyes and beak, so stacking them and changing
+ * data-mood reads as the face changing — no redrawing, no tweening.
+ *
+ *   content      eyes glancing, at ease (idle)
+ *   focused      narrowed eyes — "working on it"
+ *   oh           wide eyes, small open beak — noticing you
+ *   blink        eyes closed (blink frame)
+ *   laugh        beak wide open — delighted
+ *   unimpressed  half-lidded — "you already did that"
+ *   skeptical    one eye narrowed — "hmm, check that"
+ *
+ * Drive it with setMood / blink from src/lib/quinn.ts.
+ */
+export const MOODS = ["content", "focused", "oh", "blink", "laugh", "unimpressed", "skeptical"] as const;
+export type Mood = (typeof MOODS)[number];
+
+interface Props {
+  palette?: "pink" | "green";
+  moods?: readonly Mood[];
+  initial?: Mood;
+  sizes?: string;
+  eager?: boolean;
+  class?: string;
+}
+const { palette = "pink", moods = MOODS, initial = "content", sizes = "280px", eager = false, class: className } = Astro.props;
+---
+
+<div class:list={["quinn-face", className]} data-quinn-face data-mood={initial} aria-hidden="true">
+  {
+    moods.map((m) => (
+      <img
+        class="quinn-mood"
+        data-m={m}
+        src={`/brand/quinn/face-${palette}-${m}-320.webp`}
+        srcset={`/brand/quinn/face-${palette}-${m}-320.webp 320w, /brand/quinn/face-${palette}-${m}-640.webp 640w`}
+        sizes={sizes}
+        width="640"
+        height="1165"
+        alt=""
+        loading={eager ? "eager" : "lazy"}
+        fetchpriority={eager && m === initial ? "high" : undefined}
+        decoding="async"
+        draggable="false"
+      />
+    ))
+  }
+</div>
+
+<style>
+  .quinn-face {
+    position: relative;
+    aspect-ratio: 618 / 1125;
+    user-select: none;
+  }
+  .quinn-mood {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+  }
+  [data-mood="content"] > [data-m="content"],
+  [data-mood="focused"] > [data-m="focused"],
+  [data-mood="oh"] > [data-m="oh"],
+  [data-mood="blink"] > [data-m="blink"],
+  [data-mood="laugh"] > [data-m="laugh"],
+  [data-mood="unimpressed"] > [data-m="unimpressed"],
+  [data-mood="skeptical"] > [data-m="skeptical"] {
+    opacity: 1;
+  }
+</style>

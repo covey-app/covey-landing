@@ -1,0 +1,382 @@
+---
+/*
+ * /waitlist — the dedicated signup. Deep matcha (the brand accent as a whole
+ * room). Quinn peeks over the top of the signup card and reacts to the form
+ * (src/components/WaitlistForm.astro emits covey:waitlist-state):
+ *
+ *   focus → "oh"   typing → content (with a blink)   invalid → skeptical
+ *   submitting → focused   joined → laugh, and the flock springs up around
+ *   the card   already on the list → unimpressed   error → "oh"
+ *
+ * Entrance: the headline rises, the card lifts, Quinn pops up from behind
+ * it. Nothing blocks the form; reduced motion gets the final frame.
+ *
+ * The two :target messages are the no-JS error path: /api/waitlist redirects
+ * a failed native POST to /waitlist/#invalid-email or /waitlist/#try-again.
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import WaitlistForm from "../../components/WaitlistForm.astro";
+import QuinnFace from "../../components/QuinnFace.astro";
+import { birdSrc, CATEGORY_KEYS } from "../../lib/categories";
+import { CITY_SHORT } from "../../config";
+
+const next = [
+  { t: "We'll email you when Covey opens near you.", d: "One email, when it's your turn. No newsletter, no drip campaign." },
+  { t: "Set up your profile in a couple of minutes.", d: "Pick what you're into so the right plans find you." },
+  { t: "Find a plan, take a seat, show up.", d: "A few stops, a few people. If it clicks, make it a Covey." },
+];
+// Where the flock lands around the card on success (% of the card box).
+const cheer = [
+  [-14, 18, -12], [-16, 58, 6], [-6, 92, -4], [24, 104, 3], [58, 104, -3], [92, 98, 5], [104, 60, -6], [102, 22, 8], [80, -14, 0],
+];
+---
+
+<BaseLayout
+  title="Join the waitlist"
+  description={`Covey is opening in ${CITY_SHORT} first. Save your seat and we'll email you when it's your turn.`}
+  page="waitlist"
+>
+  <section class="wl wrap" data-wl>
+    <div class="wl-copy">
+      <p class="kicker wl-kicker">Waitlist · {CITY_SHORT} first</p>
+      <h1 class="wl-title t-mega">
+        <span class="line"><span>save your</span></span>
+        <span class="line"><span>seat.</span></span>
+      </h1>
+    </div>
+
+    <div class="wl-stage">
+      <div class="wl-quinn" data-wl-quinn>
+        <QuinnFace palette="pink" eager sizes="(min-width: 1024px) 240px, 44vw" />
+      </div>
+      <div class="wl-card">
+        <p id="invalid-email" class="nojs-msg" role="alert" tabindex="-1">That email didn't look quite right — please check it and try again.</p>
+        <p id="try-again" class="nojs-msg" role="alert" tabindex="-1">We couldn't save that just now. Please try again in a moment.</p>
+        <WaitlistForm placement="page" id="waitlist" describedBy="invalid-email try-again" />
+      </div>
+      <div class="wl-cheer" aria-hidden="true">
+        {
+          CATEGORY_KEYS.map((c, i) => {
+            const art = birdSrc(c);
+            const [x, y, r] = cheer[i];
+            return (
+              <img src={art.src} srcset={art.srcset} alt="" width="240" height="300" loading="lazy" decoding="async" style={`--x:${x};--y:${y};--r:${r}deg;--i:${i}`} />
+            );
+          })
+        }
+      </div>
+    </div>
+
+    <p class="wl-lede">
+      Covey is for meeting people by doing things together — small plans,
+      a few seats each. We're opening in {CITY_SHORT} first. Leave your
+      email and we'll tell you when it's your turn.
+    </p>
+
+    <div class="wl-next">
+      <h2 class="kicker">What happens next</h2>
+      <ol>
+        {
+          next.map((n, i) => (
+            <li>
+              <span class="wl-n">{i + 1}</span>
+              <div>
+                <p class="wl-next-t">{n.t}</p>
+                <p class="wl-next-d">{n.d}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+      <p class="wl-more">
+        Want ideas while you wait? <a href="/newsletter">Covey Weekly</a> is our free list of things to do in {CITY_SHORT} — it's a separate signup.
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .wl {
+    display: grid;
+    gap: 1.75rem;
+    overflow-x: clip;
+    padding-block: clamp(1rem, 5vw, 4rem) clamp(3rem, 6vw, 5rem);
+  }
+  .wl-kicker {
+    margin-bottom: 1rem;
+    color: var(--accent-ink);
+  }
+  .wl-title {
+    color: var(--ink);
+    font-size: clamp(3.2rem, 13vw, 9rem);
+  }
+  .line {
+    display: block;
+    overflow: hidden;
+    padding-bottom: 0.06em;
+    margin-bottom: -0.06em;
+  }
+  .line > span {
+    display: inline-block;
+  }
+  .wl-lede {
+    font-size: var(--fs-lede);
+    line-height: 1.6;
+    color: var(--ink-muted);
+    max-width: 32rem;
+  }
+
+  /* ---- Stage: Quinn over the card ---- */
+  /* Quinn's bust is 1.82× as tall as it is wide; the top ~52% (plume, face,
+     beak) shows above the card, the rest sits behind it. */
+  .wl-stage {
+    --qw: clamp(7.5rem, 32vw, 12rem);
+    position: relative;
+    width: min(100%, 32rem);
+    justify-self: center;
+    padding-top: calc(var(--qw) * 1.08);
+  }
+  .wl-quinn {
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    left: 50%;
+    width: var(--qw);
+    translate: -50% 0;
+    transition: transform 0.45s var(--ease-spring);
+  }
+  .wl-card {
+    position: relative;
+    z-index: 2;
+    padding: clamp(1.25rem, 4vw, 2rem);
+    border-radius: 2rem;
+    background: var(--paper-elevated);
+    border: 0.7px solid var(--edge);
+    box-shadow: 0 30px 60px -30px rgb(0 0 0 / 0.6);
+  }
+  .wl-card :global(.waitlist) {
+    max-width: none;
+  }
+  /* The card is already the surface; the form's success panel shouldn't
+     draw a second one inside it. */
+  .wl-card :global(.waitlist-success) {
+    padding: 0;
+    background: none;
+    border: 0;
+    box-shadow: none;
+  }
+  .wl-cheer {
+    position: absolute;
+    inset: calc(var(--qw) * 1.08) 0 0 0;
+    z-index: 3;
+    pointer-events: none;
+  }
+  .wl-cheer img {
+    position: absolute;
+    left: calc(var(--x) * 1%);
+    top: calc(var(--y) * 1%);
+    width: clamp(2.6rem, 9vw, 4rem);
+    height: auto;
+    translate: -50% -50%;
+    opacity: 0;
+    transform: scale(0.2) rotate(var(--r));
+  }
+  .wl.is-joined .wl-cheer img {
+    opacity: 1;
+    transform: scale(1) rotate(var(--r));
+    transition:
+      opacity 0.3s ease,
+      transform 0.7s var(--ease-spring);
+    transition-delay: calc(var(--i) * 55ms + 0.15s);
+  }
+
+  .nojs-msg {
+    display: none;
+    margin-bottom: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 0.85rem;
+    border: 1px solid color-mix(in oklab, var(--danger-ink) 45%, transparent);
+    color: var(--danger-ink);
+    font-size: 0.9375rem;
+  }
+  .nojs-msg:target {
+    display: block;
+  }
+
+  /* ---- Next ---- */
+  .wl-next ol {
+    list-style: none;
+    margin: 1rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 1.1rem;
+  }
+  .wl-next li {
+    display: grid;
+    grid-template-columns: 2.25rem 1fr;
+    gap: 0.9rem;
+    align-items: start;
+  }
+  .wl-n {
+    display: grid;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 999px;
+    border: 1.5px solid var(--accent-ink);
+    font-family: var(--font-mono);
+    font-weight: 600;
+    color: var(--accent-ink);
+  }
+  .wl-next-t {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.3;
+    margin-bottom: 0.2rem;
+  }
+  .wl-next-d {
+    color: var(--ink-muted);
+    line-height: 1.5;
+    font-size: 0.9375rem;
+  }
+  .wl-more {
+    margin-top: 1.75rem;
+    padding-top: 1.25rem;
+    border-top: 0.7px solid var(--edge);
+    font-size: 0.9375rem;
+    color: var(--ink-muted);
+  }
+  .wl-more a {
+    color: var(--accent-ink);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  @media (min-width: 1024px) {
+    .wl {
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+      grid-template-areas:
+        "copy stage"
+        "lede stage"
+        "next stage";
+      column-gap: clamp(3rem, 6vw, 6rem);
+      row-gap: 3rem;
+      align-items: start;
+      min-height: calc(100svh - 4rem);
+    }
+    .wl-copy {
+      grid-area: copy;
+      align-self: end;
+    }
+    .wl-stage {
+      grid-area: stage;
+      align-self: center;
+    }
+    .wl-lede {
+      grid-area: lede;
+      margin-top: -1.5rem;
+    }
+    .wl-next {
+      grid-area: next;
+    }
+    .wl-title {
+      font-size: clamp(5rem, 8vw, 8.5rem);
+    }
+  }
+
+  /* ---- Entrance ---- */
+  @media (prefers-reduced-motion: no-preference) {
+    .wl .line > span {
+      animation: wl-word 0.85s cubic-bezier(0.2, 0.9, 0.2, 1) both;
+    }
+    .wl .line:nth-child(2) > span {
+      animation-delay: 0.08s;
+    }
+    .wl-card {
+      animation: wl-rise 0.7s var(--ease-out) 0.15s both;
+    }
+    .wl-quinn {
+      animation: wl-peek 0.8s cubic-bezier(0.2, 0.9, 0.25, 1.15) 0.45s both;
+    }
+    .wl-lede,
+    .wl-next {
+      animation: wl-rise 0.7s var(--ease-out) 0.3s both;
+    }
+    .wl.is-joined .wl-quinn {
+      transform: translateY(-10px);
+    }
+  }
+  @keyframes wl-word {
+    from {
+      transform: translateY(108%);
+    }
+  }
+  @keyframes wl-rise {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+  }
+  @keyframes wl-peek {
+    from {
+      transform: translateY(60%);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .wl.is-joined .wl-cheer img {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  import { setMood, blink } from "../../lib/quinn";
+
+  function initWaitlistPage() {
+    const page = document.querySelector<HTMLElement>("[data-wl]");
+    const wrap = page?.querySelector<HTMLElement>("[data-wl-quinn]");
+    const face = wrap?.querySelector<HTMLElement>("[data-quinn-face]");
+    if (!page || !face || page.dataset.bound) return;
+    page.dataset.bound = "true";
+
+    window.setTimeout(() => blink(face), 1500);
+    wrap!.addEventListener("pointerenter", () => blink(face));
+
+    const onState = (e: Event) => {
+      const state = (e as CustomEvent<{ state: string }>).detail.state;
+      switch (state) {
+        case "focus":
+          setMood(face, "oh", 1400);
+          break;
+        case "typing":
+          if (face.dataset.mood !== "content") setMood(face, "content");
+          else if (Math.random() < 0.3) blink(face);
+          break;
+        case "invalid":
+          setMood(face, "skeptical", 2600);
+          break;
+        case "submitting":
+          setMood(face, "focused");
+          break;
+        case "created":
+          setMood(face, "laugh", 3200);
+          page.classList.add("is-joined");
+          break;
+        case "existing":
+          setMood(face, "unimpressed", 2600);
+          break;
+        case "error":
+          setMood(face, "oh", 2000);
+          break;
+        case "city":
+          blink(face);
+          break;
+      }
+    };
+    document.addEventListener("covey:waitlist-state", onState);
+    document.addEventListener("astro:before-swap", () => document.removeEventListener("covey:waitlist-state", onState), { once: true });
+  }
+  initWaitlistPage();
+  document.addEventListener("astro:page-load", initWaitlistPage);
+</script>

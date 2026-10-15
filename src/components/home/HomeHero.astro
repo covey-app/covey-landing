@@ -1,0 +1,325 @@
+---
+/*
+ * Home hero — "strangers / into / friends."
+ *
+ * The cast: Quinn (full body) and the nine category quails, each doing the
+ * thing its category is about. Choreography (once per session, ~2s, CSS):
+ *   0.00  headline words rise out of their masks
+ *   0.15  Quinn pops up
+ *   0.35  the flock flies in from the edges, staggered
+ *   1.25  Quinn says hello (open beak)
+ * Quinn is the 3D model (src/lib/quinn3d/), loaded after the page is idle;
+ * the front illustration is the poster until then and the fallback without
+ * WebGL. Once it's in, Quinn turns a full circle to greet first-time
+ * visitors, looks toward the pointer, can be dragged round, and flaps when
+ * tapped. The flock drifts with pointer depth, and scrolling the hero away
+ * gathers the flock in around Quinn. No-JS, reduced motion, and repeat
+ * visits in a session get the final frame.
+ */
+import Quinn from "../Quinn.astro";
+import { birdSrc, type Category } from "../../lib/categories";
+import { SITE, CITY_SHORT } from "../../config";
+
+// x/y/w: % of the stage. depth: px of pointer travel. f: fly-in offset (vw/vh).
+// g: gather vector toward Quinn (% of own size). back: sits behind Quinn.
+const flock: { c: Category; x: number; y: number; w: number; depth: number; rot: number; fx: number; fy: number; back?: boolean; mobile?: boolean }[] = [
+  { c: "outdoors", x: 2, y: 14, w: 19, depth: 28, rot: -5, fx: -60, fy: -10, mobile: true },
+  { c: "nightlife", x: 26, y: -2, w: 14, depth: 16, rot: 3, fx: -10, fy: -60, back: true },
+  { c: "arts", x: 66, y: 0, w: 20, depth: 24, rot: 4, fx: 40, fy: -60, mobile: true },
+  { c: "culture", x: 84, y: 26, w: 22, depth: 18, rot: 0, fx: 60, fy: -20, back: true },
+  { c: "food", x: 74, y: 52, w: 19, depth: 34, rot: 5, fx: 60, fy: 20, mobile: true },
+  { c: "media", x: 62, y: 78, w: 27, depth: 40, rot: 0, fx: 40, fy: 60, mobile: true },
+  { c: "sports", x: -4, y: 58, w: 25, depth: 30, rot: -4, fx: -60, fy: 30, mobile: true },
+  { c: "fashion", x: 18, y: 82, w: 14, depth: 20, rot: -3, fx: -30, fy: 60 },
+  { c: "professional", x: 50, y: 6, w: 13, depth: 12, rot: 2, fx: 10, fy: -60, back: true },
+];
+
+const arrow = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>`;
+---
+
+<section class="hero" data-hero data-pointer data-progress aria-labelledby="hero-title">
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <p class="kicker hero-kicker" style="--i:0">Small-group plans · {CITY_SHORT}</p>
+      <h1 id="hero-title" class="hero-title t-mega">
+        <span class="line" style="--i:1"><span>strangers</span></span>
+        <span class="line" style="--i:2"><span>into</span></span>
+        <span class="line" style="--i:3"><span class="accent-word">friends.</span></span>
+      </h1>
+      <p class="hero-lede" style="--i:4">
+        Make real plans, meet in groups of a few, and keep seeing the people
+        you click with. Covey turns one good night into a habit.
+      </p>
+      <div class="hero-actions" style="--i:5">
+        <a href={SITE.waitlistPath} class="cta" data-cta="hero">
+          Join the waitlist
+          <span class="cta-arrow" set:html={arrow + arrow} />
+        </a>
+        <a href="/activities" class="arrow-link">
+          See what's on this week
+          <span set:html={arrow} />
+        </a>
+      </div>
+    </div>
+
+    <div class="stage" data-stage>
+      {
+        flock.map((b, i) => {
+          const art = birdSrc(b.c);
+          return (
+            <div
+              class:list={["bird", b.back && "is-back", !b.mobile && "desktop-only"]}
+              style={`--x:${b.x};--y:${b.y};--w:${b.w};--rot:${b.rot}deg;--fx:${b.fx};--fy:${b.fy};--i:${i};--gx:${(36 - b.x) * 0.9};--gy:${(52 - b.y) * 0.9}`}
+            >
+              <div class="bird-depth" data-depth style={`--depth:${b.depth}`}>
+                <img class="bird-art" src={art.src} srcset={art.srcset} alt="" width="240" height="300" loading="eager" decoding="async" draggable="false"/>
+              </div>
+            </div>
+          );
+        })
+      }
+      <div class="hero-quinn" data-depth style="--depth:8">
+        <Quinn views={["front", "front-hello"]} sizes="(min-width: 1024px) 280px, 38vw" eager data-hero-quinn />
+      </div>
+      <div class="ground" aria-hidden="true"></div>
+    </div>
+  </div>
+</section>
+<script is:inline>
+  // Pre-paint: play the entrance once per session, unless motion is reduced.
+  (function () {
+    var hero = document.querySelector("[data-hero]");
+    if (!hero) return;
+    try {
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      if (sessionStorage.getItem("covey-hero")) return;
+      sessionStorage.setItem("covey-hero", "1");
+    } catch (e) {}
+    hero.classList.add("is-intro");
+  })();
+</script>
+
+<style>
+  .hero {
+    position: relative;
+    overflow-x: clip;
+    padding-block: clamp(1.5rem, 4vw, 3.5rem) clamp(3rem, 6vw, 5rem);
+    --p: 0.4;
+    /* Gather: 0 while the hero is on screen, → 1 as it scrolls away. */
+    --g: clamp(0, calc((var(--p) - 0.5) * 2.6), 1);
+  }
+  .hero-grid {
+    display: grid;
+    gap: 2.5rem;
+    align-items: center;
+  }
+  .hero-kicker {
+    margin-bottom: 1.25rem;
+  }
+  .hero-title {
+    display: grid;
+    color: var(--ink);
+    font-size: clamp(3.6rem, 15.5vw, 9.6rem);
+    margin-bottom: 1.5rem;
+  }
+  .line {
+    display: block;
+    overflow: hidden;
+    padding-bottom: 0.06em;
+    margin-bottom: -0.06em;
+  }
+  .line > span {
+    display: inline-block;
+  }
+  .hero-lede {
+    max-width: 30rem;
+    font-size: var(--fs-lede);
+    line-height: 1.55;
+    color: var(--ink-muted);
+    margin-bottom: 1.75rem;
+  }
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1.5rem;
+  }
+
+  /* ---- Stage ---- */
+  .stage {
+    position: relative;
+    width: min(100%, 34rem);
+    aspect-ratio: 1 / 1;
+    margin-inline: auto;
+  }
+  .bird {
+    position: absolute;
+    left: calc(var(--x) * 1%);
+    top: calc(var(--y) * 1%);
+    width: calc(var(--w) * 1%);
+    z-index: 3;
+    transform: translate(calc(var(--gx) * var(--g) * 1%), calc(var(--gy) * var(--g) * 1%)) scale(calc(1 - var(--g) * 0.3));
+  }
+  .bird.is-back {
+    z-index: 1;
+  }
+  .bird-art {
+    display: block;
+    width: 100%;
+    height: auto;
+    rotate: var(--rot);
+    filter: drop-shadow(0 10px 14px rgb(18 20 30 / 0.12));
+  }
+  .hero-quinn {
+    position: absolute;
+    z-index: 2;
+    left: 31%;
+    bottom: 3%;
+    width: 38%;
+  }
+  .hero-quinn :global([data-quinn]) {
+    width: 100%;
+    cursor: pointer;
+  }
+  .ground {
+    position: absolute;
+    z-index: 0;
+    left: 18%;
+    right: 18%;
+    bottom: 2%;
+    height: 7%;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, color-mix(in oklab, var(--ink) 14%, transparent), transparent);
+  }
+  .desktop-only {
+    display: none;
+  }
+
+  @media (min-width: 640px) {
+    .desktop-only {
+      display: block;
+    }
+  }
+  @media (min-width: 1024px) {
+    .hero {
+      min-height: min(calc(100svh - 4rem), 58rem);
+      display: grid;
+      align-items: center;
+    }
+    .hero-grid {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
+      gap: 1rem;
+    }
+    .hero-title {
+      font-size: clamp(4.75rem, 8.2vw, 8.75rem);
+    }
+    .stage {
+      width: 100%;
+      max-width: 40rem;
+      margin-left: -4rem;
+    }
+  }
+
+  /* ---- Entrance (first visit per session) ---- */
+  @media (prefers-reduced-motion: no-preference) {
+    .is-intro .line > span {
+      animation: word-up 0.85s cubic-bezier(0.2, 0.9, 0.2, 1) both;
+      animation-delay: calc(var(--i) * 85ms);
+    }
+    .is-intro .hero-kicker,
+    .is-intro .hero-lede,
+    .is-intro .hero-actions {
+      animation: fade-up 0.7s var(--ease-out) both;
+      animation-delay: calc(0.25s + var(--i) * 70ms);
+    }
+    .is-intro .bird-art {
+      animation: fly-in 0.9s cubic-bezier(0.18, 0.9, 0.24, 1.08) both;
+      animation-delay: calc(0.35s + var(--i) * 55ms);
+    }
+    .is-intro .hero-quinn {
+      animation: quinn-in 0.7s var(--ease-out) 0.15s both;
+    }
+    .is-intro .ground {
+      animation: fade-up 0.6s var(--ease-out) 0.15s both;
+    }
+  }
+  @keyframes word-up {
+    from {
+      transform: translateY(108%);
+    }
+  }
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+  }
+  @keyframes fly-in {
+    from {
+      opacity: 0;
+      transform: translate(calc(var(--fx) * 1vw), calc(var(--fy) * 1vh)) rotate(calc(var(--rot) * -4));
+    }
+    60% {
+      opacity: 1;
+    }
+  }
+  @keyframes quinn-in {
+    from {
+      opacity: 0;
+      transform: translateY(24px) scale(0.96);
+    }
+  }
+</style>
+
+<script>
+  import { setView, reducedMotion, loadQuinn3D } from "../../lib/quinn";
+  import type { Quinn3D } from "../../lib/quinn3d/index";
+
+  function initHero() {
+    const hero = document.querySelector<HTMLElement>("[data-hero]");
+    const quinn = hero?.querySelector<HTMLElement>("[data-hero-quinn]");
+    const stand = quinn?.parentElement;
+    if (!hero || !quinn || !stand || hero.dataset.bound) return;
+    hero.dataset.bound = "true";
+    const intro = hero.classList.contains("is-intro");
+    const started = performance.now();
+    let q3: Quinn3D | null = null;
+    let gone = false;
+
+    // The poster's own hello, while it's the one on screen.
+    const hello2D = () => {
+      if (q3 || reducedMotion()) return;
+      setView(quinn, "front-hello");
+      window.setTimeout(() => setView(quinn, "front"), 900);
+    };
+    if (intro) window.setTimeout(hello2D, 1250);
+    quinn.addEventListener("click", hello2D);
+
+    // Swap in the 3D model once the page has settled.
+    const load3D = async () => {
+      const q = await loadQuinn3D(stand);
+      if (!q) return;
+      if (gone) return q.destroy();
+      q3 = q;
+      setView(quinn, "front");
+      // First visit: a full turn to say hi, after the flock has landed (not if it'd come out of nowhere).
+      const since = performance.now() - started;
+      if (intro && since < 6000) window.setTimeout(() => q.greet(), Math.max(400, 1600 - since));
+    };
+    const go = () => void load3D();
+    const whenIdle = () => (typeof requestIdleCallback === "function" ? requestIdleCallback(go, { timeout: 2000 }) : setTimeout(go, 200));
+    if (document.readyState === "complete") whenIdle();
+    else window.addEventListener("load", whenIdle, { once: true });
+
+    document.addEventListener(
+      "astro:before-swap",
+      () => {
+        gone = true;
+        q3?.destroy();
+      },
+      { once: true },
+    );
+  }
+  initHero();
+  document.addEventListener("astro:page-load", initHero);
+</script>

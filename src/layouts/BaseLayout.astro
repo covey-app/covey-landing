@@ -15,14 +15,33 @@ import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import { SITE } from "../config";
 
+export type PageIdentity = "home" | "waitlist" | "newsletter" | "activities" | "about" | "default";
+
 interface Props {
   title: string;
   description: string;
   noIndex?: boolean;
+  /** The page's room in the design system (styles/expressive.css). */
+  page?: PageIdentity;
+  /** false on pages whose URL carries a secret token (newsletter confirm /
+      unsubscribe), so it never reaches analytics. */
+  analytics?: boolean;
 }
 
-const { title, description, noIndex = false } = Astro.props;
+const { title, description, noIndex = false, page = "default", analytics = true } = Astro.props;
+
+
+// Page transition: the old page fades quickly, the new one rises in.
+const pageMotion = {
+  old: { name: "page-out", duration: "0.16s", easing: "cubic-bezier(0.4, 0, 1, 1)", fillMode: "both" },
+  new: { name: "page-in", duration: "0.45s", delay: "0.04s", easing: "cubic-bezier(0.22, 1, 0.36, 1)", fillMode: "both" },
+};
 const canonicalURL = new URL(Astro.url.pathname, SITE.url);
+
+// Vercel Web Analytics: cookieless and first-party (/_vercel/insights), enabled
+// in the Vercel dashboard. Only emitted on Vercel builds (VERCEL=1), so local,
+// CI, and Playwright runs load nothing and send nothing.
+const analyticsEnabled = process.env.VERCEL === "1" && analytics;
 ---
 
 <!doctype html>
@@ -57,6 +76,44 @@ const canonicalURL = new URL(Astro.url.pathname, SITE.url);
          and no visitor IPs sent to Google on every page view. -->
     <link rel="preload" href={geistMonoUrl} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={instrumentSansUrl} as="font" type="font/woff2" crossorigin />
+
+    {
+      analyticsEnabled && (
+        <>
+          <script is:inline>
+            window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+          </script>
+          <script is:inline defer src="/_vercel/insights/script.js" />
+        </>
+      )
+    }
+
+    <!-- Campaign attribution for the waitlist: UTM parameters and the external
+         referrer (origin + path only) from the visit's landing page, kept in
+         sessionStorage until the visitor signs up or closes the tab. A new
+         campaign link mid-visit replaces it. Nothing is sent anywhere unless
+         the visitor submits the waitlist form. -->
+    <script is:inline>
+      (function () {
+        try {
+          var KEY = "covey-attribution";
+          var keys = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"];
+          var params = new URLSearchParams(location.search);
+          var hasUtm = keys.some(function (k) { return params.get(k); });
+          if (!hasUtm && sessionStorage.getItem(KEY)) return;
+          var a = { landing_path: location.pathname };
+          keys.forEach(function (k) {
+            var v = params.get(k);
+            if (v) a[k] = v.slice(0, 200);
+          });
+          if (document.referrer) {
+            var r = new URL(document.referrer);
+            if (r.host !== location.host) a.referrer = r.origin + r.pathname;
+          }
+          sessionStorage.setItem(KEY, JSON.stringify(a));
+        } catch (e) {}
+      })();
+    </script>
 
     <!-- Theme bootstrap + toggle. Kept inline so it runs before paint and
          survives ClientRouter / transition:persist without module scripts. -->
@@ -164,17 +221,20 @@ const canonicalURL = new URL(Astro.url.pathname, SITE.url);
       })();
     </script>
   </head>
-  <body>
+  <body data-page={page}>
     <a href="#main" class="skip-link">Skip to content</a>
     <div class="min-h-screen flex flex-col">
-      <Header transition:persist />
-      <main id="main" class="flex-1" transition:animate="fade">
+      <Header />
+      <main id="main" class="flex-1" transition:animate={{ forwards: pageMotion, backwards: pageMotion }}>
         <slot />
       </main>
       <Footer />
     </div>
 
     <script>
+      import { track, deviceClass } from "../lib/analytics";
+      import { initMotion, resetMotion } from "../lib/motion";
+
       // Progressive enhancement only — every .reveal element is already
       // visible without this script (see the base .reveal rule in
       // global.css). This adds a soft fade/slide-up as sections enter the
@@ -221,12 +281,27 @@ const canonicalURL = new URL(Astro.url.pathname, SITE.url);
         window.addEventListener("scroll", onScroll, { passive: true });
       }
 
+      // CTA clicks ([data-cta]) are counted, with where they were clicked.
+      // Attached once; the document persists across transitions.
+      function setupCtas() {
+        const w = window as unknown as { __coveyCtas?: boolean };
+        if (w.__coveyCtas) return;
+        w.__coveyCtas = true;
+        document.addEventListener("click", (e) => {
+          const link = (e.target as HTMLElement | null)?.closest<HTMLAnchorElement>("a[data-cta]");
+          if (link) track("waitlist_cta_click", { placement: link.dataset.cta ?? "unknown", device: deviceClass() });
+        });
+      }
+
       // astro:page-load fires on the initial load and after every view
       // transition when ClientRouter is present.
       document.addEventListener("astro:page-load", () => {
         setupReveals();
         setupHeaderScroll();
+        setupCtas();
+        initMotion();
       });
+      document.addEventListener("astro:before-swap", resetMotion);
     </script>
   </body>
 </html>

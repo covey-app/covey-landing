@@ -28,6 +28,7 @@ import gamepad from "lucide-static/icons/gamepad-2.svg?raw";
 import hand from "lucide-static/icons/hand.svg?raw";
 import iceCream from "lucide-static/icons/ice-cream-cone.svg?raw";
 import landmark from "lucide-static/icons/landmark.svg?raw";
+import leaf from "lucide-static/icons/leaf.svg?raw";
 import list from "lucide-static/icons/list.svg?raw";
 import lock from "lucide-static/icons/lock.svg?raw";
 import map from "lucide-static/icons/map.svg?raw";
@@ -40,6 +41,7 @@ import palette from "lucide-static/icons/palette.svg?raw";
 import repeat from "lucide-static/icons/repeat.svg?raw";
 import shieldCheck from "lucide-static/icons/shield-check.svg?raw";
 import shoppingBag from "lucide-static/icons/shopping-bag.svg?raw";
+import squarePlay from "lucide-static/icons/square-play.svg?raw";
 import soup from "lucide-static/icons/soup.svg?raw";
 import sparkles from "lucide-static/icons/sparkles.svg?raw";
 import sunset from "lucide-static/icons/sunset.svg?raw";
@@ -48,11 +50,18 @@ import users from "lucide-static/icons/users.svg?raw";
 import utensils from "lucide-static/icons/utensils.svg?raw";
 import volleyball from "lucide-static/icons/volleyball.svg?raw";
 import briefcase from "lucide-static/icons/briefcase.svg?raw";
+import bookOpen from "lucide-static/icons/book-open.svg?raw";
+import cloudFog from "lucide-static/icons/cloud-fog.svg?raw";
+import externalLink from "lucide-static/icons/external-link.svg?raw";
+import info from "lucide-static/icons/info.svg?raw";
+import sun from "lucide-static/icons/sun.svg?raw";
+import ticket from "lucide-static/icons/ticket.svg?raw";
 
 const RAW = {
   "arrow-down": arrowDown,
   "arrow-right": arrowRight,
   "badge-check": badgeCheck,
+  "book-open": bookOpen,
   briefcase,
   bus,
   "calendar-plus": calendarPlus,
@@ -60,16 +69,20 @@ const RAW = {
   camera,
   check,
   clock,
+  "cloud-fog": cloudFog,
   coffee,
   croissant,
   dumbbell,
+  "external-link": externalLink,
   film,
   flame,
   footprints,
   gamepad,
   hand,
   "ice-cream": iceCream,
+  info,
   landmark,
+  leaf,
   list,
   lock,
   map,
@@ -82,9 +95,12 @@ const RAW = {
   repeat,
   "shield-check": shieldCheck,
   "shopping-bag": shoppingBag,
+  "square-play": squarePlay,
   soup,
   sparkles,
+  sun,
   sunset,
+  ticket,
   trophy,
   users,
   utensils,

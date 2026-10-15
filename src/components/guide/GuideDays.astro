@@ -1,0 +1,249 @@
+---
+/*
+ * GuideDays — a complete guide, grouped by day, with filters for category,
+ * neighborhood, and a few quick toggles. Everything is in the HTML; the
+ * script only hides rows (and empty days), so the full list is readable
+ * without JavaScript and by search engines.
+ *
+ * `hidePast` removes days before today in San Francisco, judged in the
+ * visitor's browser — the static page is built weekly, the calendar isn't.
+ */
+import ActivityRow from "./ActivityRow.astro";
+import Icon from "../Icon.astro";
+import { CATEGORIES, CATEGORY_KEYS, type Category } from "../../lib/categories";
+import { longDate, neighborhoods, type GuideDay } from "../../lib/guide";
+
+interface Props {
+  days: GuideDay[];
+  pickIds?: string[];
+  hidePast?: boolean;
+  id?: string;
+}
+const { days, pickIds = [], hidePast = false, id = "guide" } = Astro.props;
+const all = days.flatMap((d) => d.items);
+const present = CATEGORY_KEYS.filter((c) => all.some((a) => a.data.category === c)) as Category[];
+const hoods = neighborhoods(all);
+const quick = [
+  { key: "free", label: "Free" },
+  { key: "after-work", label: "After work" },
+  { key: "weekend", label: "Weekend" },
+];
+---
+
+<div class="guide" id={id} data-guide data-hide-past={hidePast ? "true" : undefined}>
+  <div class="filters" role="group" aria-label="Filter the guide">
+    <div class="filter-row" role="group" aria-label="Category">
+      <button type="button" class="chip no-art" aria-pressed="true" data-filter-cat="all">All</button>
+      {
+        present.map((c) => (
+          <button type="button" class="chip" aria-pressed="false" data-filter-cat={c}>
+            <span class="orb" style={`--c:var(--cat-${c});--orb:28px`} aria-hidden="true">
+              <Icon name={CATEGORIES[c].icon} />
+            </span>
+            {CATEGORIES[c].short}
+          </button>
+        ))
+      }
+    </div>
+    <div class="filter-row">
+      {quick.map((q) => <button type="button" class="chip no-art" aria-pressed="false" data-filter-tag={q.key}>{q.label}</button>)}
+      {
+        hoods.length > 1 && (
+          <label class="hood">
+            <span class="sr-only">Neighborhood</span>
+            <select data-filter-hood>
+              <option value="">All neighborhoods</option>
+              {hoods.map((h) => <option value={h}>{h}</option>)}
+            </select>
+          </label>
+        )
+      }
+    </div>
+    <p class="filter-count" aria-live="polite" data-filter-count>{all.length} {all.length === 1 ? "thing" : "things"} to do</p>
+  </div>
+
+  {
+    days.map((d) =>
+      d.items.length ? (
+        <section class="day" data-day={d.date} aria-labelledby={`${id}-${d.date}`}>
+          <h3 class="day-title" id={`${id}-${d.date}`}>
+            <span class="day-name">{longDate(d.date).split(",")[0].toLowerCase()}</span>
+            <span class="day-date">{longDate(d.date).split(", ")[1]}</span>
+          </h3>
+          <ul class="rows">
+            {d.items.map((a) => (
+              <ActivityRow activity={a} pick={pickIds.includes(a.id)} />
+            ))}
+          </ul>
+        </section>
+      ) : null,
+    )
+  }
+  <p class="nothing" data-nothing hidden>Nothing matches those filters. <button type="button" class="reset" data-filter-reset>Clear filters</button></p>
+</div>
+
+<style>
+  .filters {
+    position: sticky;
+    top: 4rem;
+    z-index: 5;
+    display: grid;
+    gap: 0.6rem;
+    padding-block: 1rem 0.9rem;
+    margin-bottom: 1rem;
+    background: color-mix(in oklab, var(--page-bg) 94%, transparent);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 0.7px solid var(--edge);
+  }
+  .filter-row {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+  }
+  .filter-row::-webkit-scrollbar {
+    display: none;
+  }
+  .filter-row .chip {
+    flex: none;
+  }
+  .hood select {
+    min-height: 40px;
+    padding: 0 2.25rem 0 0.9rem;
+    border-radius: 999px;
+    border: 1px solid color-mix(in oklab, var(--ink) 18%, transparent);
+    background: var(--paper-elevated);
+    color: var(--ink);
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23777' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.8rem center;
+  }
+  .filter-count {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--ink-muted);
+  }
+  .day {
+    margin-top: 2.25rem;
+  }
+  .day[hidden] {
+    display: none;
+  }
+  .day-title {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+  .day-name {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: clamp(1.75rem, 3.6vw, 2.75rem);
+    letter-spacing: -0.05em;
+    color: var(--ink);
+  }
+  .day-date {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    color: var(--ink-muted);
+  }
+  .rows {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .nothing {
+    margin-top: 2rem;
+    color: var(--ink-muted);
+  }
+  .nothing[hidden] {
+    display: none;
+  }
+  .reset {
+    margin-left: 0.5rem;
+    font-family: var(--font-mono);
+    text-decoration: underline;
+    color: var(--ink);
+    cursor: pointer;
+    background: none;
+    border: 0;
+    min-height: 44px;
+  }
+</style>
+
+<script>
+  function todaySF() {
+    return new Intl.DateTimeFormat("en-CA", { timeZone: "America/Los_Angeles" }).format(new Date());
+  }
+
+  function initGuide(root: HTMLElement) {
+    if (root.dataset.bound) return;
+    root.dataset.bound = "true";
+    const rows = Array.from(root.querySelectorAll<HTMLElement>("[data-row]"));
+    const days = Array.from(root.querySelectorAll<HTMLElement>("[data-day]"));
+    const catBtns = Array.from(root.querySelectorAll<HTMLButtonElement>("[data-filter-cat]"));
+    const tagBtns = Array.from(root.querySelectorAll<HTMLButtonElement>("[data-filter-tag]"));
+    const hood = root.querySelector<HTMLSelectElement>("[data-filter-hood]");
+    const count = root.querySelector<HTMLElement>("[data-filter-count]")!;
+    const nothing = root.querySelector<HTMLElement>("[data-nothing]")!;
+    // ?today=YYYY-MM-DD pins "today" (tests and design review of sample content).
+    const pinned = new URLSearchParams(location.search).get("today");
+    const today = pinned && /^\d{4}-\d{2}-\d{2}$/.test(pinned) ? pinned : todaySF();
+    const hidePast = root.dataset.hidePast === "true";
+    let cat = "all";
+
+    const apply = () => {
+      const tags = tagBtns.filter((b) => b.getAttribute("aria-pressed") === "true").map((b) => b.dataset.filterTag!);
+      const h = hood?.value ?? "";
+      let shown = 0;
+      for (const day of days) {
+        const past = hidePast && day.dataset.day! < today;
+        let any = 0;
+        day.querySelectorAll<HTMLElement>("[data-row]").forEach((r) => {
+          const rt = (r.dataset.tags ?? "").split(" ");
+          const ok = !past && (cat === "all" || r.dataset.category === cat) && (!h || r.dataset.hood === h) && tags.every((t) => rt.includes(t));
+          r.hidden = !ok;
+          if (ok) any++;
+        });
+        day.hidden = any === 0;
+        shown += any;
+      }
+      count.textContent = `${shown} ${shown === 1 ? "thing" : "things"} to do`;
+      nothing.hidden = shown > 0 || rows.length === 0;
+    };
+
+    catBtns.forEach((b) =>
+      b.addEventListener("click", () => {
+        cat = b.dataset.filterCat!;
+        catBtns.forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+        apply();
+      }),
+    );
+    tagBtns.forEach((b) =>
+      b.addEventListener("click", () => {
+        b.setAttribute("aria-pressed", String(b.getAttribute("aria-pressed") !== "true"));
+        apply();
+      }),
+    );
+    hood?.addEventListener("change", apply);
+    root.querySelector("[data-filter-reset]")?.addEventListener("click", () => {
+      cat = "all";
+      catBtns.forEach((x) => x.setAttribute("aria-pressed", String(x.dataset.filterCat === "all")));
+      tagBtns.forEach((x) => x.setAttribute("aria-pressed", "false"));
+      if (hood) hood.value = "";
+      apply();
+    });
+    apply();
+  }
+
+  function init() {
+    document.querySelectorAll<HTMLElement>("[data-guide]").forEach(initGuide);
+  }
+  init();
+  document.addEventListener("astro:page-load", init);
+</script>

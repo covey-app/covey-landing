@@ -43,7 +43,7 @@ test.describe("theme toggle", () => {
       await desktopAbout.click();
     } else {
       await page.locator("[data-menu-btn]").click();
-      await page.locator('#mobile-menu a[href="/about"]').click();
+      await page.locator('#site-menu a[href="/about"]').click();
     }
     await page.waitForURL("**/about**");
     await expect(html).toHaveClass(/dark/);

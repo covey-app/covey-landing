@@ -18,8 +18,12 @@ jobs:
       - run: npm ci
       - name: Design tokens check
         run: npm run tokens:check
+      - name: Waitlist handler unit tests
+        run: npm run test:unit
+      - name: Waitlist migration tests (throwaway Postgres)
+        run: npm run test:db
       - name: Type + content check
         run: npm run check
-      - name: Production build
+      - name: Production build (live content)
         run: npm run build
 

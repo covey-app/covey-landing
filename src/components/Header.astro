@@ -1,131 +1,178 @@
 ---
+/*
+ * Global header. Three destinations and one action:
+ *   Activities · Newsletter · About            [Join the waitlist]
+ * "Sign in" for existing members lives in the mobile menu and the footer.
+ *
+ * The current page carries a small plume-colored marker with a shared
+ * view-transition name, so it glides from link to link when you navigate.
+ * The header is not transition:persist'ed — a persisted header would keep
+ * the previous page's aria-current.
+ */
 import AppIcon from "./AppIcon.astro";
 import ThemeToggle from "./ThemeToggle.astro";
 import { SITE } from "../config";
 
-// Section anchors resolve against the home page from any route. Testimonials
-// and Events stay out of the nav until they hold real content (footer only).
 const links = [
-  { href: "/#how", label: "How it works" },
-  { href: "/#coveys", label: "Coveys" },
-  { href: "/#safety", label: "Safety" },
+  { href: "/activities", label: "Activities" },
+  { href: "/newsletter", label: "Newsletter" },
   { href: "/about", label: "About" },
 ];
 
-// Normalize trailing slashes so /about and /about/ both mark the nav link.
 const normalize = (p: string) => p.replace(/\/+$/, "") || "/";
 const path = normalize(new URL(Astro.request.url).pathname);
-const isCurrent = (href: string) => !href.includes("#") && normalize(href) === path;
+const isCurrent = (href: string) => path === href || path.startsWith(`${href}/`);
+const onWaitlist = path.startsWith(SITE.waitlistPath);
+
+const arrow = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>`;
 ---
 
-<header
-  data-header
-  class="sticky top-0 z-40 vellum-panel border-b pt-[env(safe-area-inset-top,0px)]"
->
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between gap-3 sm:gap-4">
-    <a href="/" class="brand flex items-center gap-2 shrink-0" aria-label="Covey — home">
+<header data-header class="site-header" transition:name="site-header" transition:animate="none">
+  <div class="header-row wrap">
+    <a href="/" class="brand" aria-label="Covey — home">
       <AppIcon size={30} eager />
-      <span class="font-mono font-semibold text-[1.35rem] tracking-[-0.03em] text-ink">Covey</span>
+      <span class="wordmark">covey</span>
     </a>
 
     <nav class="primary-nav" aria-label="Primary">
       {
         links.map((l) => (
-          <a
-            href={l.href}
-            aria-current={isCurrent(l.href) ? "page" : undefined}
-            class:list={["nav-link", isCurrent(l.href) && "is-current"]}
-          >
+          <a href={l.href} aria-current={isCurrent(l.href) ? "page" : undefined} class="nav-link">
             {l.label}
+            {isCurrent(l.href) && <span class="nav-dot" transition:name="nav-dot" aria-hidden="true" />}
           </a>
         ))
       }
     </nav>
 
-    <div class="flex items-center gap-2">
+    <div class="header-actions">
       <ThemeToggle />
-      <a href={SITE.signInUrl} class="sign-in">Sign in</a>
-      <a href={SITE.joinUrl} class="btn btn-primary btn-sm header-cta">Join Covey</a>
-      <button
-        type="button"
-        class="menu-btn"
-        aria-label="Open menu"
-        aria-expanded="false"
-        aria-controls="mobile-menu"
-        data-menu-btn
-      >
-        <svg class="icon-open" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
-          <path d="M4 7h16M4 12h16M4 17h16" />
-        </svg>
-        <svg class="icon-close" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
-          <path d="M6 6l12 12M18 6L6 18" />
-        </svg>
+      {
+        !onWaitlist && (
+          <a href={SITE.waitlistPath} class="cta cta-sm header-cta" data-cta="header">
+            Join the waitlist
+            <span class="cta-arrow" set:html={arrow + arrow} />
+          </a>
+        )
+      }
+      <button type="button" class="menu-btn" aria-label="Open menu" aria-expanded="false" aria-controls="site-menu" data-menu-btn>
+        <span class="menu-lines" aria-hidden="true"><i></i><i></i></span>
       </button>
     </div>
   </div>
 
-  <div id="mobile-menu" class="mobile-menu border-t" hidden data-menu-panel>
-    <nav class="max-w-7xl mx-auto px-5 py-3 flex flex-col" aria-label="Mobile">
-      {
-        links.map((l) => (
-          <a
-            href={l.href}
-            aria-current={isCurrent(l.href) ? "page" : undefined}
-            class:list={["menu-link", isCurrent(l.href) ? "text-ink" : "text-ink-muted"]}
-          >
-            {l.label}
-          </a>
-        ))
-      }
-      <a href={SITE.signInUrl} class="menu-link text-ink-muted">Sign in</a>
-      <a href={SITE.joinUrl} class="btn btn-primary btn-lg w-full mt-3 mb-2">Join Covey</a>
+  <div id="site-menu" class="site-menu" hidden data-menu-panel>
+    <nav class="wrap menu-inner" aria-label="Menu">
+      <ul class="menu-list">
+        <li style="--i:0"><a href="/" aria-current={path === "/" ? "page" : undefined}>Home</a></li>
+        {
+          links.map((l, i) => (
+            <li style={`--i:${i + 1}`}>
+              <a href={l.href} aria-current={isCurrent(l.href) ? "page" : undefined}>{l.label}</a>
+            </li>
+          ))
+        }
+      </ul>
+      <div class="menu-foot" style="--i:5">
+        <a href={SITE.waitlistPath} class="cta menu-cta" data-cta="mobile-menu">
+          Join the waitlist
+          <span class="cta-arrow" set:html={arrow + arrow} />
+        </a>
+        <a href={SITE.signInUrl} class="menu-signin">Already a member? Sign in</a>
+      </div>
     </nav>
   </div>
 </header>
 
 <style>
-  /*
-   * Responsive visibility lives here, in scoped CSS, on purpose. Astro's
-   * scoped styles are unlayered, and unlayered CSS beats Tailwind v4's
-   * `@layer utilities` whatever the specificity — so `class="md:hidden"` on an
-   * element whose scoped rule sets `display` silently never hides it. That is
-   * how a dead hamburger shipped on desktop. Keep display + breakpoints
-   * together in one place.
-   */
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    padding-top: env(safe-area-inset-top, 0px);
+    border-bottom: 0.7px solid transparent;
+    transition: border-color 0.3s ease;
+  }
+  /* The frosted ground lives on a pseudo-element: backdrop-filter on the
+     header itself would make it the containing block for the fixed-position
+     menu, collapsing that to zero height (WebKit). */
+  .site-header::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: color-mix(in oklab, var(--page-bg) 82%, transparent);
+    backdrop-filter: saturate(1.4) blur(14px);
+    -webkit-backdrop-filter: saturate(1.4) blur(14px);
+  }
+  :global(.site-header.is-scrolled) {
+    border-bottom-color: color-mix(in oklab, var(--edge) 80%, transparent);
+  }
+  .header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    height: 4rem;
+  }
   .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
     min-height: 44px;
+    flex: none;
+  }
+  .wordmark {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 1.4rem;
+    letter-spacing: -0.05em;
+    color: var(--ink);
   }
   .primary-nav {
     display: none;
-    align-items: center;
-    gap: 1.75rem;
+    gap: 0.25rem;
+    padding: 0.25rem;
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--ink) 5%, transparent);
   }
   .nav-link {
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
-    color: var(--ink-muted);
-    padding-block: 0.5rem;
-    transition: color var(--motion-snappy);
-  }
-  .nav-link:hover,
-  .nav-link.is-current {
-    color: var(--ink);
-  }
-  .sign-in {
-    display: none;
+    position: relative;
+    display: inline-flex;
     align-items: center;
-    min-height: 40px;
-    padding-inline: 0.5rem;
+    min-height: 36px;
+    padding: 0 1rem;
+    border-radius: 999px;
     font-family: var(--font-mono);
     font-weight: 500;
-    font-size: 0.8125rem;
+    font-size: 0.875rem;
     color: var(--ink-muted);
-    transition: color var(--motion-snappy);
+    transition:
+      color 0.2s ease,
+      background-color 0.2s ease;
   }
-  .sign-in:hover {
+  .nav-link:hover {
     color: var(--ink);
+  }
+  .nav-link[aria-current="page"] {
+    color: var(--ink);
+    background: var(--paper-elevated);
+    box-shadow: var(--shadow-paper);
+  }
+  .nav-dot {
+    position: absolute;
+    left: 50%;
+    bottom: 3px;
+    width: 5px;
+    height: 5px;
+    margin-left: -2.5px;
+    border-radius: 99px;
+    background: linear-gradient(135deg, #f19a8f, #c27ab8);
+  }
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
   }
   .header-cta {
     display: none;
@@ -136,52 +183,96 @@ const isCurrent = (href: string) => !href.includes("#") && normalize(href) === p
     place-items: center;
     width: 44px;
     height: 44px;
-    border-radius: var(--radius-sm);
-    color: var(--ink-muted);
-    border: 0.7px solid color-mix(in oklab, var(--edge) 65%, transparent);
-    background-color: transparent;
-    cursor: pointer;
-    transition:
-      color 0.25s ease,
-      background-color 0.25s ease,
-      border-color 0.25s ease;
-  }
-  .menu-btn:hover {
+    border-radius: 999px;
+    border: 0.7px solid color-mix(in oklab, var(--edge) 80%, transparent);
+    background: transparent;
     color: var(--ink);
-    border-color: color-mix(in oklab, var(--ink) 25%, transparent);
+    cursor: pointer;
   }
-  .menu-btn svg {
-    grid-area: 1 / 1;
+  .menu-lines {
+    display: grid;
+    gap: 5px;
+    width: 18px;
   }
-  .menu-btn .icon-close {
-    display: none;
-  }
-  .menu-btn[aria-expanded="true"] .icon-open {
-    display: none;
-  }
-  .menu-btn[aria-expanded="true"] .icon-close {
+  .menu-lines i {
     display: block;
+    height: 2px;
+    border-radius: 2px;
+    background: currentColor;
+    transition: transform 0.3s var(--ease-spring);
+  }
+  .menu-btn[aria-expanded="true"] .menu-lines i:first-child {
+    transform: translateY(3.5px) rotate(45deg);
+  }
+  .menu-btn[aria-expanded="true"] .menu-lines i:last-child {
+    transform: translateY(-3.5px) rotate(-45deg);
   }
 
-  .menu-link {
+  .site-menu {
+    position: fixed;
+    inset: calc(4rem + env(safe-area-inset-top, 0px)) 0 0 0;
+    z-index: 49;
+    background: var(--page-bg);
+    overflow-y: auto;
+  }
+  .site-menu[hidden] {
+    display: none;
+  }
+  .menu-inner {
     display: flex;
-    align-items: center;
-    min-height: 48px;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 100%;
+    padding-block: 1.5rem 2rem;
+  }
+  .menu-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .menu-list a {
+    display: block;
+    padding: 0.35rem 0;
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: clamp(2.5rem, 13vw, 4rem);
+    line-height: 1.05;
+    letter-spacing: -0.06em;
+    text-transform: lowercase;
+    color: var(--ink);
+  }
+  .menu-list a[aria-current="page"] {
+    color: var(--accent-ink);
+  }
+  .menu-foot {
+    display: grid;
+    gap: 1rem;
+    justify-items: start;
+    margin-top: 2.5rem;
+  }
+  .menu-signin {
     font-family: var(--font-mono);
     font-size: 0.875rem;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    border-bottom: 0.7px solid color-mix(in oklab, var(--edge) 45%, transparent);
+    color: var(--ink-muted);
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
   }
-
-  .mobile-menu[hidden] {
-    display: none;
+  @media (prefers-reduced-motion: no-preference) {
+    .site-menu:not([hidden]) .menu-list li,
+    .site-menu:not([hidden]) .menu-foot {
+      animation: menu-rise 0.5s var(--ease-out) both;
+      animation-delay: calc(var(--i) * 45ms + 40ms);
+    }
+  }
+  @keyframes menu-rise {
+    from {
+      opacity: 0;
+      transform: translateY(18px);
+    }
   }
 
   @media (min-width: 640px) {
-    .sign-in {
-      display: inline-flex;
-    }
     .header-cta {
       display: inline-flex;
     }
@@ -191,24 +282,8 @@ const isCurrent = (href: string) => !href.includes("#") && normalize(href) === p
       display: flex;
     }
     .menu-btn,
-    .mobile-menu {
+    .site-menu {
       display: none !important;
-    }
-  }
-
-  @media (prefers-reduced-motion: no-preference) {
-    .mobile-menu:not([hidden]) {
-      animation: menu-in 0.22s var(--ease-standard) both;
-    }
-  }
-  @keyframes menu-in {
-    from {
-      opacity: 0;
-      transform: translateY(-8px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
     }
   }
 </style>
@@ -219,18 +294,13 @@ const isCurrent = (href: string) => !href.includes("#") && normalize(href) === p
     const panel = document.querySelector<HTMLElement>("[data-menu-panel]");
     if (!btn || !panel || btn.dataset.bound === "true") return;
     btn.dataset.bound = "true";
-
     const setOpen = (open: boolean) => {
       btn.setAttribute("aria-expanded", String(open));
       btn.setAttribute("aria-label", open ? "Close menu" : "Open menu");
       panel.hidden = !open;
+      document.documentElement.style.overflow = open ? "hidden" : "";
     };
-
-    btn.addEventListener("click", () => {
-      setOpen(btn.getAttribute("aria-expanded") !== "true");
-    });
-
-    // Close on link tap, Escape (returning focus), or resize to desktop.
+    btn.addEventListener("click", () => setOpen(btn.getAttribute("aria-expanded") !== "true"));
     panel.addEventListener("click", (e) => {
       if ((e.target as HTMLElement).closest("a")) setOpen(false);
     });
@@ -243,8 +313,8 @@ const isCurrent = (href: string) => !href.includes("#") && normalize(href) === p
     window.addEventListener("resize", () => {
       if (window.innerWidth >= 900) setOpen(false);
     });
+    document.addEventListener("astro:before-swap", () => setOpen(false), { once: true });
   }
-
   initMenu();
   document.addEventListener("astro:page-load", initMenu);
 </script>

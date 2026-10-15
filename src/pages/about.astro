@@ -1,121 +1,490 @@
 ---
+/*
+ * /about — the human room: why Covey exists, its California roots, the
+ * character, what we believe, how we keep it safe, and the questions people
+ * ask. Sun-warmed clay ground.
+ *
+ * "Meet Quinn": the turnaround sheet (line art) laid out like a sketchbook,
+ * and the 3D Quinn built from it, turning one full circle as you scroll the
+ * section (front → right → back → left → front). Scroll-driven, so he only
+ * turns when you do; you can also drag him round. The model loads as the
+ * section approaches; until then, and without WebGL or under reduced motion
+ * (where scrolling doesn't turn him), the front view stands in.
+ */
 import BaseLayout from "../layouts/BaseLayout.astro";
-import JoinCTA from "../components/JoinCTA.astro";
-import BirdDivider from "../components/BirdDivider.astro";
-import CoveyMark from "../components/CoveyMark.astro";
-import { SITE } from "../config";
+import Quinn from "../components/Quinn.astro";
+import { SITE, CITY_SHORT } from "../config";
 
 const principles = [
-  {
-    n: "01",
-    t: "Plans, not profiles.",
-    d: "We don't sell you on someone's photos. We show you what the day actually looks like — where, when, with how many.",
-  },
-  {
-    n: "02",
-    t: "Small on purpose.",
-    d: "Hosts set the headcount, six seats by default. Small enough that everyone actually talks. We won't ship features that push capacity up for its own sake.",
-  },
-  {
-    n: "03",
-    t: "Again beats once.",
-    d: "One good night is a coincidence. Friendship is repetition — so recaps, Coveys, and recurring plans exist to make the second hangout the easy default.",
-  },
-  {
-    n: "04",
-    t: "Hosts are the soul.",
-    d: "The best plans come from people with strong taste and a generous instinct. We design every product decision around making their job easier.",
-  },
+  { n: "01", t: "plans, not profiles.", d: "We don't sell you on someone's photos. We show you what the day actually looks like — where, when, and with how many." },
+  { n: "02", t: "small on purpose.", d: "Hosts set the headcount, six seats by default. Small enough that everyone actually talks. We won't ship features that push capacity up for its own sake." },
+  { n: "03", t: "again beats once.", d: "One good night is a coincidence. Friendship is repetition — so recaps, Coveys, and recurring plans exist to make the second hangout the easy default." },
+  { n: "04", t: "hosts are the soul.", d: "The best plans come from people with good taste and a generous instinct. We design every decision around making their job easier." },
 ];
 
-const stats = [
-  { k: "2025", v: "Founded" },
-  { k: SITE.city.split(",")[0], v: "First city" },
-  { k: "Invite-only", v: "iOS launch" },
+const faqs = [
+  { q: "What is Covey?", a: "An app for meeting people through small, real-world plans. A host posts a short itinerary — a few stops, a time, a set number of seats — and people who like the same things join. When a group clicks, it can become a Covey and keep meeting up." },
+  { q: "How big are the plans?", a: "Small. The host sets the headcount, and it's six seats by default. Date plans are always two." },
+  { q: "What's a Covey?", a: "A standing group that plans things together — your climbing crew, book club, or Sunday pickup game. Coveys can be open, request-to-join, or invite-only, and can run a recurring plan weekly, every two weeks, or monthly." },
+  { q: "How much does it cost?", a: "Covey is free. Some plans have their own costs — a dinner, a class, a ticket — which you'd cover like any night out." },
+  { q: "When can I start using Covey?", a: `We're opening in waves, starting in ${CITY_SHORT}. Join the waitlist and we'll email you as soon as there's a spot for you. We'd rather tell you when it's real than promise a date.` },
+  { q: "What's the difference between the waitlist and the newsletter?", a: "The waitlist is for the app: one email when it's your turn. Covey Weekly is a free list of things to do in San Francisco that anyone can read. They're separate signups, and you can be on either, both, or neither." },
+  { q: "Is it a dating app?", a: "No. Covey is about real plans first. Dating is an optional opt-in, and most plans are simply people doing something together." },
 ];
+
+const views = ["front", "side-right", "back", "side-left"] as const;
 ---
 
 <BaseLayout
   title="About"
-  description="Covey is a plan-first social app built around real-world itineraries and small-group meetups, launching invite-only on iOS."
+  description={`Covey is a small-group plans app from ${CITY_SHORT}, built around the second hangout — named for a covey of California quail.`}
+  page="about"
 >
-  <div class="max-w-4xl mx-auto px-6 py-[var(--section-y)]">
-    <div class="eyebrow mb-3 flex items-center gap-2.5">
-      <CoveyMark variant="dots" dotSize={6} />
-      About
-    </div>
-    <h1 class="display t-h1 mb-8">A new shape for going out.</h1>
-
-    <div class="space-y-6 leading-relaxed">
-      <p class="text-xl md:text-2xl text-ink leading-snug max-w-3xl">
-        Covey started with a simple frustration: most ways to meet people
-        online have nothing to do with what you actually want to
-        <em class="not-italic text-accent-ink font-medium">do</em>.
+  <section class="ab-hero wrap">
+    <p class="kicker">About Covey</p>
+    <h1 class="t-mega ab-title">a small flock<br />in a big city.</h1>
+    <div class="ab-story">
+      <p class="ab-lead">
+        Covey started with a simple frustration: most ways to meet people have
+        nothing to do with what you actually want to <em>do</em>.
       </p>
-      <p class="text-lg text-ink-muted">
-        Group chats stall. Apps optimize for swipes, not Saturdays. The good
-        plans live in someone's head and never leave it. So we built Covey
-        around plans instead — a host publishes a small itinerary, a ramen run,
-        a bookstore loop, a sunrise hike, and a few seats stay open for
-        whoever's curious.
-      </p>
-      <p class="text-lg text-ink-muted">
-        Plans are intentionally small: a handful of people, a few stops, and a
-        clear vibe. And when a group clicks, it doesn't have to end there — it
-        can become a Covey that keeps meeting up.
-      </p>
-    </div>
-
-    <div class="mt-16 grid sm:grid-cols-3 gap-5 reveal-stagger">
-      {
-        stats.map((s, i) => (
-          <div class="card p-6 reveal-item" style={`--i:${i}`}>
-            <div class="font-mono font-semibold text-2xl md:text-3xl text-ink tracking-tight text-balance">{s.k}</div>
-            <div class="eyebrow mt-2">{s.v}</div>
-          </div>
-        ))
-      }
-    </div>
-
-    <BirdDivider />
-
-    <div class="card-pinned p-8 md:p-12 my-4 flex flex-col md:flex-row gap-8 items-center" style="border-radius: var(--radius-sheet)">
-      <div class="shrink-0">
-        <CoveyMark variant="dots" dotSize={16} />
-      </div>
-      <div>
-        <div class="eyebrow mb-3">The shape we build around</div>
-        <p class="text-xl md:text-2xl text-ink leading-snug">
-          A covey is a small flock of quail. On Covey, it's the handful of
-          people you keep making plans with. The{" "}
-          <a href="/#coveys" class="underline decoration-edge underline-offset-4 hover:text-accent-ink hover:decoration-accent-ink transition-colors">home page</a>{" "}
-          shows how a group gets there.
+      <div class="ab-cols">
+        <p>
+          Group chats stall. Apps optimize for swipes, not Saturdays. The good
+          plans live in someone's head and never leave it. So we built Covey
+          around plans instead — a host posts a small itinerary, a ramen run, a
+          bookstore loop, a sunrise hike, and a few seats stay open for whoever's
+          curious.
+        </p>
+        <p>
+          Plans stay small on purpose: a handful of people, a few stops, a clear
+          vibe. And when a group clicks, it doesn't have to end at the last stop
+          — it can become a Covey that keeps meeting up. We're starting in
+          {" "}{CITY_SHORT}, where we live.
         </p>
       </div>
     </div>
+  </section>
 
-    <div class="mt-16">
-      <div class="eyebrow mb-3">What we believe</div>
-      <h2 class="display t-h2 mb-8">Four principles we build around.</h2>
-      <ol class="space-y-8">
-        {
-          principles.map((p) => (
-            <li class="grid md:grid-cols-12 gap-4 md:gap-8 border-t pt-8">
-              <span class="md:col-span-2 font-mono font-semibold text-accent-ink text-3xl md:text-4xl tracking-tight">{p.n}</span>
-              <div class="md:col-span-10">
-                <h3 class="title-mono text-xl md:text-2xl text-ink mb-2">{p.t}</h3>
-                <p class="text-ink-muted text-lg leading-relaxed max-w-2xl">{p.d}</p>
-              </div>
-            </li>
-          ))
-        }
-      </ol>
+  <section class="roots" aria-labelledby="roots-title">
+    <div class="wrap roots-inner">
+      <p class="kicker">Why a quail</p>
+      <h2 id="roots-title" class="t-display roots-title">california's bird<br />travels in coveys.</h2>
+      <p class="roots-text">
+        The California quail is the state bird — the one with the little
+        teardrop plume. It's famously social: quail live in small groups called
+        coveys that feed, move, and roost together. A small group that keeps
+        showing up for each other is the whole idea, so we named the app after
+        it, and gave our mascot the plume.
+      </p>
     </div>
-  </div>
+  </section>
 
-  <JoinCTA
-    eyebrow="The city is the canvas"
-    heading="want to be part of it?"
-    body="Make an account on the web today. The iOS app is rolling out by invite."
-  />
+  <section class="quinn-sec" data-progress="pin" data-turn aria-labelledby="quinn-title">
+    <div class="quinn-pin">
+      <div class="wrap quinn-grid">
+        <div class="quinn-copy">
+          <p class="kicker">The character</p>
+          <h2 id="quinn-title" class="t-display">meet quinn.</h2>
+          <p class="quinn-text">
+            Quinn is Covey's quail: sneakers on, headband on, always up for the
+            plan. Quinn shows up around the site — waving you in on the home page
+            and reacting when you sign up for the waitlist.
+          </p>
+          <ol class="sheet" aria-label="Quinn's turnaround sheet">
+            {
+              views.map((v) => (
+                <li>
+                  <Quinn views={[v]} line sizes="90px" />
+                </li>
+              ))
+            }
+          </ol>
+          <p class="sheet-caption">From the turnaround sheet: front, right, back, left.</p>
+        </div>
+        <div class="quinn-turn">
+          <Quinn views={["front"]} sizes="(min-width: 900px) 300px, 50vw" alt="Quinn, Covey's quail mascot, turning around" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="beliefs wrap" aria-labelledby="beliefs-title">
+    <p class="kicker">What we believe</p>
+    <h2 id="beliefs-title" class="t-title beliefs-title">four principles<br />we build around.</h2>
+    <ol class="beliefs-list">
+      {
+        principles.map((p, i) => (
+          <li data-reveal style={`--d:${i}`}>
+            <span class="b-n">{p.n}</span>
+            <h3 class="b-t">{p.t}</h3>
+            <p class="b-d">{p.d}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <section class="safe wrap" aria-labelledby="safe-title">
+    <div>
+      <p class="kicker">Built for showing up</p>
+      <h2 id="safe-title" class="t-title">small, verified,<br />public first.</h2>
+    </div>
+    <ul class="safe-list">
+      <li><strong>Small by design.</strong> Hosts set the headcount — six by default; date plans are always two.</li>
+      <li><strong>Hosts approve requests.</strong> On request-to-join plans, the host reviews who's coming first.</li>
+      <li><strong>Adults, verified.</strong> Covey is 18+, with identity verification in the app.</li>
+      <li><strong>Public places first.</strong> Every plan reminds you to meet somewhere public, and you can report or block anyone.</li>
+      <li><a href="/safety" class="arrow-link">Read our safety guidelines →</a></li>
+    </ul>
+  </section>
+
+  <section class="faq wrap" aria-labelledby="faq-title">
+    <h2 id="faq-title" class="t-title">good questions.</h2>
+    <div class="faq-list">
+      {
+        faqs.map((f) => (
+          <details class="faq-item">
+            <summary class="faq-q">
+              {f.q}
+              <span class="faq-plus" aria-hidden="true">+</span>
+            </summary>
+            <div class="faq-answer">
+              <div>
+                <p>{f.a}</p>
+              </div>
+            </div>
+          </details>
+        ))
+      }
+    </div>
+    <p class="faq-contact">Still curious? <a href={`mailto:${SITE.emails.hello}`}>{SITE.emails.hello}</a></p>
+  </section>
 </BaseLayout>
+
+<style>
+  .ab-hero {
+    padding-block: clamp(2rem, 6vw, 5rem) clamp(3rem, 6vw, 5rem);
+  }
+  .ab-title {
+    color: var(--ink);
+    font-size: clamp(3rem, 10vw, 9rem);
+    margin-block: 1rem 2.5rem;
+  }
+  .ab-story {
+    display: grid;
+    gap: 1.5rem;
+    max-width: 62rem;
+  }
+  .ab-lead {
+    font-size: clamp(1.35rem, 2.4vw, 2rem);
+    line-height: 1.3;
+    color: var(--ink);
+    max-width: 40rem;
+  }
+  .ab-lead em {
+    font-style: normal;
+    color: var(--accent-ink);
+    font-weight: 600;
+  }
+  .ab-cols {
+    display: grid;
+    gap: 1.25rem;
+  }
+  .ab-cols p {
+    font-size: 1.0625rem;
+    line-height: 1.65;
+    color: var(--ink-muted);
+  }
+
+  .roots {
+    background: #2d4a1a;
+    color: #f3f1e7;
+  }
+  :global(.dark) .roots {
+    background: #1d3110;
+  }
+  .roots-inner {
+    display: grid;
+    gap: 1.25rem;
+    padding-block: clamp(4rem, 9vw, 7rem);
+  }
+  .roots .kicker {
+    color: #cfe9a6;
+  }
+  .roots-title {
+    color: #f3f1e7;
+  }
+  .roots-text {
+    max-width: 40rem;
+    font-size: var(--fs-lede);
+    line-height: 1.6;
+    color: #d5dccb;
+  }
+
+  .quinn-sec {
+    --p: 0;
+  }
+  .quinn-grid {
+    display: grid;
+    gap: 2rem;
+    padding-block: clamp(4rem, 8vw, 6rem);
+    align-items: center;
+  }
+  .quinn-copy .t-display {
+    color: var(--ink);
+    margin-block: 0.75rem 1.25rem;
+  }
+  .quinn-text {
+    max-width: 34rem;
+    font-size: var(--fs-lede);
+    line-height: 1.6;
+    color: var(--ink-muted);
+  }
+  .sheet {
+    list-style: none;
+    margin: 2rem 0 0.5rem;
+    padding: 1.25rem;
+    display: flex;
+    gap: 1rem;
+    justify-content: space-between;
+    align-items: end;
+    max-width: 30rem;
+    border-radius: 1rem;
+    background:
+      linear-gradient(var(--edge) 1px, transparent 1px) 0 0 / 100% 24px,
+      var(--paper-elevated);
+    border: 0.7px solid var(--edge);
+  }
+  .sheet li {
+    width: 18%;
+  }
+  .sheet-caption {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--ink-muted);
+  }
+  /* Sized by height so the whole turning figure fits the pinned screen. */
+  .quinn-turn {
+    position: relative;
+    width: min(60%, 17rem, calc((100svh - 12rem) * 0.54));
+    justify-self: center;
+  }
+
+  .beliefs {
+    padding-block: clamp(4rem, 8vw, 6rem);
+    border-top: 0.7px solid var(--edge);
+  }
+  .beliefs-title {
+    color: var(--ink);
+    margin-block: 0.75rem 2.5rem;
+  }
+  .beliefs-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 2rem;
+  }
+  .b-n {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    line-height: 1;
+    letter-spacing: -0.06em;
+    color: var(--accent-ink);
+  }
+  .b-t {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: clamp(1.4rem, 2.4vw, 1.9rem);
+    letter-spacing: -0.04em;
+    color: var(--ink);
+    margin-block: 0.6rem 0.5rem;
+  }
+  .b-d {
+    color: var(--ink-muted);
+    line-height: 1.6;
+    max-width: 30rem;
+  }
+
+  .safe {
+    display: grid;
+    gap: 2rem;
+    padding-block: clamp(3.5rem, 7vw, 5rem);
+    border-top: 0.7px solid var(--edge);
+  }
+  .safe .t-title {
+    color: var(--ink);
+    margin-top: 0.75rem;
+  }
+  .safe-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1rem;
+  }
+  .safe-list li {
+    color: var(--ink-muted);
+    line-height: 1.55;
+    padding-bottom: 1rem;
+    border-bottom: 0.7px solid var(--edge);
+  }
+  .safe-list strong {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .safe-list li:last-child {
+    border: 0;
+  }
+
+  .faq {
+    padding-block: clamp(3.5rem, 7vw, 5rem) 2rem;
+    border-top: 0.7px solid var(--edge);
+    max-width: 52rem;
+  }
+  .faq .t-title {
+    color: var(--ink);
+    margin-bottom: 1.75rem;
+  }
+  .faq-list {
+    display: grid;
+    gap: 0.6rem;
+  }
+  .faq-item {
+    border-radius: 1rem;
+    background: var(--paper-elevated);
+    border: 0.7px solid var(--edge);
+  }
+  .faq-item > summary::-webkit-details-marker {
+    display: none;
+  }
+  .faq-q {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 56px;
+    padding: 1rem 1.25rem;
+    list-style: none;
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .faq-plus {
+    font-size: 1.5rem;
+    line-height: 1;
+    color: var(--ink-muted);
+    transition: transform 0.3s var(--ease-spring);
+  }
+  details[open] .faq-plus {
+    transform: rotate(45deg);
+  }
+  .faq-answer p {
+    padding: 0 1.25rem 1.25rem;
+    color: var(--ink-muted);
+    line-height: 1.6;
+  }
+  .faq-contact {
+    margin-top: 1.5rem;
+    color: var(--ink-muted);
+  }
+  .faq-contact a {
+    color: var(--accent-ink);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  @media (min-width: 900px) {
+    .ab-cols {
+      grid-template-columns: 1fr 1fr;
+      gap: 2.5rem;
+    }
+    .quinn-sec {
+      height: 220vh;
+    }
+    .quinn-pin {
+      position: sticky;
+      top: 4rem;
+      height: calc(100vh - 4rem);
+      display: grid;
+      align-items: center;
+    }
+    .quinn-grid {
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+      padding-block: 2rem;
+    }
+    .beliefs-list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 3rem 4rem;
+    }
+    .safe {
+      grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .quinn-sec {
+      height: auto;
+    }
+    .quinn-pin {
+      position: static;
+      height: auto;
+    }
+  }
+</style>
+
+<script>
+  import { loadQuinn3D, reducedMotion } from "../lib/quinn";
+  import type { Quinn3D } from "../lib/quinn3d/index";
+
+  // Scroll progress → one full turn, holding the front for a beat at each end.
+  const angleAt = (p: number) => Math.min(1, Math.max(0, (p - 0.1) / 0.8)) * Math.PI * 2;
+
+  function initTurn() {
+    const sec = document.querySelector<HTMLElement>("[data-turn]");
+    const stand = sec?.querySelector<HTMLElement>(".quinn-turn");
+    if (!sec || !stand || sec.dataset.bound) return;
+    sec.dataset.bound = "true";
+    const scrolls = !reducedMotion();
+    let q3: Quinn3D | null = null;
+    let p = Number(sec.dataset.p ?? 0);
+    let gone = false;
+
+    if (scrolls) {
+      sec.addEventListener("scrollprogress", (e) => {
+        p = (e as unknown as CustomEvent<number>).detail;
+        q3?.setTurn(angleAt(p));
+      });
+    }
+
+    // Load the model as the section comes within a screen of the viewport.
+    const near = new IntersectionObserver(
+      async ([entry]) => {
+        if (!entry.isIntersecting) return;
+        near.disconnect();
+        const q = await loadQuinn3D(stand, { follow: false, turn: scrolls ? angleAt(p) : 0 });
+        if (!q) return;
+        if (gone) return q.destroy();
+        q3 = q;
+        if (scrolls) q.setTurn(angleAt(p));
+      },
+      { rootMargin: "100% 0px" },
+    );
+    near.observe(sec);
+
+    document.addEventListener(
+      "astro:before-swap",
+      () => {
+        gone = true;
+        near.disconnect();
+        q3?.destroy();
+      },
+      { once: true },
+    );
+  }
+  initTurn();
+  document.addEventListener("astro:page-load", initTurn);
+</script>

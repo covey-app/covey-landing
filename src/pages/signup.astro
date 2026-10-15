@@ -1,7 +1,8 @@
 ---
-// covey-web links here ("Join the waitlist"); forwards to account creation.
+// covey-web links "Join the waitlist" here; forwards to the waitlist page.
+// vercel.json answers first with a 307; this covers any host without it.
 import RedirectPage from "../components/RedirectPage.astro";
 import { SITE } from "../config";
 ---
 
-<RedirectPage to={SITE.joinUrl} title="Join Covey" />
+<RedirectPage to={SITE.waitlistPath} title="Join the waitlist" />

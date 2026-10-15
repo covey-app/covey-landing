@@ -1,114 +1,176 @@
 import { test, expect } from "@playwright/test";
 
 /**
- * Regression coverage for the 2026-09-26 landing audit
- * (docs/landing-audit-2026-09-26.md). Each test names the finding it guards.
+ * Site structure, navigation, and the redesign's acceptance criteria
+ * (docs/redesign-2026-10.md): distinct pages, the primary mark used only to
+ * identify the brand, no app-icon tile in the hero, at most two prominent
+ * waitlist CTAs on the home page, and motion that respects reduced motion.
  */
 
-test.describe("header (P2-1: dead hamburger on desktop)", () => {
-  test("menu button is hidden on wide screens and nav is visible", async ({ page }) => {
+test.describe("navigation", () => {
+  test("desktop: three destinations, the current one marked, one waitlist CTA", async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
-    await page.goto("/");
+    for (const [path, label] of [
+      ["/activities", "Activities"],
+      ["/newsletter", "Newsletter"],
+      ["/about", "About"],
+    ] as const) {
+      await page.goto(path);
+      const nav = page.locator('nav[aria-label="Primary"]');
+      await expect(nav.getByRole("link")).toHaveText(["Activities", "Newsletter", "About"]);
+      await expect(nav.locator('a[aria-current="page"]')).toHaveText(label);
+    }
     await expect(page.locator("[data-menu-btn]")).toBeHidden();
-    await expect(page.locator('nav[aria-label="Primary"]')).toBeVisible();
+    await expect(page.locator("header a[data-cta='header']")).toHaveAttribute("href", "/waitlist");
   });
 
-  test("menu button works on phones and holds the primary CTA", async ({ page }) => {
+  test("the waitlist page doesn't advertise itself in the header", async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto("/waitlist");
+    await expect(page.locator("header a[data-cta='header']")).toHaveCount(0);
+  });
+
+  test("phones: full-screen menu with every destination, the CTA, and sign in", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto("/");
     await expect(page.locator('nav[aria-label="Primary"]')).toBeHidden();
     await page.locator("[data-menu-btn]").click();
-    const panel = page.locator("[data-menu-panel]");
-    await expect(panel).toBeVisible();
-    await expect(panel.getByRole("link", { name: "Join Covey" })).toHaveAttribute(
-      "href",
-      "https://go.coveyapp.co/login",
+    const menu = page.locator("[data-menu-panel]");
+    await expect(menu).toBeVisible();
+    await expect(menu.locator(".menu-list a")).toHaveText(["Home", "Activities", "Newsletter", "About"]);
+    await expect(menu.getByRole("link", { name: "Join the waitlist" })).toHaveAttribute("href", "/waitlist");
+    await expect(menu.getByRole("link", { name: /Sign in/ })).toHaveAttribute("href", "https://go.coveyapp.co/login");
+  });
+
+  test("soft navigation between pages keeps working (view transitions)", async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto("/");
+    await page.locator('nav[aria-label="Primary"]').getByRole("link", { name: "Activities" }).click();
+    await expect(page).toHaveURL(/\/activities\/?$/);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("what's on.");
+    await page.locator('nav[aria-label="Primary"]').getByRole("link", { name: "Newsletter" }).click();
+    await expect(page).toHaveURL(/\/newsletter\/?$/);
+    await expect(page.locator('nav[aria-label="Primary"] a[aria-current="page"]')).toHaveText("Newsletter");
+  });
+});
+
+test.describe("home page (acceptance criteria)", () => {
+  test("at most two prominent waitlist CTAs — header and hero — and no form", async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto("/");
+    const visible = await page.locator("a[data-cta]").evaluateAll((els) =>
+      els.filter((e) => (e as HTMLElement).offsetParent !== null).map((e) => [e.getAttribute("data-cta"), e.getAttribute("href")]),
     );
+    expect(visible).toEqual([
+      ["header", "/waitlist"],
+      ["hero", "/waitlist"],
+    ]);
+    await expect(page.locator("main form[action='/api/waitlist']")).toHaveCount(0);
   });
-});
 
-test.describe("calls to action (P0-1, P0-3)", () => {
-  test("every Join Covey link goes to the product's join screen", async ({ page }) => {
+  test("the hero is a cast, not an app-icon tile; the primary mark stays in the header and footer", async ({ page }) => {
     await page.goto("/");
-    const joins = page.getByRole("link", { name: "Join Covey" });
-    expect(await joins.count()).toBeGreaterThan(1);
-    for (const href of await joins.evaluateAll((els) => els.map((e) => e.getAttribute("href")))) {
-      expect(href).toBe("https://go.coveyapp.co/login");
-    }
-    const signIn = page.getByRole("link", { name: "Sign in" }).first();
-    await expect(signIn).toHaveAttribute("href", "https://go.coveyapp.co/login");
+    await expect(page.locator("main img[src*='app-icon']")).toHaveCount(0);
+    await expect(page.locator("main .tile")).toHaveCount(0);
+    await expect(page.locator("[data-hero] img[src*='/brand/flock/']")).not.toHaveCount(0);
+    await expect(page.locator("[data-hero] [data-quinn]")).toHaveCount(1);
+    expect(await page.locator("header img[src*='app-icon'], footer img[src*='app-icon']").count()).toBe(2);
   });
 
-  test("no page promises a waitlist or email capture that doesn't exist", async ({ page }) => {
-    for (const route of ["/", "/about", "/events", "/testimonials", "/support"]) {
+  test("contextual actions lead to the newsletter and activities, not more waitlist buttons", async ({ page }) => {
+    await page.goto("/");
+    await expect(page.locator("main [data-newsletter]")).toHaveCount(1);
+    await expect(page.locator("main a[href='/activities']")).not.toHaveCount(0);
+  });
+
+  test("group size claims match the product", async ({ page }) => {
+    for (const route of ["/", "/about"]) {
       await page.goto(route);
-      const text = (await page.locator("main").innerText()).toLowerCase();
-      expect(text, route).not.toContain("waitlist");
-      expect(text, route).not.toContain("drop your email");
+      const text = await page.locator("main").innerText();
+      expect(text, route).not.toMatch(/2[–-]10|two (and|to) ten|ten to fifteen/i);
     }
   });
 
-  test("group size claims match the product (P0-4)", async ({ page }) => {
+  test("Quinn turns into the 3D model once the page settles, and the poster steps aside", async ({ page, browserName }) => {
+    // Headless WebGL is software-rendered and only dependable in Chromium.
+    test.skip(browserName !== "chromium", "WebGL 2 in headless Chromium only");
+    test.setTimeout(60_000);
+    const errors: string[] = [];
+    page.on("pageerror", (e) => errors.push(e.message));
     await page.goto("/");
-    const text = await page.locator("main").innerText();
-    expect(text).not.toMatch(/2[–-]10|two (and|to) ten|ten to fifteen/i);
+    const stand = page.locator(".hero-quinn");
+    await expect(stand).toHaveAttribute("data-quinn3d", "ready", { timeout: 45_000 });
+    await expect(stand.locator("canvas.quinn-3d")).toHaveCount(1);
+    await expect(stand.locator("[data-quinn]")).toHaveCSS("opacity", "0");
+    expect(errors).toEqual([]);
+  });
+
+  test("without WebGL, the illustrated Quinn stays put", async ({ page }) => {
+    const errors: string[] = [];
+    page.on("pageerror", (e) => errors.push(e.message));
+    await page.addInitScript(() => {
+      const getContext = HTMLCanvasElement.prototype.getContext;
+      HTMLCanvasElement.prototype.getContext = function (this: HTMLCanvasElement, type: string, ...rest: unknown[]) {
+        return /webgl/.test(type) ? null : getContext.call(this, type as "2d", ...(rest as []));
+      } as typeof getContext;
+    });
+    for (const [route, host] of [["/", ".hero-quinn"], ["/about", ".quinn-turn"]]) {
+      await page.goto(route);
+      const stand = page.locator(host);
+      await stand.scrollIntoViewIfNeeded();
+      await page.waitForLoadState("networkidle");
+      await expect(stand, route).not.toHaveAttribute("data-quinn3d");
+      await expect(stand.locator("canvas"), route).toHaveCount(0);
+      await expect(stand.locator("[data-quinn]"), route).toHaveCSS("opacity", "1");
+    }
+    expect(errors).toEqual([]);
+  });
+
+  test("the hero entrance plays once per session", async ({ page }) => {
+    await page.goto("/");
+    await expect(page.locator("[data-hero]")).toHaveClass(/is-intro/);
+    await page.reload();
+    await expect(page.locator("[data-hero]")).not.toHaveClass(/is-intro/);
+    // The CTA is usable immediately either way.
+    await expect(page.locator("a[data-cta='hero']")).toBeVisible();
   });
 });
 
-test("/signup forwards to the product (P0-2: covey-web links here)", async ({ request }) => {
-  const res = await request.get("/signup");
-  expect(res.ok()).toBeTruthy();
-  const html = await res.text();
-  expect(html).toContain('http-equiv="refresh"');
-  expect(html).toContain("url=https://go.coveyapp.co/login");
-  expect(html).toContain('name="robots" content="noindex"');
+test("/about: the 3D Quinn loads as \"meet quinn\" approaches and stands in for the poster", async ({ page, browserName }) => {
+  test.skip(browserName !== "chromium", "WebGL 2 in headless Chromium only");
+  test.setTimeout(60_000);
+  const errors: string[] = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  await page.goto("/about");
+  const stand = page.locator(".quinn-turn");
+  await page.waitForLoadState("networkidle");
+  await expect(stand.locator("canvas")).toHaveCount(0); // not until the section is near
+  await stand.scrollIntoViewIfNeeded();
+  await expect(stand).toHaveAttribute("data-quinn3d", "ready", { timeout: 45_000 });
+  await expect(stand.locator("[data-quinn]")).toHaveCSS("opacity", "0");
+  expect(errors).toEqual([]);
 });
 
-test.describe("plan demo", () => {
-  test("tabs follow the WAI-ARIA pattern with arrow keys", async ({ page }) => {
-    await page.goto("/");
-    const itinerary = page.locator("[data-tab='itinerary']");
-    await itinerary.focus();
-    await page.keyboard.press("ArrowRight");
-    await expect(page.locator("[data-tab='map']")).toBeFocused();
-    await expect(page.locator("[data-tab='map']")).toHaveAttribute("aria-selected", "true");
-    await expect(page.locator("#demo-panel-map")).toBeVisible();
-    await expect(page.locator("#demo-panel-itinerary")).toBeHidden();
-    await page.keyboard.press("End");
-    await expect(page.locator("#demo-panel-group")).toBeVisible();
-    await page.keyboard.press("Home");
-    await expect(page.locator("#demo-panel-itinerary")).toBeVisible();
-  });
-
-  test("plan picker swaps every view to the chosen plan", async ({ page }) => {
-    await page.goto("/");
-    await page.locator("[data-pick='ramen']").click();
-    await expect(page.locator("[data-pick='ramen']")).toHaveAttribute("aria-pressed", "true");
-    await expect(page.locator(".demo-summary [data-plan='ramen']")).toBeVisible();
-    await expect(page.locator(".demo-summary [data-plan='sunset']")).toBeHidden();
-    await expect(page.locator("#demo-panel-itinerary [data-plan='ramen']")).toBeVisible();
-  });
-
-  test("demo join is local, reversible, and says nothing was sent", async ({ page }) => {
-    await page.goto("/");
-    const plan = page.locator(".demo-summary [data-plan='sunset']");
-    const going = plan.locator("[data-going]");
-    await expect(going).toHaveText("4/6 going");
-    await plan.locator("[data-join]").click();
-    await expect(going).toHaveText("5/6 going");
-    await expect(page.locator("[data-live]")).toContainText("Nothing was actually sent");
-    await plan.locator("[data-join]").click();
-    await expect(going).toHaveText("4/6 going");
-  });
-});
-
-test("reduced motion shows the hero plan fully, with no entrance", async ({ browser }) => {
+test("reduced motion: final frames, no entrance, pinned beats fully visible", async ({ browser }) => {
   const ctx = await browser.newContext({ reducedMotion: "reduce" });
   const page = await ctx.newPage();
   await page.goto("/");
+  await expect(page.locator("[data-hero]")).not.toHaveClass(/is-intro/);
   const opacities = await page
-    .locator(".invite-sheet, .invite-stop-body, .invite-orb, .reveal")
+    .locator("[data-hero] .bird-art, [data-hero] .line > span, .problem .beat, .problem .answer, [data-reveal]")
     .evaluateAll((els) => els.map((e) => getComputedStyle(e).opacity));
+  expect(opacities.length).toBeGreaterThan(10);
   expect(opacities.every((o) => o === "1")).toBeTruthy();
   await ctx.close();
+});
+
+test("redirects: /signup → /waitlist, /events → /activities", async ({ request }) => {
+  const signup = await request.get("/signup", { maxRedirects: 0 });
+  expect(signup.status()).toBe(307);
+  expect(signup.headers()["location"]).toBe("/waitlist");
+  const events = await request.get("/events", { maxRedirects: 0 });
+  expect(events.status()).toBe(308);
+  expect(events.headers()["location"]).toBe("/activities");
+  const fallback = await (await request.get("/signup/index.html")).text();
+  expect(fallback).toContain("url=/waitlist");
 });

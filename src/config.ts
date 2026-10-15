@@ -15,12 +15,12 @@ export const SITE = {
   // and must never be duplicated in the Expo tree.
   appUrl: "https://go.coveyapp.co",
 
-  // Where the primary "Join Covey" CTA lands: the product's /login, which
-  // handles both paths (Apple / Google sign-in, plus "New to Covey? Create an
-  // account"). Product decision, 2026-09-26 — /signup exists if that changes.
-  joinUrl: "https://go.coveyapp.co/login",
-  // Returning members ("Sign in" in the header and mobile menu). Currently the
-  // same screen as joinUrl; kept separate so either can move independently.
+  // Pre-launch, every primary CTA is "Join the waitlist" (product decision,
+  // 2026-10-14). The form lives on the home page (#waitlist) and on its own
+  // page here; /signup forwards to it, which is where covey-web's "Join the
+  // waitlist" links already point. go.coveyapp.co stays up and untouched.
+  waitlistPath: "/waitlist",
+  // Existing members ("Sign in" in the header, mobile menu, and footer).
   signInUrl: "https://go.coveyapp.co/login",
 
   // Published plans are readable without an account (the anon preview RPCs in

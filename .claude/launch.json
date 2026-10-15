@@ -4,15 +4,36 @@
     {
       "name": "covey-landing",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
       "port": 4321,
       "autoPort": true
     },
     {
       "name": "covey-landing-preview",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "preview", "--", "--port", "4322"],
+      "runtimeArgs": [
+        "run",
+        "preview",
+        "--",
+        "--port",
+        "4322"
+      ],
       "port": 4322
+    },
+    {
+      "name": "covey-landing-4325",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "4325"
+      ],
+      "port": 4325
     }
   ]
 }

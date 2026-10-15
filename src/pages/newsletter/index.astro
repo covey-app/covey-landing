@@ -1,0 +1,353 @@
+---
+/*
+ * /newsletter — Covey Weekly, the editorial room. Newsprint ground, a
+ * masthead, a subscription slip, the latest edition's Top Picks, and the
+ * archive. Clearly not the waitlist: no app, no account, its own consent.
+ *
+ * The media quail (reading on the couch) is the masthead's mascot — the one
+ * illustration here, because it's literally about reading.
+ *
+ * No-JS error anchors: /api/newsletter redirects a failed native POST to
+ * #nl-invalid or #nl-retry.
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import NewsletterForm from "../../components/NewsletterForm.astro";
+import PickCard from "../../components/guide/PickCard.astro";
+import { latestEdition, publishedEditions, resolveEdition, publishedActivities, shortDate } from "../../lib/guide";
+import { birdSrc } from "../../lib/categories";
+import { CITY_SHORT } from "../../config";
+
+const all = await publishedActivities();
+const editions = await publishedEditions();
+const latest = await latestEdition();
+const archive = await Promise.all(editions.slice(1).map((e) => resolveEdition(e, all)));
+const reader = birdSrc("media");
+const arrow = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>`;
+---
+
+<BaseLayout
+  title="Covey Weekly — things to do in San Francisco"
+  description={`A free weekly email of things worth leaving the house for in ${CITY_SHORT}: our top picks, plus everything else we found and checked.`}
+  page="newsletter"
+>
+  <header class="mast wrap">
+    <div class="mast-rule" aria-hidden="true">
+      <span>{CITY_SHORT}</span><span>Free · Every week</span><span>{latest ? `Latest: ${latest.span}` : "First edition soon"}</span>
+    </div>
+    <h1 class="mast-title">
+      <span class="mast-covey">covey</span>
+      <span class="mast-weekly">weekly</span>
+      <img class="mast-bird" src={reader.src} srcset={reader.srcset} alt="" width="240" height="220" loading="eager" decoding="async" />
+    </h1>
+    <div class="mast-rule mast-rule--bottom" aria-hidden="true"></div>
+    <div class="mast-grid">
+      <div class="mast-copy">
+        <p class="mast-dek">
+          Things worth leaving the house for in {CITY_SHORT} — after work, on
+          the weekend, with people or on your own. Every edition has:
+        </p>
+        <dl class="mast-parts">
+          <div><dt>Top picks</dt><dd>A short list of what we'd actually go to this week, why, and what to know before you go.</dd></div>
+          <div><dt>Ready-made plans</dt><dd>Listings strung into a morning, an afternoon, or a night out, plus ideas that suit the forecast.</dd></div>
+          <div><dt>The complete guide</dt><dd>Everything else we found and checked, by day and time of day, with addresses, prices, and a link to each organizer.</dd></div>
+        </dl>
+      </div>
+      <div class="mast-sub">
+        <p id="nl-invalid" class="nojs-msg" role="alert" tabindex="-1">That email didn't look quite right — please check it and try again.</p>
+        <p id="nl-retry" class="nojs-msg" role="alert" tabindex="-1">We couldn't save that just now. Please try again in a moment.</p>
+        <NewsletterForm placement="newsletter-page" variant="slip" label="Subscribe — it's free" />
+        <p class="mast-not">This isn't the app waitlist. You don't need Covey to read it, and subscribing doesn't sign you up for anything else.</p>
+      </div>
+    </div>
+  </header>
+
+  {
+    latest && latest.picks.length > 0 ? (
+      <section class="latest wrap" aria-labelledby="latest-title">
+        <div class="latest-head" data-reveal>
+          <p class="kicker">Latest edition · {latest.span}</p>
+          <h2 id="latest-title" class="t-title">{latest.entry.data.title.toLowerCase()}</h2>
+          <p class="latest-dek">{latest.entry.data.dek}</p>
+        </div>
+        <div class="latest-picks">
+          {latest.picks.slice(0, 5).map((p, i) => (
+            <div data-reveal style={`--d:${i}`} class:list={[i === 0 && "is-lead"]}>
+              <PickCard activity={p.activity} why={p.why} n={i + 1} size={i === 0 ? "lg" : "md"} />
+            </div>
+          ))}
+        </div>
+        <a href={`/newsletter/${latest.slug}`} class="arrow-link latest-more">
+          Read the whole edition — {latest.total} things to do
+          <span set:html={arrow} />
+        </a>
+      </section>
+    ) : (
+      <section class="latest wrap" aria-labelledby="latest-title">
+        <h2 id="latest-title" class="t-title">the first edition is on its way.</h2>
+        <p class="latest-dek">We're collecting and checking this week's listings now. Subscribe above and it'll land in your inbox.</p>
+      </section>
+    )
+  }
+
+  {
+    archive.length > 0 && (
+      <section class="archive wrap" aria-labelledby="archive-title">
+        <h2 id="archive-title" class="kicker">Past editions</h2>
+        <ol class="archive-list">
+          {archive.map((e) => (
+            <li>
+              <a href={`/newsletter/${e.slug}`} class="archive-row">
+                <span class="archive-date">{shortDate(e.entry.data.weekOf)}</span>
+                <span class="archive-title">{e.entry.data.title}</span>
+                <span class="archive-count">{e.picks.length} picks · {e.total} listings</span>
+              </a>
+            </li>
+          ))}
+        </ol>
+      </section>
+    )
+  }
+
+  <section class="cross wrap" aria-label="More from Covey">
+    <a href="/activities" class="cross-card">
+      <span class="kicker no-rule">Activities</span>
+      <span class="cross-t">browse everything on this week →</span>
+    </a>
+    <a href="/about" class="cross-card">
+      <span class="kicker no-rule">About</span>
+      <span class="cross-t">who's picking these, and why →</span>
+    </a>
+  </section>
+</BaseLayout>
+
+<style>
+  .mast {
+    padding-block: clamp(1.5rem, 4vw, 3rem) clamp(2.5rem, 5vw, 4rem);
+  }
+  .mast-rule {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.6rem 0;
+    border-top: 3px solid var(--ink);
+    border-bottom: 0.7px solid var(--ink);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+  .mast-rule span:nth-child(2) {
+    display: none;
+  }
+  .mast-rule--bottom {
+    padding: 0;
+    border-top: 0.7px solid var(--ink);
+    border-bottom: 3px solid var(--ink);
+    height: 6px;
+  }
+  .mast-title {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0 0.18em;
+    padding-block: 0.15em 0.1em;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: clamp(3.6rem, 16vw, 13.5rem);
+    line-height: 0.85;
+    letter-spacing: -0.07em;
+    color: var(--ink);
+  }
+  .mast-weekly {
+    color: var(--accent-ink);
+  }
+  .mast-bird {
+    position: absolute;
+    right: 0;
+    bottom: 0.08em;
+    width: clamp(4.5rem, 14vw, 12rem);
+    height: auto;
+    transform-origin: 50% 100%;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .mast-bird {
+      animation: settle-in 0.9s cubic-bezier(0.2, 0.9, 0.25, 1.15) 0.2s both;
+    }
+  }
+  @keyframes settle-in {
+    from {
+      opacity: 0;
+      transform: translateY(18px) rotate(-6deg);
+    }
+  }
+  .mast-grid {
+    display: grid;
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+  .mast-dek {
+    font-size: var(--fs-lede);
+    line-height: 1.55;
+    color: var(--ink);
+    max-width: 34rem;
+    margin-bottom: 1.25rem;
+  }
+  .mast-parts {
+    display: grid;
+    gap: 1rem;
+    margin: 0;
+  }
+  .mast-parts div {
+    padding-left: 1rem;
+    border-left: 3px solid var(--accent-ink);
+  }
+  .mast-parts dt {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .mast-parts dd {
+    margin: 0.2rem 0 0;
+    color: var(--ink-muted);
+    line-height: 1.5;
+  }
+  .mast-not {
+    margin-top: 1rem;
+    font-size: 0.875rem;
+    color: var(--ink-muted);
+    line-height: 1.5;
+  }
+  .nojs-msg {
+    display: none;
+    margin-bottom: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 0.85rem;
+    border: 1px solid color-mix(in oklab, var(--danger-ink) 45%, transparent);
+    color: var(--danger-ink);
+  }
+  .nojs-msg:target {
+    display: block;
+  }
+
+  .latest {
+    padding-block: clamp(3rem, 7vw, 5.5rem);
+    border-top: 0.7px solid var(--edge);
+  }
+  .latest-head {
+    display: grid;
+    gap: 0.9rem;
+    margin-bottom: 2rem;
+  }
+  .latest-head .t-title {
+    color: var(--ink);
+    max-width: 18ch;
+  }
+  .latest-dek {
+    font-size: var(--fs-lede);
+    line-height: 1.55;
+    color: var(--ink-muted);
+    max-width: 36rem;
+  }
+  .latest-picks {
+    display: grid;
+    gap: 1rem;
+  }
+  .latest-more {
+    margin-top: 1.5rem;
+  }
+
+  .archive {
+    padding-block: 0 clamp(3rem, 6vw, 4.5rem);
+  }
+  .archive-list {
+    list-style: none;
+    margin: 1rem 0 0;
+    padding: 0;
+  }
+  .archive-row {
+    display: grid;
+    grid-template-columns: 4.5rem 1fr;
+    gap: 0.25rem 1rem;
+    padding: 1rem 0;
+    border-top: 0.7px solid var(--edge);
+    transition: padding-left 0.3s var(--ease-spring);
+  }
+  .archive-row:hover {
+    padding-left: 0.5rem;
+  }
+  .archive-date {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    color: var(--accent-ink);
+  }
+  .archive-title {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .archive-count {
+    grid-column: 2;
+    font-size: 0.875rem;
+    color: var(--ink-muted);
+  }
+
+  .cross {
+    display: grid;
+    gap: 1rem;
+    padding-bottom: 1rem;
+  }
+  .cross-card {
+    display: grid;
+    gap: 0.5rem;
+    padding: 1.5rem;
+    border-radius: 1.25rem;
+    border: 0.7px solid var(--edge);
+    background: var(--paper-elevated);
+    transition: transform 0.35s var(--ease-spring);
+  }
+  .cross-card:hover {
+    transform: translateY(-3px);
+  }
+  .cross-t {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 1.25rem;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+  }
+
+  @media (min-width: 768px) {
+    .mast-rule span:nth-child(2) {
+      display: inline;
+    }
+    .mast-grid {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: clamp(2rem, 5vw, 5rem);
+      align-items: start;
+    }
+    .latest-picks {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .latest-picks .is-lead {
+      grid-column: 1 / -1;
+    }
+    .archive-row {
+      grid-template-columns: 6rem 1fr auto;
+      align-items: baseline;
+    }
+    .archive-count {
+      grid-column: auto;
+    }
+    .cross {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .archive-row,
+    .cross-card {
+      transition: none;
+    }
+  }
+</style>

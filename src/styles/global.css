@@ -6,6 +6,9 @@
  * is landing-only.
  */
 @import "./tokens.css";
+/* The 2026-10 redesign layer: editorial scale, page identities, CTA and motion
+   primitives. Imported here (imports must precede rules); it only reads tokens. */
+@import "./expressive.css";
 
 /*
  * Covey — landing page design system.
@@ -139,6 +142,11 @@
   --rose: #e0386f;
   --rose-soft: #fbe0ea;
   --danger: #e04339;
+  /* Landing-only: error *text* on paper (5.3:1). --danger stays the shared
+     token for borders and icons, where 3:1 is the bar. */
+  --danger-ink: #b83229;
+  /* Landing-only: a form-field outline that clears 3:1 against paper. */
+  --field-edge-strong: #8a8a8e;
 
 
   /* Shadows (light) */
@@ -199,6 +207,8 @@
   --rose: #f2769e;
   --rose-soft: #3e1626;
   --danger: #ff7264;
+  --danger-ink: #ff8a7e;
+  --field-edge-strong: #6a6a70;
 
   /* Shadows (dark) — black at higher alpha */
   --sh-paper: 0 2px 6px rgba(0, 0, 0, 0.6);
@@ -776,7 +786,7 @@
     margin-top: 0.4rem;
     font-family: var(--font-sans);
     font-size: 0.8125rem;
-    color: var(--danger);
+    color: var(--danger-ink);
   }
   .field-control[aria-invalid="true"] ~ .field-error {
     display: block;
@@ -1097,3 +1107,4 @@ details[open] .faq-answer {
     transition: none;
   }
 }
+

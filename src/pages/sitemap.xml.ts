@@ -4,10 +4,12 @@
  */
 import type { APIRoute } from "astro";
 import { SITE } from "../config";
+import { publishedEditions } from "../lib/guide";
 
-const EXCLUDE = new Set(["/404", "/thanks", "/signup", "/waitlist"]);
+const EXCLUDE = new Set(["/404", "/thanks", "/signup", "/events", "/waitlist/joined", "/newsletter/thanks", "/newsletter/confirm", "/newsletter/unsubscribe"]);
 
-export const GET: APIRoute = () => {
+export const GET: APIRoute = async () => {
+  const editions = (await publishedEditions()).map((e) => `/newsletter/${e.id}/`);
   const pages = Object.keys(import.meta.glob("./**/*.astro"))
     .map((f) => f.replace(/^\.\//, "/").replace(/\.astro$/, "").replace(/\/index$/, "/"))
     .map((p) => (p === "/index" ? "/" : p))
@@ -15,6 +17,7 @@ export const GET: APIRoute = () => {
     // Trailing slash, to match the canonical tags (Astro.url.pathname in the
     // static build ends in "/"; Vercel serves both forms with a 200).
     .map((p) => (p.endsWith("/") ? p : `${p}/`))
+    .concat(editions)
     .sort();
   const body =
     `<?xml version="1.0" encoding="UTF-8"?>\n` +

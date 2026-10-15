@@ -1,0 +1,160 @@
+---
+/*
+ * The email version of an edition — same content collections as the web
+ * page, rendered as plain, inline-styled HTML that mail clients can handle.
+ * scripts/newsletter/send-edition.mjs reads the built file, replaces
+ * %%UNSUBSCRIBE_URL%% per recipient, and sends it through Resend.
+ * Not linked anywhere and noindex'd; it exists to be mailed.
+ */
+import { render } from "astro:content";
+import { publishedEditions, resolveEdition, publishedActivities, longDate, partsOfDay, timeLabel, priceLabel, type Edition } from "../../../lib/guide";
+import { CATEGORIES } from "../../../lib/categories";
+import { SITE } from "../../../config";
+
+export async function getStaticPaths() {
+  const editions = await publishedEditions();
+  return editions.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+interface Props {
+  entry: Edition;
+}
+const { entry } = Astro.props;
+const ed = await resolveEdition(entry, await publishedActivities());
+const d = entry.data;
+const webUrl = `${SITE.url}/newsletter/${ed.slug}/`;
+const { Content } = await render(entry);
+const hasNote = Boolean(entry.body?.trim());
+const ink = "#241b12", muted = "#625140", rule = "#d8cbb3", red = "#a8361f", paper = "#f5efe3", card = "#fbf7ef";
+const mono = "ui-monospace, SFMono-Regular, Menlo, monospace";
+const sans = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>{`Covey Weekly: ${d.title}`}</title>
+  </head>
+  <body style={`margin:0;padding:0;background:${paper};color:${ink};font-family:${sans}`}>
+    <div style="display:none;max-height:0;overflow:hidden">{d.dek}</div>
+    <div style="max-width:600px;margin:0 auto;padding:28px 20px">
+      <p style={`margin:0 0 6px;font-family:${mono};font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:${muted}`}>
+        San Francisco · {ed.span} · <a href={webUrl} style={`color:${muted}`}>View on the web</a>
+      </p>
+      <p style={`margin:0;padding:8px 0;border-top:3px solid ${ink};border-bottom:3px solid ${ink};font-family:${mono};font-weight:700;font-size:40px;letter-spacing:-.06em;line-height:1`}>
+        covey <span style={`color:${red}`}>weekly</span>
+      </p>
+      <h1 style={`margin:24px 0 8px;font-family:${mono};font-size:26px;line-height:1.1;letter-spacing:-.04em`}>{d.title.toLowerCase()}</h1>
+      <p style={`margin:0 0 24px;font-size:16px;line-height:1.55;color:${muted}`}>{d.dek}</p>
+      {
+        hasNote && (
+          <div style={`margin:0 0 24px;padding-left:14px;border-left:3px solid ${red};font-size:16px;line-height:1.6`}>
+            <Content />
+          </div>
+        )
+      }
+      <p style={`margin:0 0 8px;font-size:14px;line-height:1.5;color:${muted}`}>
+        Checking the weather before you pick? <a href={`${webUrl}#weather`} style={`color:${ink}`}>See this weekend's weather plan</a>.
+      </p>
+
+      <h2 style={`margin:28px 0 12px;font-family:${mono};font-size:20px;letter-spacing:-.04em`}>top picks</h2>
+      {
+        ed.picks.map((p, i) => {
+          const a = p.activity.data;
+          const when = a.date ? longDate(a.date) : "";
+          return (
+            <div style={`margin:0 0 14px;padding:16px 18px;background:${card};border:1px solid ${rule};border-radius:14px`}>
+              <p style={`margin:0 0 6px;font-family:${mono};font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:${muted}`}>
+                {String(i + 1).padStart(2, "0")} · {CATEGORIES[a.category].label}
+              </p>
+              <p style={`margin:0 0 8px;font-family:${mono};font-weight:700;font-size:18px;line-height:1.2`}>
+                <a href={a.source.url} style={`color:${ink};text-decoration:none`}>{a.title}</a>
+              </p>
+              <p style="margin:0 0 10px;font-size:15px;line-height:1.55">{p.why}</p>
+              <p style={`margin:0;font-family:${mono};font-size:12px;color:${muted}`}>
+                {[when, timeLabel(a), `${a.venue}${a.address ? `, ${a.address}` : ""}, ${a.neighborhood}`, priceLabel(a)].filter(Boolean).join(" · ")}
+              </p>
+              {a.tips.length > 0 && (
+                <p style={`margin:8px 0 0;font-size:13px;line-height:1.5;color:${ink}`}>
+                  {a.tips.map((t) => (
+                    <>
+                      → {t}
+                      <br />
+                    </>
+                  ))}
+                </p>
+              )}
+            </div>
+          );
+        })
+      }
+
+      {
+        ed.plans.length > 0 && (
+          <>
+            <h2 style={`margin:32px 0 6px;font-family:${mono};font-size:20px;letter-spacing:-.04em`}>ready-made plans</h2>
+            <p style={`margin:0 0 12px;font-size:13px;line-height:1.5;color:${muted}`}>A few listings that fit together into one outing.</p>
+            {ed.plans.map((plan) => (
+              <div style={`margin:0 0 14px;padding:16px 18px;background:${card};border:1px solid ${rule};border-radius:14px`}>
+                <p style={`margin:0 0 4px;font-family:${mono};font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:${muted}`}>{plan.for}</p>
+                <p style={`margin:0 0 6px;font-family:${mono};font-weight:700;font-size:17px;line-height:1.2`}>{plan.title.toLowerCase()}</p>
+                <p style={`margin:0 0 10px;font-size:14px;line-height:1.5;color:${muted}`}>{plan.note}</p>
+                {plan.stops.map((st, i) => (
+                  <p style={`margin:0;padding:6px 0;border-top:1px solid ${rule};font-size:14px;line-height:1.4`}>
+                    <span style={`font-family:${mono};color:${muted}`}>{i + 1}. {timeLabel(st.data) ?? "Any time"}</span>
+                    {" · "}
+                    <a href={st.data.source.url} style={`color:${ink};font-weight:600`}>{st.data.title}</a>
+                    <span style={`color:${muted}`}> · {st.data.neighborhood}</span>
+                  </p>
+                ))}
+              </div>
+            ))}
+          </>
+        )
+      }
+
+      <h2 style={`margin:32px 0 6px;font-family:${mono};font-size:20px;letter-spacing:-.04em`}>the complete guide</h2>
+      <p style={`margin:0 0 8px;font-size:13px;line-height:1.5;color:${muted}`}>
+        Everything we found and checked this week — not every event in the city. Times and prices come from each organizer; check their page before you go.
+      </p>
+      {
+        ed.days
+          .filter((day) => day.items.length)
+          .map((day) => (
+            <div>
+              <p style={`margin:22px 0 4px;font-family:${mono};font-weight:700;font-size:16px;letter-spacing:-.03em`}>{longDate(day.date).toLowerCase()}</p>
+              {partsOfDay(day.items).map((part) => (
+                <>
+                  <p style={`margin:12px 0 2px;font-family:${mono};font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:${red}`}>{part.label}</p>
+                  {part.items.map((it) => {
+                    const a = it.data;
+                    return (
+                      <p style={`margin:0;padding:10px 0;border-top:1px solid ${rule};font-size:14px;line-height:1.45`}>
+                        <span style={`font-family:${mono};color:${muted}`}>{timeLabel(a) ?? "Any time"}</span>
+                        {" · "}
+                        <a href={a.source.url} style={`color:${ink};font-weight:600`}>{a.title}</a>
+                        {" · "}
+                        <span style={`color:${muted}`}>{a.venue}, {a.neighborhood}{priceLabel(a) ? ` · ${priceLabel(a)}` : ""}</span>
+                        <br />
+                        <span style={`color:${muted};font-size:13px`}>{a.summary}</span>
+                      </p>
+                    );
+                  })}
+                </>
+              ))}
+            </div>
+          ))
+      }
+
+      <p style={`margin:32px 0 0;padding-top:16px;border-top:1px solid ${rule};font-size:12px;line-height:1.6;color:${muted}`}>
+        You're getting this because you subscribed to Covey Weekly at {SITE.domain}.
+        <a href="%%UNSUBSCRIBE_URL%%" style={`color:${muted}`}>Unsubscribe</a> ·
+        <a href={`${SITE.url}/privacy`} style={`color:${muted}`}>Privacy</a><br />
+        Covey · {SITE.city} · Reply to this email to reach us.
+      </p>
+    </div>
+  </body>
+</html>

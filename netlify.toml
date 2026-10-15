@@ -16,18 +16,16 @@
     Permissions-Policy = "camera=(), microphone=(), geolocation=()"
     Strict-Transport-Security = "max-age=63072000; includeSubDomains; preload"
 
-# The product (covey-web) still links "Join the waitlist" to coveyapp.co/signup.
-# The waitlist is gone; forward both paths to the product's join screen. Must sit above
-# the catch-all 404.
+# covey-web links "Join the waitlist" to coveyapp.co/signup; forward it to the
+# real waitlist page. Must sit above the catch-all 404.
+#
+# NOTE: this file is a fallback mirror. Production runs on Vercel, and the
+# waitlist endpoint (/api/waitlist) is a Vercel Function built by
+# @astrojs/vercel — it does not exist on Netlify. Moving hosts means swapping
+# the adapter (see docs/waitlist.md).
 [[redirects]]
   from = "/signup"
-  to = "https://go.coveyapp.co/login"
-  status = 302
-  force = true
-
-[[redirects]]
-  from = "/waitlist"
-  to = "https://go.coveyapp.co/login"
+  to = "/waitlist"
   status = 302
   force = true
 

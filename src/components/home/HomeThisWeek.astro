@@ -1,0 +1,146 @@
+---
+/*
+ * "This week in SF" — the doorway to the newsletter and the activities guide.
+ * Borrows the newsletter's newsprint identity so it reads as a different room
+ * you can step into. Its action is the newsletter (contextual, secondary),
+ * never a third waitlist button.
+ */
+import PickCard from "../guide/PickCard.astro";
+import NewsletterForm from "../NewsletterForm.astro";
+import { latestEdition } from "../../lib/guide";
+
+const edition = await latestEdition();
+const picks = edition?.picks.slice(0, 3) ?? [];
+const arrow = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>`;
+---
+
+<section class="thisweek" aria-labelledby="thisweek-title">
+  <div class="wrap">
+    <div class="tw-head" data-reveal>
+      <div>
+        <p class="kicker">Covey Weekly · San Francisco</p>
+        <h2 id="thisweek-title" class="t-title">not sure what<br />to do this week?</h2>
+      </div>
+      <p class="tw-lede">
+        Every week we pick a few things worth leaving the house for — after
+        work, on the weekend, with people or on your own — and list every
+        other good thing we found.
+      </p>
+    </div>
+
+    {
+      edition && picks.length ? (
+        <>
+          <p class="tw-edition" data-reveal>
+            Top picks · {edition.span} · <a href={`/newsletter/${edition.slug}`}>read the whole edition</a>
+          </p>
+          <div class="tw-picks">
+            {picks.map((p, i) => (
+              <div data-reveal style={`--d:${i}`}>
+                <PickCard activity={p.activity} why={p.why} n={i + 1} />
+              </div>
+            ))}
+          </div>
+        </>
+      ) : (
+        <p class="tw-empty" data-reveal>The first edition is being put together now. Subscribe and it lands in your inbox.</p>
+      )
+    }
+
+    <div class="tw-foot" data-reveal>
+      <div class="tw-form">
+        <NewsletterForm placement="home" label="Get the weekly picks" />
+      </div>
+      <a href="/activities" class="arrow-link">
+        Browse everything on this week
+        <span set:html={arrow} />
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .thisweek {
+    --page-bg: #f5efe3;
+    --paper-elevated: #fbf7ef;
+    --edge: #d8cbb3;
+    --ink: #241b12;
+    --ink-muted: #625140;
+    --ink-inverse: #f5efe3;
+    --accent-ink: #a8361f;
+    --field-edge-strong: #8c7a64;
+    background: var(--page-bg);
+    color: var(--ink);
+    padding-block: clamp(4.5rem, 9vw, 7.5rem);
+    border-block: 0.7px solid var(--edge);
+  }
+  :global(.dark) .thisweek {
+    --page-bg: #17120c;
+    --paper-elevated: #241c13;
+    --edge: #3a2f22;
+    --ink: #f1e8d8;
+    --ink-muted: #bfae96;
+    --ink-inverse: #17120c;
+    --accent-ink: #f08a6e;
+    --field-edge-strong: #6e604e;
+  }
+  .tw-head {
+    display: grid;
+    gap: 1.25rem;
+    margin-bottom: 2.5rem;
+  }
+  .tw-head .t-title {
+    color: var(--ink);
+    margin-top: 0.75rem;
+  }
+  .tw-lede {
+    font-size: var(--fs-lede);
+    line-height: 1.6;
+    color: var(--ink-muted);
+    max-width: 32rem;
+  }
+  .tw-edition {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--ink-muted);
+    margin-bottom: 1rem;
+  }
+  .tw-edition a {
+    color: var(--accent-ink);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+  .tw-picks {
+    display: grid;
+    gap: 1rem;
+  }
+  .tw-empty {
+    font-family: var(--font-mono);
+    font-size: 1.125rem;
+    color: var(--ink);
+    padding: 2rem 0;
+    border-block: 2px dashed var(--edge);
+  }
+  .tw-foot {
+    display: grid;
+    gap: 1.5rem;
+    align-items: end;
+    margin-top: 3rem;
+  }
+  .tw-form {
+    max-width: 34rem;
+  }
+  @media (min-width: 768px) {
+    .tw-head {
+      grid-template-columns: 1fr 1fr;
+      align-items: end;
+    }
+    .tw-picks {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .tw-foot {
+      grid-template-columns: minmax(0, 1.2fr) auto;
+      justify-content: space-between;
+    }
+  }
+</style>
