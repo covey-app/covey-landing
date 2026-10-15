@@ -16,7 +16,6 @@ const ROUTES = [
   "/deletion",
   "/status",
   "/support",
-  "/thanks",
 ];
 
 const WIDTHS = [320, 360, 375, 390, 412, 430, 768, 820, 1024, 1280, 1440, 1920];

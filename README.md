@@ -87,17 +87,11 @@ environment and a one-time migration — the full checklist is in
 [docs/waitlist.md §3](docs/waitlist.md#3-deployment-checklist). `netlify.toml`
 mirrors the static config only.
 
-> **Verify the contact form.** It uses Netlify Forms (`data-netlify`), which
-> does nothing on Vercel. Submit it once in production; if nothing arrives,
-> move it to a Vercel-compatible backend before relying on it.
-
-**Forms** use Netlify Forms — Netlify detects the `data-netlify="true"`
-`contact` form at build time and captures submissions (**Site settings →
-Forms**). It POSTs to `/thanks` and carries `data-astro-reload` so Astro's
-client router performs a full navigation and Netlify captures the POST. If you
-migrate off Netlify, replace the form backend (the `data-netlify` attribute +
-honeypot) before release — a POST to the static `/thanks` page will otherwise
-fail.
+**The only forms are the waitlist and Covey Weekly sign-ups**, both handled by
+Vercel Functions (`/api/waitlist`, `/api/newsletter`). The old Netlify Forms
+contact form did nothing on Vercel and was removed; `/contact` and `/support`
+list `mailto:` addresses instead. Any new form must be added to the privacy
+policy (§ 4.14) first.
 
 **Waitlist:** every primary CTA is "Join the waitlist", backed by
 `/api/waitlist` → Supabase (`waitlist_signups`, service-role-only RPCs). See
@@ -113,8 +107,6 @@ Policy and Support URLs in the iOS App Store Connect listing.
 
 ## Before you go live
 
-- [ ] Submit the contact form once in production and confirm it arrives
-      (Netlify Forms does not run on Vercel — see "Deployment").
 - [ ] Set up inboxes/forwarding for every address in `src/config.ts`
       (`hello@`, `press@`, `support@`, `safety@coveyapp.co`).
 - [ ] Once iOS is approved, set `appStoreUrl` in `src/config.ts` and add a

@@ -6,7 +6,7 @@ import type { APIRoute } from "astro";
 import { SITE } from "../config";
 import { publishedEditions } from "../lib/guide";
 
-const EXCLUDE = new Set(["/404", "/thanks", "/signup", "/events", "/waitlist/joined", "/newsletter/thanks", "/newsletter/confirm", "/newsletter/unsubscribe"]);
+const EXCLUDE = new Set(["/404", "/signup", "/events", "/waitlist/joined", "/newsletter/thanks", "/newsletter/confirm", "/newsletter/unsubscribe"]);
 
 export const GET: APIRoute = async () => {
   const editions = (await publishedEditions()).map((e) => `/newsletter/${e.id}/`);

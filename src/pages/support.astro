@@ -1,38 +1,70 @@
 ---
+/*
+ * /support is the App Store Connect Support URL. It must give a working
+ * contact path (a mailto, not a form: the old Netlify form did nothing on
+ * Vercel) and must describe the access model accurately.
+ */
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { SITE } from "../config";
+import { SITE, CITY_SHORT, APP_STORE } from "../config";
 
 const channels = [
   {
-    title: "General support",
+    title: "Help with Covey",
     value: SITE.emails.support,
-    body: "Questions about your account, your invite, or the website.",
+    body: "Your account, signing in, plans, messages, the app or the website.",
   },
   {
     title: "Trust & safety",
     value: SITE.emails.safety,
-    body: "Urgent behavior reports, policy concerns, and incident escalations.",
+    body: "Reporting a person or content you can't report in the app, and urgent safety concerns.",
   },
   {
-    title: "Press & partnerships",
-    value: SITE.emails.press,
-    body: "Media inquiries, partnership proposals, and collaboration requests.",
+    title: "Privacy",
+    value: SITE.emails.privacy,
+    body: "Requests to access, correct or delete your data, and privacy questions.",
+  },
+];
+
+const answers = [
+  {
+    q: "How do I report someone?",
+    a: "In the app, use Report on their profile, a message, a plan, a Covey or a recap. A person reviews every report within 24 hours.",
+    href: "/safety",
+    link: "How reporting works",
+  },
+  {
+    q: "How do I delete my account?",
+    a: "In the app, go to Profile → Settings → Account → Delete account. Deletion is immediate, and your photos are removed within 24 hours.",
+    href: "/deletion",
+    link: "What deletion removes",
+  },
+  {
+    q: "Who can use Covey?",
+    a: `Adults 18 and over in the US, starting in ${CITY_SHORT}. Anyone can create an account on the web. ${APP_STORE.sentence}`,
+    href: null,
+    link: null,
   },
 ];
 ---
 
 <BaseLayout
   title="Support"
-  description="Contact Covey support for account, invite, safety, or general questions."
+  description="Contact Covey support by email for account, app, safety or privacy questions."
 >
   <div class="max-w-5xl mx-auto px-6 py-[var(--section-y)]">
     <div class="eyebrow mb-3">Support</div>
     <h1 class="display t-h1 mb-6">How can we help?</h1>
     <p class="text-ink-muted text-lg leading-relaxed max-w-3xl">
-      Covey is starting in San Francisco, on the web now and on iOS by
-      invite. For account, invite, or safety questions, reach out through one
-      of the channels below and we'll get back to you within a few days.
+      Email us and a person will reply, usually within a few days.
+      Write from the email address on your Covey account if your question is
+      about your account.
     </p>
+
+    <div class="mt-8">
+      <a href={`mailto:${SITE.emails.support}`} class="btn btn-primary btn-lg w-full sm:w-auto">
+        Email {SITE.emails.support}
+      </a>
+    </div>
 
     <div class="mt-12 grid md:grid-cols-3 gap-5">
       {
@@ -41,7 +73,7 @@ const channels = [
             <h2 class="title-mono text-xl text-ink mb-2">{item.title}</h2>
             <a
               href={`mailto:${item.value}`}
-              class="font-mono text-xs uppercase tracking-[0.14em] text-accent-ink mb-3 block hover:underline"
+              class="font-mono text-xs uppercase tracking-[0.14em] text-accent-ink mb-3 block hover:underline break-all"
             >
               {item.value}
             </a>
@@ -50,6 +82,34 @@ const channels = [
         ))
       }
     </div>
+
+    <section class="mt-16" aria-labelledby="quick-answers">
+      <h2 id="quick-answers" class="title-mono text-2xl text-ink mb-6">Quick answers</h2>
+      <dl class="space-y-8 max-w-3xl">
+        {
+          answers.map((item) => (
+            <div>
+              <dt class="text-ink font-medium text-lg mb-2">{item.q}</dt>
+              <dd class="text-ink-muted leading-relaxed text-lg">
+                {item.a}
+                {item.href && (
+                  <>
+                    {" "}
+                    <a href={item.href} class="text-accent-ink underline underline-offset-2 decoration-1">
+                      {item.link}
+                    </a>
+                  </>
+                )}
+              </dd>
+            </div>
+          ))
+        }
+      </dl>
+      <p class="mt-8 text-ink-muted leading-relaxed text-lg max-w-3xl">
+        If someone is in immediate danger, call 911 first. Covey is not an
+        emergency service.
+      </p>
+    </section>
 
     <div class="mt-12 border-t pt-8 flex flex-wrap gap-6 font-mono text-xs uppercase tracking-[0.16em]">
       <a href="/terms" class="border-b border-ink pb-1 hover:text-accent-ink hover:border-accent-ink transition-colors">
@@ -68,7 +128,7 @@ const channels = [
         Status
       </a>
       <a href="/contact" class="border-b border-ink pb-1 hover:text-accent-ink hover:border-accent-ink transition-colors">
-        Contact form
+        Contact
       </a>
     </div>
   </div>

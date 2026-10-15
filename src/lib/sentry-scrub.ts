@@ -5,7 +5,7 @@
 // Sentry organisation; they must not disagree about what counts as sensitive.
 //
 // This site holds the least user content of the three — it is static pages
-// plus one Netlify contact form — but /terms and /privacy are the URLs App
+// with no forms — but /terms and /privacy are the URLs App
 // Review opens. Keeping the rules identical costs nothing and means there is
 // no third policy to reason about.
 
