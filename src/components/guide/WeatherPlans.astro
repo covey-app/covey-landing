@@ -92,6 +92,34 @@ const listings = days.map((d) => ({
   .wx-days[hidden] {
     display: none;
   }
+  /* Phones: the days swipe sideways rather than stacking five tall cards.
+     The wrap's gutter is borrowed so cards run edge to edge while scrolling. */
+  @media (max-width: 639px) {
+    .wx {
+      min-width: 0;
+    }
+    .wx-days:not([hidden]) {
+      display: flex;
+      min-width: 0;
+      /* Contains absolutely positioned descendants (.sr-only), which would
+         otherwise escape the scroller and widen the page. */
+      position: relative;
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scroll-snap-type: x mandatory;
+      scroll-padding-inline: var(--gutter, 1.25rem);
+      margin-inline: calc(var(--gutter, 1.25rem) * -1);
+      padding: 0.25rem var(--gutter, 1.25rem) 0.5rem;
+      scrollbar-width: none;
+    }
+    .wx-days::-webkit-scrollbar {
+      display: none;
+    }
+    .wx-days > :global(.wx-day) {
+      flex: 0 0 min(80%, 19rem);
+      scroll-snap-align: start;
+    }
+  }
   :global(.wx-day) {
     --m: var(--cat-professional);
     --m-soft: var(--cat-professional-soft);

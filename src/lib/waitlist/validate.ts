@@ -18,8 +18,11 @@ export type UtmKey = (typeof UTM_KEYS)[number];
 export type Attribution = Partial<Record<UtmKey | "referrer" | "landing_path", string>>;
 
 /**
- * Trim and lower-case. Deliberately no Gmail dot/plus folding: those are real,
- * distinct mailboxes on most providers, and folding would email the wrong one.
+ * Trim and lower-case. This is the address Covey sends to, so it is kept as
+ * typed. Duplicate detection (one signup per mailbox: `+tag` stripped, Gmail
+ * dots and googlemail.com folded) happens in the database, in
+ * public.waitlist_canonical_email, so there is one source of truth
+ * (db/migrations/20261015120000_waitlist_hardening.sql).
  */
 export function normalizeEmail(raw: string): string {
   return raw.trim().toLowerCase();

@@ -15,7 +15,7 @@ export interface SupabaseConfig {
 export type JoinResult =
   | { result: "created"; id: string }
   | { result: "existing" }
-  | { result: "rate_limited" }
+  | { result: "rate_limited"; limit: "window" | "daily" }
   | { result: "invalid_email" };
 
 /** Thrown for anything that isn't a well-formed answer from the database. */
@@ -101,10 +101,11 @@ export async function joinWaitlist(
     fetchFn,
   );
   if (data && typeof data === "object" && "__invalid_email" in data) return { result: "invalid_email" };
-  const r = data as { result?: unknown; id?: unknown } | null;
+  const r = data as { result?: unknown; id?: unknown; limit?: unknown } | null;
   if (r?.result === "created" && typeof r.id === "string") return { result: "created", id: r.id };
   if (r?.result === "existing") return { result: "existing" };
-  if (r?.result === "rate_limited") return { result: "rate_limited" };
+  // `limit` is absent from the pre-hardening function; treat that as the window.
+  if (r?.result === "rate_limited") return { result: "rate_limited", limit: r.limit === "daily" ? "daily" : "window" };
   throw new WaitlistStoreError("rpc waitlist_join returned an unexpected shape");
 }
 

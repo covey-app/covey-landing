@@ -18,12 +18,16 @@ Browser (WaitlistForm.astro)
   ▼
 Vercel Function  (src/pages/api/waitlist.ts → src/lib/waitlist/handler.ts)
   │  validate · honeypot · timing trap · per-instance limit · HMAC(ip) client key
+  │  disposable-domain check (src/lib/waitlist/disposable.ts)
   │  POST {SUPABASE_URL}/rest/v1/rpc/waitlist_join   (service-role key, server only)
   ▼
-Supabase Postgres  (db/migrations/20261014120000_waitlist_signups.sql)
+Supabase Postgres  (db/migrations/20261014120000_waitlist_signups.sql
+                    + 20261015120000_waitlist_hardening.sql)
      waitlist_join()       SECURITY DEFINER, service_role only
        ├─ rate window: 8 attempts / 10 min per client key
-       └─ INSERT … ON CONFLICT (email) DO NOTHING → created | existing
+       ├─ daily cap:   30 attempts / rolling 24 h per client key
+       └─ INSERT … ON CONFLICT DO NOTHING  (unique email + unique canonical mailbox)
+                                            → created | existing
   │
   └─ optional: Resend confirmation email (only for "created")
 ```
@@ -45,8 +49,10 @@ Supabase Postgres  (db/migrations/20261014120000_waitlist_signups.sql)
 |---|---|---|---|
 | New signup | `201 {ok, result:"created", followupToken}` | `/waitlist/joined/` | "you're on the list!" + optional city chips |
 | Already on the list | `200 {ok, result:"existing"}` | `/waitlist/joined/` | "you're already on the list." |
+| Same mailbox, different spelling (`a.b+x@gmail.com` after `ab@gmail.com`) | `200 {ok, result:"existing"}` | `/waitlist/joined/` | "you're already on the list." |
 | Bad email | `422 invalid_email` | `#invalid-email` | Inline error; email kept |
-| Rate limited | `429 rate_limited` | `#try-again` | "Too many tries…" |
+| Throwaway inbox (mailinator, yopmail, …) | `422 disposable_email` | `#invalid-email` | "Please use a permanent email address…"; email kept |
+| Rate limited (8 / 10 min, or 30 / 24 h, per IP or IPv6 /64) | `429 rate_limited`, `Retry-After: 600` (window) or `3600` (daily) | `#try-again` | "Too many tries…" |
 | Database/network failure | `502 unavailable` | `#try-again` | "We couldn't save that…"; email kept |
 | Env vars missing | `503 not_configured` | `#try-again` | Same. **Never a fake success**, and the log says which var is missing |
 | Honeypot filled, submitted <1.2s after load, or JSON without the timing field | Identical to a new signup (`201`, decoy token), **not stored** | — | Success (so bots learn nothing) |
@@ -66,7 +72,8 @@ body as `created` (without a token).
 | Column | Notes |
 |---|---|
 | `id` | uuid |
-| `email` | Trimmed + lower-cased; `CHECK` enforces it, unique index enforces one row per address. No Gmail dot/plus folding (those are real, distinct mailboxes) |
+| `email` | Trimmed + lower-cased, otherwise **exactly as typed**: this is the address Covey sends to. `CHECK` enforces the normalization; a unique index enforces one row per address |
+| `email_canonical` | The mailbox the address delivers to, used only for dedupe: lower-cased, `+tag` stripped (every domain), and for Gmail dots stripped and `googlemail.com` → `gmail.com`. **Unique**, so one signup per real mailbox. Computed by `public.waitlist_canonical_email()` and kept correct by a `BEFORE INSERT/UPDATE OF email` trigger, including for rows written by hand. NULL only for pre-hardening duplicates (§4.5) |
 | `status` | `waiting` (default) · `invited` · `joined` · `removed` |
 | `city` | `san-francisco` · `davis` · `other` · null. Optional, asked after signup |
 | `source` | Which surface: `landing:page` (the /waitlist form) or `landing:nojs`. `hero`/`closing` remain valid for any future placement |
@@ -80,6 +87,24 @@ body as `created` (without a token).
 `public.waitlist_rate_limits` holds `(client_key, window_started_at, request_count)`.
 `client_key` is an HMAC of the IP (keyed with the service key), never the IP
 itself. Every signup call deletes rows older than a day.
+
+### Anti-abuse limits
+
+| Layer | Limit | Where | Why this number |
+|---|---|---|---|
+| Honeypot + timing trap | Submits under 1.2 s, a filled hidden field, or JSON without `elapsed_ms` get a fake `201` and are not stored | `handler.ts` | Bots learn nothing |
+| Disposable domains | ~180 throwaway-inbox domains and their subdomains → `422 disposable_email` | `disposable.ts` (server only) | Stops the lazy case without a third-party lookup. Privacy relays that forward to a real inbox (Apple Hide My Email, DuckDuckGo, Firefox Relay, SimpleLogin, addy.io) are allowed on purpose |
+| Per warm instance | 12 / 60 s per client key | `handler.ts` | Saves a database round trip when one instance is hammered |
+| Window | 8 attempts / 10 min per client key | `waitlist_join` | A household or office on one IP; a script hits it on the 9th try |
+| Daily | 30 attempts / rolling 24 h per client key | `waitlist_join` | A single-IP script pacing itself under the window would get 8 × 144 = 1,152 rows a day; this holds it to 30. Each 10-min window counts at most 8 toward it, so hammering through a 429 doesn't also burn the next day's allowance for everyone behind a shared address. Kept above 20 because Davis is a launch market: campus Wi-Fi NAT, and an IPv6 /64 that a whole LAN shares, put many real people on one key |
+| One per mailbox | Unique `email` and unique `email_canonical` | table | "Only can join once per email", including `+tag` and Gmail-dot variants |
+
+The key is the IP (IPv4 address or IPv6 /64), not a device ID or cookie:
+anything the client holds, a bot resets for free. **No global circuit
+breaker** (refusing everyone once N signups land site-wide): it would let
+anyone with a botnet close the waitlist, and it would trip on exactly the
+moment that matters, a post going viral. Junk rows are cheap to delete; lost
+real signups aren't. If distributed abuse shows up, escalate per §8.
 
 **Why a migration in this repo and not in `covey/supabase`?** The landing site
 shouldn't change the app's migration chain from here, and `supabase db push` from
@@ -162,13 +187,23 @@ iOS app and a migration, so it isn't edited from this branch.
 
 ### 3.2 Database
 
-1. Copy `db/migrations/20261014120000_waitlist_signups.sql` into
-   `covey/supabase/migrations/` and apply it the way that repo deploys, or paste
-   it once into the Supabase SQL editor for the production project.
+1. Apply the migrations **in filename order**, each exactly once. Copy them into
+   `covey/supabase/migrations/` and apply them the way that repo deploys, or
+   paste each into the Supabase SQL editor for the production project:
+   1. `db/migrations/20261014120000_waitlist_signups.sql` (creates the tables;
+      fails loudly if they already exist, so skip it if it's already applied)
+   2. `db/migrations/20261014130000_newsletter_subscribers.sql` (Covey Weekly;
+      independent of step 3)
+   3. `db/migrations/20261015120000_waitlist_hardening.sql` (canonical-mailbox
+      dedupe + daily cap). Safe on a table that already has rows and safe to
+      re-run. If it prints `NOTICE: … left with email_canonical = NULL`, see §4.5.
 2. Check it:
    ```sql
    select has_table_privilege('anon', 'public.waitlist_signups', 'select');   -- false
    select has_function_privilege('anon', 'public.waitlist_join(text,text,text,text,text,text,text,text,text,text,text)', 'execute'); -- false
+   select has_function_privilege('anon', 'public.waitlist_canonical_email(text)', 'execute');  -- false
+   select indexdef from pg_indexes where indexname = 'waitlist_signups_email_canonical_key';  -- CREATE UNIQUE INDEX …
+   select public.waitlist_canonical_email('A.B+x@GoogleMail.com');  -- ab@gmail.com
    ```
 3. If `pg_graphql` is enabled, nothing extra is needed: it honours the same grants.
 
@@ -293,12 +328,48 @@ returning email;
 -- Mark people who created an account
 update waitlist_signups set status = 'joined' where email = lower(trim('person@example.com'));
 
--- Unsubscribe / opt-out: keep the row so they aren't re-added by a stale form, but stop emailing
-update waitlist_signups set status = 'removed' where email = lower(trim('person@example.com'));
+-- Unsubscribe / opt-out: keep the row so they aren't re-added by a stale form, but stop emailing.
+-- Match on the mailbox, so "pat+covey@…" and "pat@…" are the same person.
+update waitlist_signups set status = 'removed'
+where email_canonical = waitlist_canonical_email('person@example.com');
 
--- Deletion request: remove entirely
-delete from waitlist_signups where email = lower(trim('person@example.com'));
+-- Deletion request: remove entirely (every spelling of that mailbox)
+delete from waitlist_signups
+where email_canonical = waitlist_canonical_email('person@example.com')
+   or email = lower(trim('person@example.com'));
 ```
+
+### 4.5 Duplicates from before the hardening migration, and new throwaway domains
+
+Rows written before `20261015120000_waitlist_hardening.sql` were deduped only
+on the exact address. If two of them fold to the same mailbox, the migration
+keeps the canonical key on the **oldest** and leaves the newer ones with
+`email_canonical = NULL`. It deletes nothing (the newer row may carry the
+better attribution), and it reports the count. Review and resolve them by hand:
+
+```sql
+select n.id, n.email, n.created_at, o.email as first_signup, o.created_at as first_at
+from waitlist_signups n
+join waitlist_signups o on o.email_canonical = waitlist_canonical_email(n.email)
+where n.email_canonical is null
+order by o.email;
+
+-- Typical resolution: keep the first signup, drop the later duplicate
+delete from waitlist_signups where id = '<n.id>';
+```
+
+Until they're resolved, exclude them from sends with
+`where email_canonical is not null`. Signups made after the migration can't
+create a NULL key.
+
+To spot throwaway domains the list misses:
+
+```sql
+select split_part(email, '@', 2) as domain, count(*) from waitlist_signups
+group by 1 having count(*) > 2 order by 2 desc;
+```
+
+Add confirmed throwaway domains to `src/lib/waitlist/disposable.ts`.
 
 Matching against app accounts (to mark `joined` in bulk) can be done in SQL
 against `auth.users.email` by someone with project access. That's deliberately not
@@ -357,8 +428,9 @@ motion map.
 ## 7. Testing
 
 ```bash
-npm run test:unit   # handler: 15 cases, fake fetch, no network
-npm run test:db     # applies the migration to a throwaway Postgres (Docker) and runs its assertions
+npm run test:unit   # handler: 20 cases, fake fetch, no network
+npm run test:db     # applies the migrations to a throwaway Postgres (Docker) and runs db/tests/*.test.sql,
+                    # including waitlist_hardening.test.sql (backfill over existing duplicate rows, re-run)
 npm run test:e2e    # Playwright: builds (COVEY_TODAY pinned), serves via scripts/preview.mjs, mocks /api/waitlist per test
 ```
 
@@ -366,19 +438,45 @@ npm run test:e2e    # Playwright: builds (COVEY_TODAY pinned), serves via script
 running the built function for /api/* and the newsletter confirm and
 unsubscribe pages. `astro preview` doesn't support the Vercel adapter. To run the whole loop
 against a real database locally, start Postgres + PostgREST in Docker, apply the
-migration, and set `SUPABASE_URL` / `SUPABASE_SERVICE_ROLE_KEY` in `.env`. The
-endpoint calls `${SUPABASE_URL}/rest/v1/rpc/…`, so put a `/rest/v1` prefix in
-front of PostgREST or use `supabase start`.
+migrations in order (§3.2), and pass `SUPABASE_URL` / `SUPABASE_SERVICE_ROLE_KEY`
+on the command line (`SUPABASE_URL=… SUPABASE_SERVICE_ROLE_KEY=… npm run preview`;
+the environment wins over `.env`). The endpoint calls
+`${SUPABASE_URL}/rest/v1/rpc/…`, so put a `/rest/v1` prefix in front of
+PostgREST or use `supabase start`. A curl that should reach the database needs
+`"elapsed_ms": 1200` or more in the JSON body, or the timing trap answers with a
+fake `201` and stores nothing.
 
 ---
 
 ## 8. Known limitations
 
-- **Rate limiting** is per IPv4 address or IPv6 /64 (via HMAC) in the database,
-  plus per warm function instance. A distributed bot with many IPs can still add junk rows (they're
-  harmless and greppable). If that happens, add a Vercel WAF rate-limit rule on
-  `/api/waitlist` or Cloudflare Turnstile. Both were left out to keep third-party
-  scripts off the page.
+- **Rate limiting** is per IPv4 address or IPv6 /64 (via HMAC) in the database
+  (8 / 10 min and 30 / 24 h), plus per warm function instance. A distributed
+  bot with many IPs can still add junk rows (they're harmless and greppable).
+  If that happens, add a Vercel WAF rate-limit rule on `/api/waitlist` or
+  Cloudflare Turnstile. Both were left out to keep third-party scripts off the
+  page. The flip side of IP keys: a big on-campus or event push from one
+  network will hit 8 / 10 min and then 30 / day. For a planned event, raise
+  `c_max` / `c_daily_max` in `waitlist_join` temporarily.
+- **Mailbox dedupe is a heuristic.** `+tag` is stripped for every domain
+  because nearly every provider treats it as a label, so a company that runs
+  separate `ops+a@` and `ops+b@` mailboxes gets one signup. Other providers'
+  aliasing schemes (Yahoo's `-` keywords, Fastmail subdomain addressing) and
+  domain aliases other than googlemail.com aren't folded. Because the first
+  signup owns the mailbox key and nobody proves ownership (the confirmation
+  email is off by default), someone could pre-claim `victim+x@yahoo.com` on a
+  provider without `+` addressing; the real `victim@yahoo.com` then sees
+  "already on the list" and the invite goes to an address that bounces. It's
+  targeted, rate-limited, and exposes nothing. If it matters, strip `+tag`
+  only for an allowlist of providers that support it (gmail.com, outlook.com,
+  hotmail.com, live.com, icloud.com, me.com, fastmail.com, proton.me, …) in
+  `waitlist_canonical_email`.
+- **Disposable-domain blocking is a list, not a service.** New throwaway
+  domains appear daily; the list stops the common ones (§4.5 shows how to find
+  the rest). It never blocks forwarding relays, since those reach real people.
+- **Duplicate detection is still visible** to the submitter (`existing`), now
+  per mailbox rather than per exact address. The rate limits bound how fast
+  anyone can probe it (§1).
 - **Hosting:** the endpoint is a Vercel Function. `netlify.toml` remains a
   mirror for static pages only; moving hosts means swapping the adapter.
 - **The contact form** still uses Netlify Forms, which does nothing on Vercel

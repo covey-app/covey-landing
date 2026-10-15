@@ -6,6 +6,7 @@ import { test, beforeEach } from "node:test";
 import assert from "node:assert/strict";
 import { handleWaitlistRequest, resetInstanceRateLimit, type WaitlistEnv } from "../../src/lib/waitlist/handler.ts";
 import { cleanAttribution, isValidEmail, normalizeEmail } from "../../src/lib/waitlist/validate.ts";
+import { isDisposableEmail } from "../../src/lib/waitlist/disposable.ts";
 
 const ENV: WaitlistEnv = { supabaseUrl: "https://db.example.test", supabaseServiceKey: "sb_secret_test_key_123" };
 const IP = "203.0.113.9";
@@ -177,6 +178,15 @@ test("database rate limit and database-side email rejection are surfaced", async
   assert.equal(r1.status, 429);
   assert.equal(r1.headers.get("retry-after"), "600");
 
+  assert.ok(limited.logs.some((l) => l.includes('"limit":"window"')), "pre-hardening shape is treated as the window limit");
+
+  const daily = harness(() => rpcOk({ result: "rate_limited", id: null, limit: "daily" }));
+  const rd = await handleWaitlistRequest(jsonReq({ ...human, email: "pat@example.com" }), IP, ENV, daily.deps);
+  assert.equal(rd.status, 429);
+  assert.deepEqual(await rd.json(), { ok: false, error: "rate_limited" });
+  assert.equal(rd.headers.get("retry-after"), "3600");
+  assert.ok(daily.logs.some((l) => l.includes('"limit":"daily"')));
+
   const rejected = harness(() => new Response(JSON.stringify({ message: "invalid_email" }), { status: 400 }));
   const r2 = await handleWaitlistRequest(jsonReq({ ...human, email: "pat@example.com" }), IP, ENV, rejected.deps);
   assert.equal(r2.status, 422);
@@ -287,4 +297,63 @@ test("cross-site native form posts are refused; same-site and origin-less ones a
   assert.equal(h.calls.length, 0);
   assert.equal((await handleWaitlistRequest(form("https://www.coveyapp.co"), IP, ENV, h.deps)).status, 303);
   assert.equal((await handleWaitlistRequest(form(), IP, ENV, h.deps)).status, 303);
+});
+
+test("disposable domains are a 422 disposable_email before the database; no-JS goes to #invalid-email", async () => {
+  const h = harness(() => rpcOk({ result: "created", id: "x" }));
+  for (const email of [
+    "pat@mailinator.com",
+    "  Pat@MAILINATOR.com ",
+    "someone@guerrillamail.com",
+    "x@sharklasers.com",
+    "x@10minutemail.com",
+    "x@yopmail.com",
+    "x@temp-mail.org",
+    "x@trashmail.com",
+    "x@getnada.com",
+    "x@inbox.mailinator.com", // subdomain of a listed domain
+  ]) {
+    const res = await handleWaitlistRequest(jsonReq({ ...human, email }), IP, ENV, h.deps);
+    assert.equal(res.status, 422, email);
+    assert.deepEqual(await res.json(), { ok: false, error: "disposable_email" }, email);
+  }
+  assert.equal(h.calls.length, 0, "no RPC (and so no rate-limit row) for a throwaway address");
+  assert.ok(h.logs.every((l) => !l.includes("mailinator")), "the domain isn't logged");
+
+  const form = await handleWaitlistRequest(formReq({ email: "pat@yopmail.com" }), IP, ENV, h.deps);
+  assert.equal(form.status, 303);
+  assert.equal(form.headers.get("location"), "/waitlist/#invalid-email");
+  assert.equal(h.calls.length, 0);
+});
+
+test("disposable matching is by domain label, and privacy relays are allowed", async () => {
+  for (const email of [
+    "pat@notmailinator.com",
+    "pat@mailinator.com.example.org",
+    "pat@gmail.com",
+    "pat@icloud.com",
+    "abc123@privaterelay.appleid.com",
+    "pat@duck.com",
+    "pat@mozmail.com",
+    "pat@simplelogin.com",
+    "pat@proton.me",
+    "pat@ucdavis.edu",
+  ]) {
+    assert.equal(isDisposableEmail(email), false, email);
+  }
+  assert.equal(isDisposableEmail("pat@mailinator.com."), true, "trailing dot");
+  assert.equal(isDisposableEmail("pat@a.b.yopmail.fr"), true);
+
+  const h = harness(() => rpcOk({ result: "created", id: "0b4c2f9e-1111-4222-8333-444455556666" }));
+  const res = await handleWaitlistRequest(jsonReq({ ...human, email: "abc123@privaterelay.appleid.com" }), IP, ENV, h.deps);
+  assert.equal(res.status, 201);
+  assert.equal(h.calls.length, 1);
+});
+
+test("plus-tag and Gmail-dot variants are sent to the database as typed; dedupe is the database's job", async () => {
+  const h = harness(() => rpcOk({ result: "existing", id: null }));
+  const res = await handleWaitlistRequest(jsonReq({ ...human, email: " A.B+Covey@GoogleMail.com " }), IP, ENV, h.deps);
+  assert.equal(res.status, 200);
+  assert.deepEqual(await res.json(), { ok: true, result: "existing" });
+  assert.equal(h.calls[0].body.p_email, "a.b+covey@googlemail.com", "send address is kept, only trimmed and lower-cased");
 });

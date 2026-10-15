@@ -21,6 +21,7 @@ import {
   normalizeEmail,
   type Placement,
 } from "./validate.ts";
+import { isDisposableEmail } from "./disposable.ts";
 import { joinWaitlist, setWaitlistCity, type SupabaseConfig } from "./supabase.ts";
 import { sendConfirmation, type EmailConfig } from "./email.ts";
 
@@ -38,7 +39,14 @@ export interface WaitlistDeps {
   now: () => number;
 }
 
-export type ErrorCode = "invalid_email" | "invalid_request" | "rate_limited" | "not_configured" | "unavailable" | "expired";
+export type ErrorCode =
+  | "invalid_email"
+  | "disposable_email"
+  | "invalid_request"
+  | "rate_limited"
+  | "not_configured"
+  | "unavailable"
+  | "expired";
 
 export const MAX_BODY_BYTES = 4096;
 // A person can't read the page, type an address, and press submit in under
@@ -46,7 +54,7 @@ export const MAX_BODY_BYTES = 4096;
 export const MIN_HUMAN_MS = 1200;
 
 // First line of defence, per warm function instance. The durable limit is the
-// database window (8 / 10 min per client key); this one only saves a round
+// database (8 / 10 min and 30 / 24 h per client key); this one only saves a round
 // trip when a single instance is being hammered.
 const INSTANCE_WINDOW_MS = 60_000;
 const INSTANCE_MAX = 12;
@@ -161,7 +169,7 @@ export function json(status: number, payload: Record<string, unknown>, extra?: R
 function fail(status: number, error: ErrorCode, isForm: boolean, extra?: Record<string, string>): Response {
   if (isForm) {
     // No-JS fallback: the waitlist page reveals a matching message with :target.
-    const anchor = error === "invalid_email" ? "invalid-email" : "try-again";
+    const anchor = error === "invalid_email" || error === "disposable_email" ? "invalid-email" : "try-again";
     return new Response(null, { status: 303, headers: { location: `/waitlist/#${anchor}`, "cache-control": "no-store" } });
   }
   return json(status, { ok: false, error }, extra);
@@ -224,6 +232,12 @@ export async function handleWaitlistRequest(
     deps.log("waitlist.invalid_email");
     return fail(422, "invalid_email", isForm);
   }
+  // Throwaway inboxes are refused before the database: no row, no rate-limit
+  // hit. The domain isn't logged either; the event count is enough.
+  if (isDisposableEmail(email)) {
+    deps.log("waitlist.disposable_email");
+    return fail(422, "disposable_email", isForm);
+  }
 
   const placement: Placement = isForm ? "nojs" : isPlacement(body.source) ? body.source : "page";
   const token = randomToken();
@@ -265,8 +279,8 @@ export async function handleWaitlistRequest(
       deps.log("waitlist.existing", { placement });
       return ok(200, { result: "existing" }, isForm);
     case "rate_limited":
-      deps.log("waitlist.rate_limited", { layer: "database" });
-      return fail(429, "rate_limited", isForm, { "retry-after": "600" });
+      deps.log("waitlist.rate_limited", { layer: "database", limit: result.limit });
+      return fail(429, "rate_limited", isForm, { "retry-after": result.limit === "daily" ? "3600" : "600" });
     case "invalid_email":
       deps.log("waitlist.invalid_email", { layer: "database" });
       return fail(422, "invalid_email", isForm);

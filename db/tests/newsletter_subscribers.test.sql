@@ -28,6 +28,7 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON FUNCTIONS TO anon, authen
 -- The newsletter reuses waitlist_rate_limits, so the waitlist goes first.
 \i db/migrations/20261014120000_waitlist_signups.sql
 \i db/migrations/20261014130000_newsletter_subscribers.sql
+\i db/migrations/20261015120000_waitlist_hardening.sql
 
 -- --- Privilege checks (catalog) --------------------------------------------
 DO $$

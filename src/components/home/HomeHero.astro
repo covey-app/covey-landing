@@ -113,18 +113,30 @@ const arrow = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
     gap: 2.5rem;
     align-items: center;
   }
+  /* The copy column is the container the headline is sized against, so
+     "strangers" (the longest word, ~4.9em wide) can never outgrow it, whatever
+     the viewport, zoom level, or fallback font. It also sits above the flock,
+     which overlaps the column's edge on wide screens. */
+  .hero-copy {
+    position: relative;
+    z-index: 4;
+    container-type: inline-size;
+  }
   .hero-kicker {
     margin-bottom: 1.25rem;
   }
   .hero-title {
     display: grid;
     color: var(--ink);
-    font-size: clamp(3.6rem, 15.5vw, 9.6rem);
+    font-size: min(clamp(3.6rem, 15.5vw, 9.6rem), 19cqi);
     margin-bottom: 1.5rem;
   }
+  /* Masks for the rise-in: clip vertically only, so the last glyph's
+     overhang (negative tracking) is never shaved off. */
   .line {
     display: block;
-    overflow: hidden;
+    overflow-x: visible;
+    overflow-y: clip;
     padding-bottom: 0.06em;
     margin-bottom: -0.06em;
   }
@@ -195,6 +207,28 @@ const arrow = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
     display: none;
   }
 
+  /* Phones: the cast sits right under the actions in a shorter frame, so
+     the hero reads as one composition instead of copy, a gap, then a
+     separate scene. */
+  @media (max-width: 639px) {
+    .hero {
+      padding-bottom: 1.5rem;
+    }
+    .hero-grid {
+      gap: 0.5rem;
+    }
+    .hero-lede {
+      margin-bottom: 1.5rem;
+    }
+    .stage {
+      width: 100%;
+      aspect-ratio: 5 / 4;
+    }
+    .hero-quinn {
+      left: 32%;
+      width: 36%;
+    }
+  }
   @media (min-width: 640px) {
     .desktop-only {
       display: block;
@@ -211,7 +245,7 @@ const arrow = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
       gap: 1rem;
     }
     .hero-title {
-      font-size: clamp(4.75rem, 8.2vw, 8.75rem);
+      font-size: min(clamp(4.75rem, 8.2vw, 8.75rem), 19cqi);
     }
     .stage {
       width: 100%;

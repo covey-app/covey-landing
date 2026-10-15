@@ -130,6 +130,37 @@ const arrow = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
   .tw-form {
     max-width: 34rem;
   }
+  /* Phones: the three picks swipe sideways instead of stacking into three
+     screens of cards. */
+  @media (max-width: 767px) {
+    .tw-head {
+      margin-bottom: 2rem;
+    }
+    .tw-picks {
+      display: flex;
+      /* Contains absolutely positioned descendants (.sr-only), which would
+         otherwise escape the scroller and widen the page. */
+      position: relative;
+      gap: 0.85rem;
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scroll-snap-type: x mandatory;
+      scroll-padding-inline: var(--gutter);
+      margin-inline: calc(var(--gutter) * -1);
+      padding: 0.25rem var(--gutter) 0.75rem;
+      scrollbar-width: none;
+    }
+    .tw-picks::-webkit-scrollbar {
+      display: none;
+    }
+    .tw-picks > div {
+      flex: 0 0 min(84%, 22rem);
+      scroll-snap-align: start;
+    }
+    .tw-foot {
+      margin-top: 2.25rem;
+    }
+  }
   @media (min-width: 768px) {
     .tw-head {
       grid-template-columns: 1fr 1fr;

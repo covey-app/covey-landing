@@ -307,6 +307,7 @@ const Heading = `h${headingLevel}` as "h2" | "h3";
 
   const MESSAGES = {
     invalid: "That email doesn't look quite right. Check it for typos and try again.",
+    disposable_email: "Please use a permanent email address so we can reach you when Covey opens.",
     rate_limited: "Too many tries from this network. Give it a few minutes, then try again.",
     network: "We couldn't reach Covey. Check your connection — your email is still here — and try again.",
     server: "We couldn't save that just now. Your email is still here; please try again in a moment.",
@@ -461,6 +462,7 @@ const Heading = `h${headingLevel}` as "h2" | "h3";
     track("waitlist_error", { placement, reason: code, device: deviceClass() });
     emit(code === "invalid_email" ? "invalid" : "error");
     if (code === "invalid_email") showError(root, MESSAGES.invalid);
+    else if (code === "disposable_email") showError(root, MESSAGES.disposable_email);
     else if (code === "rate_limited") showError(root, MESSAGES.rate_limited);
     else showError(root, MESSAGES.server);
   }

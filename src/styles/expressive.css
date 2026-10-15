@@ -33,9 +33,30 @@ body {
   background-color: var(--page-bg);
 }
 
-/* Waitlist: deep matcha, the brand accent as a whole room. Same in light and
-   dark mode — the page is its own night. */
+/* Waitlist: matcha, the brand accent as a whole room. Light mode is a pale
+   matcha latte with deep-matcha ink; dark mode is deep matcha, the page's
+   own night. */
 body[data-page="waitlist"] {
+  --page-bg: #e6eed8;
+  --background: #e6eed8;
+  --paper: #dce7cb;
+  --paper-elevated: #fbfdf6;
+  --paper-sunken: #d3dfc0;
+  --vellum: rgba(230, 238, 216, 0.84);
+  --ink: #142600;
+  --ink-muted: #46553a;
+  --ink-subtle: #6d7c5f;
+  --ink-inverse: #f7faef;
+  --edge: #c4d3ad;
+  --hairline: #c4d3ad;
+  --accent-ink: #3c6a12;
+  --accent-soft: #d2e3b8;
+  --danger-ink: #a8291f;
+  --field-edge-strong: #7d906a;
+  color-scheme: light;
+}
+.dark body[data-page="waitlist"],
+body[data-page="waitlist"]:where(.dark *) {
   --page-bg: #112100;
   --background: #112100;
   --paper: #182c06;

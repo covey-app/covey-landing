@@ -112,7 +112,8 @@ const cheer = [
   }
   .line {
     display: block;
-    overflow: hidden;
+    overflow-x: visible;
+    overflow-y: clip;
     padding-bottom: 0.06em;
     margin-bottom: -0.06em;
   }
@@ -152,6 +153,11 @@ const cheer = [
     border-radius: 2rem;
     background: var(--paper-elevated);
     border: 0.7px solid var(--edge);
+    box-shadow:
+      0 1px 2px rgb(20 38 0 / 0.06),
+      0 30px 60px -30px rgb(20 38 0 / 0.35);
+  }
+  :global(.dark) .wl-card {
     box-shadow: 0 30px 60px -30px rgb(0 0 0 / 0.6);
   }
   .wl-card :global(.waitlist) {
