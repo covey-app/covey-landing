@@ -33,7 +33,7 @@
     "@axe-core/playwright": "^4.12.1",
     "@playwright/test": "^1.61.1",
     "@tailwindcss/vite": "^4.0.0",
-    "@types/node": "^26.1.1",
+    "@types/node": "^26.6.5",
     "@types/three": "^0.160.0",
     "lucide-static": "^1.48.0",
     "sharp": "^0.35.3",
