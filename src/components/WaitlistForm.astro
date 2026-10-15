@@ -1,0 +1,552 @@
+---
+/*
+ * WaitlistForm — the one signup mechanism on the site. Every waitlist CTA
+ * either is this component or scrolls to it.
+ *
+ * Email only. After a new signup, an optional one-tap "where would you use
+ * Covey?" follow-up collects city interest without making the form longer.
+ *
+ * Without JavaScript it is a plain POST to /api/waitlist, which redirects to
+ * /waitlist/joined/ (or back to /waitlist/ with an error anchor). With
+ * JavaScript it validates, submits once, keeps the typed email on any
+ * failure, and confirms in place.
+ */
+import type { Placement } from "../lib/waitlist/validate";
+
+interface Props {
+  placement: Exclude<Placement, "nojs">;
+  /** Element id for in-page links (#waitlist). */
+  id?: string;
+  /** Level of the success heading, to fit the page outline. */
+  headingLevel?: 2 | 3;
+  /** Extra ids for the email field's aria-describedby (no-JS messages). */
+  describedBy?: string;
+  /** Visually smaller variant for tight layouts. */
+  compact?: boolean;
+  class?: string;
+}
+const { placement, id, headingLevel = 2, describedBy, compact = false, class: className } = Astro.props;
+const uid = `wl-${placement}`;
+const Heading = `h${headingLevel}` as "h2" | "h3";
+---
+
+<div class:list={["waitlist", compact && "is-compact", className]} id={id} data-waitlist data-placement={placement}>
+  <form class="waitlist-form" method="post" action="/api/waitlist" data-waitlist-form>
+    <label class="waitlist-label eyebrow" for={`${uid}-email`}>Your email</label>
+    <div class="waitlist-row">
+      <input
+        id={`${uid}-email`}
+        class="field-control waitlist-input"
+        type="email"
+        name="email"
+        required
+        maxlength="254"
+        autocomplete="email"
+        inputmode="email"
+        autocapitalize="off"
+        spellcheck="false"
+        enterkeyhint="go"
+        placeholder="you@example.com"
+        aria-describedby={[`${uid}-error`, describedBy, `${uid}-note`].filter(Boolean).join(" ")}
+      />
+      <button type="submit" class="cta waitlist-submit" data-waitlist-submit>
+        <span data-waitlist-label>Join the waitlist</span>
+        <span class="cta-arrow" aria-hidden="true">
+          <span class="btn-spinner waitlist-spinner"></span>
+          <svg class="waitlist-go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </span>
+      </button>
+    </div>
+    <!-- Honeypot: invisible to people and to assistive tech; bots fill it.
+         Named so browser autofill has nothing to match (a "company" field gets
+         autofilled, which would silently drop a real signup). -->
+    <div class="waitlist-hp" aria-hidden="true">
+      <label>Leave this empty <input type="text" name="wl_check" tabindex="-1" autocomplete="off" /></label>
+    </div>
+    <p id={`${uid}-error`} class="waitlist-error" role="alert" data-waitlist-error></p>
+    <p id={`${uid}-note`} class="waitlist-note">
+      We'll only email you about Covey's launch. Unsubscribe anytime.
+      <a href="/privacy" class="text-link">Privacy</a>
+    </p>
+  </form>
+
+  <div class="waitlist-success" data-waitlist-success hidden>
+    <div class="waitlist-success-head">
+      <Heading class="waitlist-success-title" tabindex="-1" data-waitlist-title>you're on the list!</Heading>
+      <p class="waitlist-success-text" data-waitlist-text>We'll let you know when Covey is ready.</p>
+    </div>
+
+    <fieldset class="waitlist-city" data-waitlist-city hidden>
+      <legend class="waitlist-city-legend">
+        Where would you use Covey? <span class="waitlist-optional">Optional</span>
+      </legend>
+      <div class="waitlist-chips">
+        <button type="button" class="waitlist-chip" data-city="san-francisco" aria-pressed="false">San Francisco</button>
+        <button type="button" class="waitlist-chip" data-city="davis" aria-pressed="false">Davis</button>
+        <button type="button" class="waitlist-chip" data-city="other" aria-pressed="false">Somewhere else</button>
+      </div>
+      <p class="waitlist-city-status" data-waitlist-city-status aria-live="polite"></p>
+    </fieldset>
+  </div>
+
+  <p class="sr-only" aria-live="polite" data-waitlist-status></p>
+</div>
+
+<style>
+  .waitlist {
+    width: 100%;
+    max-width: 34rem;
+  }
+  .waitlist-label {
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+  .waitlist-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+  }
+  .waitlist-input {
+    min-height: 52px;
+    padding-inline: 1.25rem;
+    border-radius: 999px;
+    font-size: 1.0625rem;
+    background-color: var(--paper-elevated);
+    border-color: var(--field-edge-strong);
+  }
+  .waitlist-input::placeholder {
+    color: var(--ink-muted);
+  }
+  .waitlist-submit {
+    flex: none;
+    white-space: nowrap;
+  }
+  @media (min-width: 480px) {
+    .waitlist-row {
+      flex-direction: row;
+      align-items: stretch;
+    }
+    .waitlist-input {
+      flex: 1;
+      min-width: 0;
+    }
+  }
+
+  .waitlist-spinner {
+    display: none;
+  }
+  .waitlist-submit {
+    justify-content: space-between;
+  }
+  .waitlist-submit[aria-busy="true"] .waitlist-spinner {
+    display: inline-block;
+  }
+  .waitlist-submit[aria-busy="true"] .waitlist-go {
+    display: none;
+  }
+
+  .waitlist-hp {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  .waitlist-error {
+    display: none;
+    margin-top: 0.6rem;
+    font-size: 0.9375rem;
+    line-height: 1.45;
+    color: var(--danger-ink);
+  }
+  .waitlist-error:not(:empty) {
+    display: block;
+  }
+  .waitlist-note {
+    margin-top: 0.7rem;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--ink-muted);
+  }
+  .waitlist-note .text-link {
+    margin-left: 0.15rem;
+  }
+
+  /* ---------------- Success ---------------- */
+  .waitlist-success {
+    padding: 1.1rem 1.25rem 1.25rem 1.1rem;
+    border-radius: var(--radius-lg);
+    background-color: var(--paper-elevated);
+    border: 0.7px solid color-mix(in oklab, var(--edge) 70%, transparent);
+    box-shadow: var(--shadow-paper);
+  }
+  .waitlist-success[hidden] {
+    display: none;
+  }
+  .waitlist-success-head {
+    display: grid;
+    gap: 0.25rem;
+  }
+  .waitlist-success-title {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 1.25rem;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin-bottom: 0.2rem;
+    border-radius: 4px;
+  }
+  .waitlist-success-title:focus {
+    outline: none;
+  }
+  .waitlist-success-title:focus-visible {
+    outline: 2px solid var(--accent-ink);
+    outline-offset: 3px;
+  }
+  .waitlist-success-text {
+    color: var(--ink-muted);
+    line-height: 1.5;
+  }
+
+  .waitlist-city {
+    margin: 0.9rem 0 0;
+    padding: 0.9rem 0 0;
+    border: 0;
+    border-top: 0.7px solid var(--edge);
+    min-width: 0;
+  }
+  .waitlist-city[hidden] {
+    display: none;
+  }
+  /* Floated so the legend sits below the fieldset's top rule instead of
+     notching into it. */
+  .waitlist-city-legend {
+    float: left;
+    width: 100%;
+    padding: 0;
+    margin-bottom: 0.6rem;
+    font-size: 0.9375rem;
+    color: var(--ink);
+  }
+  .waitlist-optional {
+    margin-left: 0.35rem;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    color: var(--ink-muted);
+  }
+  .waitlist-chips {
+    clear: both;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .waitlist-chip {
+    min-height: 44px;
+    padding: 0.5rem 0.95rem;
+    border-radius: 999px;
+    border: 1px solid color-mix(in oklab, var(--ink) 22%, transparent);
+    background-color: transparent;
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: 0.8125rem;
+    color: var(--ink);
+    cursor: pointer;
+    transition:
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      color 0.2s ease,
+      transform var(--motion-snappy);
+  }
+  @media (pointer: fine) {
+    .waitlist-chip:hover {
+      border-color: color-mix(in oklab, var(--ink) 45%, transparent);
+    }
+    .waitlist-chip:active {
+      transform: scale(0.97);
+    }
+  }
+  .waitlist-chip[aria-pressed="true"] {
+    background-color: var(--ink);
+    border-color: var(--ink);
+    color: var(--ink-inverse);
+  }
+  .waitlist-city[aria-busy="true"] .waitlist-chip {
+    cursor: progress;
+  }
+  .waitlist-city-status {
+    margin-top: 0.55rem;
+    font-size: 0.8125rem;
+    color: var(--ink-muted);
+  }
+  .waitlist-city-status:empty {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .waitlist-success.is-entering {
+      animation: success-in 0.42s var(--ease-out) both;
+    }
+  }
+  @keyframes success-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+  }
+</style>
+
+<script>
+  import { track, deviceClass } from "../lib/analytics";
+  import { UTM_KEYS, isValidEmail, normalizeEmail } from "../lib/waitlist/validate";
+
+  type JoinResponse =
+    | { ok: true; result: "created"; followupToken?: string }
+    | { ok: true; result: "existing" }
+    | { ok: false; error: string };
+
+  const MESSAGES = {
+    invalid: "That email doesn't look quite right. Check it for typos and try again.",
+    disposable_email: "Please use a permanent email address so we can reach you when Covey opens.",
+    rate_limited: "Too many tries from this network. Give it a few minutes, then try again.",
+    network: "We couldn't reach Covey. Check your connection — your email is still here — and try again.",
+    server: "We couldn't save that just now. Your email is still here; please try again in a moment.",
+  } as const;
+
+  const loadedAt = performance.now();
+  // Shared by every form on the page: one signup, one follow-up token.
+  let followupToken: string | null = null;
+  let joined: "created" | "existing" | null = null;
+  let focusTracked = false;
+
+  function attribution(): Record<string, string> {
+    try {
+      const raw = sessionStorage.getItem("covey-attribution");
+      const parsed = raw ? (JSON.parse(raw) as Record<string, unknown>) : {};
+      const out: Record<string, string> = {};
+      for (const key of [...UTM_KEYS, "referrer", "landing_path"]) {
+        const v = parsed[key];
+        if (typeof v === "string" && v) out[key] = v;
+      }
+      return out;
+    } catch {
+      return {};
+    }
+  }
+
+  function campaignProps(): Record<string, string> {
+    const a = attribution();
+    const props: Record<string, string> = {};
+    if (a.utm_source) props.utm_source = a.utm_source;
+    if (a.utm_campaign) props.utm_campaign = a.utm_campaign;
+    return props;
+  }
+
+  /** Tell whoever's listening (Quinn on /waitlist) what the form is doing. */
+  function emit(state: "focus" | "typing" | "invalid" | "submitting" | "created" | "existing" | "error" | "city") {
+    document.dispatchEvent(new CustomEvent("covey:waitlist-state", { detail: { state } }));
+  }
+
+  function showSuccess(root: HTMLElement, result: "created" | "existing", moveFocus: boolean) {
+    const form = root.querySelector<HTMLFormElement>("[data-waitlist-form]")!;
+    const success = root.querySelector<HTMLElement>("[data-waitlist-success]")!;
+    const title = root.querySelector<HTMLElement>("[data-waitlist-title]")!;
+    const text = root.querySelector<HTMLElement>("[data-waitlist-text]")!;
+    const city = root.querySelector<HTMLElement>("[data-waitlist-city]")!;
+
+    if (result === "existing") {
+      title.textContent = "you're already on the list.";
+      text.textContent = "We have your email — we'll let you know when Covey is ready.";
+    }
+    city.hidden = !(result === "created" && followupToken);
+    form.hidden = true;
+    success.hidden = false;
+    success.classList.add("is-entering");
+    if (moveFocus) title.focus();
+  }
+
+  function setBusy(root: HTMLElement, busy: boolean) {
+    const btn = root.querySelector<HTMLButtonElement>("[data-waitlist-submit]")!;
+    const label = root.querySelector<HTMLElement>("[data-waitlist-label]")!;
+    const input = root.querySelector<HTMLInputElement>("input[type=email]")!;
+    btn.setAttribute("aria-busy", String(busy));
+    btn.setAttribute("aria-disabled", String(busy));
+    label.textContent = busy ? "Joining…" : "Join the waitlist";
+    input.readOnly = busy;
+  }
+
+  function showError(root: HTMLElement, message: string) {
+    const input = root.querySelector<HTMLInputElement>("input[type=email]")!;
+    const err = root.querySelector<HTMLElement>("[data-waitlist-error]")!;
+    // Clear first so an identical message (a second bad submit) is announced again.
+    err.textContent = "";
+    input.setAttribute("aria-invalid", "true");
+    input.focus();
+    requestAnimationFrame(() => {
+      err.textContent = message;
+    });
+  }
+
+  function clearError(root: HTMLElement) {
+    const input = root.querySelector<HTMLInputElement>("input[type=email]")!;
+    root.querySelector<HTMLElement>("[data-waitlist-error]")!.textContent = "";
+    input.removeAttribute("aria-invalid");
+  }
+
+  async function submit(root: HTMLElement) {
+    const placement = root.dataset.placement ?? "page";
+    const input = root.querySelector<HTMLInputElement>("input[type=email]")!;
+    const status = root.querySelector<HTMLElement>("[data-waitlist-status]")!;
+    const btn = root.querySelector<HTMLButtonElement>("[data-waitlist-submit]")!;
+    if (btn.getAttribute("aria-busy") === "true") return; // double submit
+
+    const email = normalizeEmail(input.value);
+    if (!isValidEmail(email)) {
+      track("waitlist_error", { placement, reason: "invalid_client", device: deviceClass() });
+      emit("invalid");
+      showError(root, MESSAGES.invalid);
+      return;
+    }
+    clearError(root);
+    setBusy(root, true);
+    emit("submitting");
+    status.textContent = "Joining the waitlist…";
+    track("waitlist_submit", { placement, device: deviceClass(), ...campaignProps() });
+
+    const honeypot = root.querySelector<HTMLInputElement>("input[name=wl_check]")?.value ?? "";
+    let res: Response;
+    try {
+      res = await fetch("/api/waitlist", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          email,
+          source: placement,
+          wl_check: honeypot,
+          elapsed_ms: Math.round(performance.now() - loadedAt),
+          ...attribution(),
+        }),
+        signal: AbortSignal.timeout(15000),
+      });
+    } catch {
+      setBusy(root, false);
+      status.textContent = "";
+      track("waitlist_error", { placement, reason: "network", device: deviceClass() });
+      emit("error");
+      showError(root, MESSAGES.network);
+      return;
+    }
+
+    let data: JoinResponse | null = null;
+    try {
+      data = (await res.json()) as JoinResponse;
+    } catch {
+      /* handled below */
+    }
+    setBusy(root, false);
+    status.textContent = "";
+
+    if (data && data.ok) {
+      const result = data.result;
+      joined = result;
+      if (data.result === "created" && data.followupToken) followupToken = data.followupToken;
+      track("waitlist_signup", { placement, result, device: deviceClass(), ...campaignProps() });
+      // Every form on the page confirms; only the one used takes focus.
+      document.querySelectorAll<HTMLElement>("[data-waitlist]").forEach((r) => showSuccess(r, result, r === root));
+      document.dispatchEvent(new CustomEvent("covey:waitlist-joined", { detail: { result } }));
+      emit(result);
+      return;
+    }
+
+    const code = data && !data.ok ? data.error : `http_${res.status}`;
+    track("waitlist_error", { placement, reason: code, device: deviceClass() });
+    emit(code === "invalid_email" ? "invalid" : "error");
+    if (code === "invalid_email") showError(root, MESSAGES.invalid);
+    else if (code === "disposable_email") showError(root, MESSAGES.disposable_email);
+    else if (code === "rate_limited") showError(root, MESSAGES.rate_limited);
+    else showError(root, MESSAGES.server);
+  }
+
+  // Chips stay enabled (focus never drops to <body>) and the choice can be
+  // changed while the follow-up token is valid. Only the form that was used
+  // announces; the mirrored copies update silently.
+  let citySeq = 0;
+  async function chooseCity(root: HTMLElement, chip: HTMLButtonElement) {
+    const city = chip.dataset.city;
+    if (!city || !followupToken) return;
+    const seq = ++citySeq;
+    const forms = Array.from(document.querySelectorAll<HTMLElement>("[data-waitlist]"));
+    const setPressed = () =>
+      forms.forEach((r) =>
+        r.querySelectorAll<HTMLButtonElement>("[data-city]").forEach((c) => c.setAttribute("aria-pressed", String(c.dataset.city === city))),
+      );
+    setPressed();
+    const fieldset = root.querySelector<HTMLElement>("[data-waitlist-city]")!;
+    fieldset.setAttribute("aria-busy", "true");
+    let ok = false;
+    try {
+      const res = await fetch("/api/waitlist", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ intent: "city", token: followupToken, city }),
+        signal: AbortSignal.timeout(10000),
+      });
+      ok = res.ok;
+    } catch {
+      ok = false;
+    }
+    if (seq !== citySeq) return; // a newer choice is in flight
+    fieldset.removeAttribute("aria-busy");
+    track("waitlist_city", { city, saved: ok, placement: root.dataset.placement ?? "page" });
+    const message = ok ? "Thanks — noted." : "We couldn't save that, but you're still on the list.";
+    forms.forEach((r) => {
+      const s = r.querySelector<HTMLElement>("[data-waitlist-city-status]");
+      if (!s) return;
+      s.setAttribute("aria-live", r === root ? "polite" : "off");
+      s.textContent = message;
+    });
+    if (ok) emit("city");
+  }
+
+  function init(root: HTMLElement) {
+    if (root.dataset.bound) return;
+    root.dataset.bound = "true";
+    const form = root.querySelector<HTMLFormElement>("[data-waitlist-form]")!;
+    const input = form.querySelector<HTMLInputElement>("input[type=email]")!;
+    const placement = root.dataset.placement ?? "page";
+
+    // Native validation stays on for no-JS visitors; with JS we validate and
+    // explain errors ourselves.
+    form.noValidate = true;
+    if (joined) showSuccess(root, joined, false);
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      void submit(root);
+    });
+    let lastTyping = 0;
+    input.addEventListener("keydown", () => {
+      const now = performance.now();
+      if (now - lastTyping > 900) emit("typing");
+      lastTyping = now;
+    });
+    input.addEventListener("focus", () => {
+      emit("focus");
+      if (focusTracked) return;
+      focusTracked = true;
+      track("waitlist_form_focus", { placement, device: deviceClass() });
+    });
+    input.addEventListener("input", () => {
+      if (input.getAttribute("aria-invalid") === "true" && isValidEmail(normalizeEmail(input.value))) clearError(root);
+    });
+    root.querySelectorAll<HTMLButtonElement>("[data-city]").forEach((chip) =>
+      chip.addEventListener("click", () => void chooseCity(root, chip)),
+    );
+  }
+
+  function initAll() {
+    document.querySelectorAll<HTMLElement>("[data-waitlist]").forEach(init);
+  }
+  initAll();
+  document.addEventListener("astro:page-load", initAll);
+</script>

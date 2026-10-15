@@ -1,0 +1,353 @@
+---
+/*
+ * NewsletterForm — subscribe to Covey Weekly. Deliberately not the waitlist:
+ * different words, a different shape (an outlined "subscription slip", never
+ * the ink pill), its own consent line, its own table and endpoint.
+ *
+ * The consent sentence is NEWSLETTER_CONSENT_TEXT — the same constant the
+ * server stores with the subscription, so the record matches the screen.
+ * Double opt-in: success means "check your inbox", not "subscribed".
+ *
+ * No JS: a plain POST to /api/newsletter, which redirects to
+ * /newsletter/thanks/ or back to /newsletter/#nl-invalid | #nl-retry.
+ */
+import { NEWSLETTER_CONSENT_TEXT } from "../lib/newsletter/consent";
+import type { NewsletterPlacement } from "../lib/newsletter/validate";
+
+interface Props {
+  placement: NewsletterPlacement;
+  variant?: "slip" | "inline";
+  /** Button label. */
+  label?: string;
+  id?: string;
+  class?: string;
+}
+const { placement, variant = "inline", label = "Subscribe", id, class: className } = Astro.props;
+const uid = `nl-${placement}`;
+---
+
+<div class:list={["nl", `nl--${variant}`, className]} id={id} data-newsletter data-placement={placement}>
+  <form class="nl-form" method="post" action="/api/newsletter" data-newsletter-form>
+    <input type="hidden" name="consent" value="yes" />
+    <input type="hidden" name="source" value={placement} />
+    <label class="nl-label" for={`${uid}-email`}>Your email</label>
+    <div class="nl-row">
+      <input
+        id={`${uid}-email`}
+        class="nl-input"
+        type="email"
+        name="email"
+        required
+        maxlength="254"
+        autocomplete="email"
+        inputmode="email"
+        autocapitalize="off"
+        spellcheck="false"
+        enterkeyhint="go"
+        placeholder="you@example.com"
+        aria-describedby={`${uid}-error ${uid}-consent`}
+      />
+      <button type="submit" class="nl-submit" data-nl-submit>
+        <span data-nl-label>{label}</span>
+      </button>
+    </div>
+    <div class="nl-hp" aria-hidden="true">
+      <label>Leave this empty <input type="text" name="wl_check" tabindex="-1" autocomplete="off" /></label>
+    </div>
+    <p id={`${uid}-error`} class="nl-error" role="alert" data-nl-error></p>
+    <p id={`${uid}-consent`} class="nl-consent">
+      {NEWSLETTER_CONSENT_TEXT} <a href="/privacy">Privacy</a>
+    </p>
+  </form>
+
+  <div class="nl-done" data-nl-done hidden>
+    <p class="nl-done-title" tabindex="-1" data-nl-done-title>check your inbox.</p>
+    <p class="nl-done-text" data-nl-done-text>Tap the link in the email we just sent to confirm, and the next edition is yours.</p>
+  </div>
+  <p class="sr-only" aria-live="polite" data-nl-status></p>
+</div>
+
+<style>
+  .nl {
+    width: 100%;
+  }
+  .nl--slip {
+    position: relative;
+    padding: clamp(1.25rem, 3vw, 2rem);
+    border: 2px dashed color-mix(in oklab, var(--ink) 45%, transparent);
+    border-radius: 1.25rem;
+    background: var(--paper-elevated);
+  }
+  /* The scissor notch on a slip's edge. */
+  .nl--slip::before {
+    content: "✂";
+    position: absolute;
+    top: -0.85rem;
+    left: 1.5rem;
+    padding: 0 0.4rem;
+    background: var(--page-bg);
+    font-size: 1rem;
+    color: color-mix(in oklab, var(--ink) 55%, transparent);
+  }
+  .nl-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+  }
+  .nl-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+  .nl-input {
+    min-height: 52px;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border-radius: 0.85rem;
+    border: 1.5px solid var(--field-edge-strong);
+    background: var(--paper-elevated);
+    color: var(--ink);
+    font-size: 1.0625rem;
+  }
+  .nl-input::placeholder {
+    color: var(--ink-muted);
+  }
+  .nl-input:focus-visible {
+    outline: 2px solid var(--accent-ink);
+    outline-offset: 2px;
+  }
+  .nl-input[aria-invalid="true"] {
+    border-color: var(--danger);
+  }
+  .nl-submit {
+    min-height: 52px;
+    padding: 0 1.5rem;
+    border-radius: 0.85rem;
+    border: 2px solid var(--ink);
+    background: transparent;
+    color: var(--ink);
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 0.9375rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease,
+      transform 0.3s var(--ease-spring);
+  }
+  @media (pointer: fine) {
+    .nl-submit:hover {
+      background: var(--ink);
+      color: var(--ink-inverse);
+    }
+  }
+  .nl-submit:active {
+    transform: scale(0.97);
+  }
+  .nl-submit[aria-busy="true"] {
+    opacity: 0.7;
+    cursor: progress;
+  }
+  @media (min-width: 480px) {
+    .nl-row {
+      flex-direction: row;
+    }
+    .nl-input {
+      flex: 1;
+      min-width: 0;
+    }
+  }
+  .nl-hp {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+  .nl-error {
+    display: none;
+    margin-top: 0.6rem;
+    font-size: 0.9375rem;
+    color: var(--danger-ink);
+  }
+  .nl-error:not(:empty) {
+    display: block;
+  }
+  .nl-consent {
+    margin-top: 0.75rem;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--ink-muted);
+  }
+  .nl-consent a {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+  .nl-done[hidden] {
+    display: none;
+  }
+  .nl-done-title {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: clamp(1.4rem, 2.6vw, 1.9rem);
+    letter-spacing: -0.04em;
+    color: var(--ink);
+    margin-bottom: 0.4rem;
+    border-radius: 4px;
+  }
+  .nl-done-title:focus {
+    outline: none;
+  }
+  .nl-done-title:focus-visible {
+    outline: 2px solid var(--accent-ink);
+    outline-offset: 3px;
+  }
+  .nl-done-text {
+    color: var(--ink-muted);
+    line-height: 1.55;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .nl-done.is-entering {
+      animation: nl-in 0.45s var(--ease-out) both;
+    }
+  }
+  @keyframes nl-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px) rotate(-0.6deg);
+    }
+  }
+</style>
+
+<script>
+  import { track, deviceClass } from "../lib/analytics";
+  import { UTM_KEYS, isValidEmail, normalizeEmail } from "../lib/waitlist/validate";
+
+  const loadedAt = performance.now();
+  const MESSAGES = {
+    invalid: "That email doesn't look quite right. Check it for typos and try again.",
+    rate_limited: "Too many tries from this network. Give it a few minutes, then try again.",
+    network: "We couldn't reach Covey. Check your connection — your email is still here — and try again.",
+    server: "We couldn't save that just now. Your email is still here; please try again in a moment.",
+  } as const;
+
+  function attribution(): Record<string, string> {
+    try {
+      const parsed = JSON.parse(sessionStorage.getItem("covey-attribution") ?? "{}") as Record<string, unknown>;
+      const out: Record<string, string> = {};
+      for (const k of [...UTM_KEYS, "referrer", "landing_path"]) if (typeof parsed[k] === "string") out[k] = parsed[k] as string;
+      return out;
+    } catch {
+      return {};
+    }
+  }
+
+  function showError(root: HTMLElement, message: string) {
+    const input = root.querySelector<HTMLInputElement>("input[type=email]")!;
+    const err = root.querySelector<HTMLElement>("[data-nl-error]")!;
+    err.textContent = "";
+    input.setAttribute("aria-invalid", "true");
+    input.focus();
+    requestAnimationFrame(() => (err.textContent = message));
+  }
+
+  function done(root: HTMLElement, title: string, text: string) {
+    root.querySelector<HTMLFormElement>("[data-newsletter-form]")!.hidden = true;
+    const box = root.querySelector<HTMLElement>("[data-nl-done]")!;
+    root.querySelector<HTMLElement>("[data-nl-done-title]")!.textContent = title;
+    root.querySelector<HTMLElement>("[data-nl-done-text]")!.textContent = text;
+    box.hidden = false;
+    box.classList.add("is-entering");
+    root.querySelector<HTMLElement>("[data-nl-done-title]")!.focus();
+  }
+
+  async function submit(root: HTMLElement) {
+    const placement = root.dataset.placement ?? "newsletter-page";
+    const input = root.querySelector<HTMLInputElement>("input[type=email]")!;
+    const btn = root.querySelector<HTMLButtonElement>("[data-nl-submit]")!;
+    const label = root.querySelector<HTMLElement>("[data-nl-label]")!;
+    const status = root.querySelector<HTMLElement>("[data-nl-status]")!;
+    if (btn.getAttribute("aria-busy") === "true") return;
+    const email = normalizeEmail(input.value);
+    if (!isValidEmail(email)) {
+      track("newsletter_error", { placement, reason: "invalid_client" });
+      showError(root, MESSAGES.invalid);
+      return;
+    }
+    root.querySelector<HTMLElement>("[data-nl-error]")!.textContent = "";
+    input.removeAttribute("aria-invalid");
+    const original = label.textContent;
+    btn.setAttribute("aria-busy", "true");
+    label.textContent = "Subscribing…";
+    input.readOnly = true;
+    status.textContent = "Subscribing…";
+    track("newsletter_submit", { placement, device: deviceClass() });
+
+    let data: { ok: boolean; result?: string; confirmation?: string; error?: string } | null = null;
+    let httpStatus = 0;
+    try {
+      const res = await fetch("/api/newsletter", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          email,
+          consent: true,
+          source: placement,
+          wl_check: root.querySelector<HTMLInputElement>("input[name=wl_check]")?.value ?? "",
+          elapsed_ms: Math.round(performance.now() - loadedAt),
+          ...attribution(),
+        }),
+        signal: AbortSignal.timeout(15000),
+      });
+      httpStatus = res.status;
+      data = await res.json().catch(() => null);
+    } catch {
+      data = null;
+    }
+    btn.setAttribute("aria-busy", "false");
+    label.textContent = original;
+    input.readOnly = false;
+    status.textContent = "";
+
+    if (!httpStatus) {
+      track("newsletter_error", { placement, reason: "network" });
+      return showError(root, MESSAGES.network);
+    }
+    if (data?.ok) {
+      track("newsletter_signup", { placement, result: data.result ?? "pending", confirmation: data.confirmation ?? "", device: deviceClass() });
+      if (data.result === "subscribed") return done(root, "you're already subscribed.", "That address already gets Covey Weekly. See you in your inbox.");
+      if (data.confirmation === "sent")
+        return done(root, "check your inbox.", "Tap the link in the email we just sent to confirm, and the next edition is yours.");
+      return done(root, "you're signed up.", "We'll email you a confirmation link before the next edition goes out.");
+    }
+    const code = data?.error ?? `http_${httpStatus}`;
+    track("newsletter_error", { placement, reason: code });
+    showError(root, code === "invalid_email" ? MESSAGES.invalid : code === "rate_limited" ? MESSAGES.rate_limited : MESSAGES.server);
+  }
+
+  function init() {
+    document.querySelectorAll<HTMLElement>("[data-newsletter]").forEach((root) => {
+      if (root.dataset.bound) return;
+      root.dataset.bound = "true";
+      const form = root.querySelector<HTMLFormElement>("[data-newsletter-form]")!;
+      form.noValidate = true;
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        void submit(root);
+      });
+      form.querySelector("input[type=email]")!.addEventListener(
+        "focus",
+        () => track("newsletter_form_focus", { placement: root.dataset.placement ?? "" }),
+        { once: true },
+      );
+    });
+  }
+  init();
+  document.addEventListener("astro:page-load", init);
+</script>

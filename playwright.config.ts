@@ -19,6 +19,8 @@ const allProjects = [
 
 export default defineConfig({
   testDir: "./tests",
+  // tests/unit runs under node --test (npm run test:unit), not Playwright.
+  testIgnore: "unit/**",
   timeout: 30_000,
   expect: { timeout: 5_000 },
   fullyParallel: true,
@@ -31,7 +33,9 @@ export default defineConfig({
   },
   projects: only ? allProjects.filter((p) => p.name === only) : allProjects,
   webServer: {
-    command: "npm run build && npm run preview",
+    // The real listings with a pinned "today" (the week of the first
+    // edition), so the guide pages are deterministic whatever day it runs.
+    command: "COVEY_TODAY=2026-10-14 npm run build && npm run preview",
     url: `http://localhost:${PORT}`,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,

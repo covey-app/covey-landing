@@ -1,0 +1,35 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# Netlify auto-detects the <form data-netlify="true"> tag in contact.astro at
+# build time — no functions or serverless code needed. The form POSTs to
+# /thanks and carries data-astro-reload so Astro's client router does a full
+# navigation and Netlify captures the submission.
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+    Strict-Transport-Security = "max-age=63072000; includeSubDomains; preload"
+
+# covey-web links "Join the waitlist" to coveyapp.co/signup; forward it to the
+# real waitlist page. Must sit above the catch-all 404.
+#
+# NOTE: this file is a fallback mirror. Production runs on Vercel, and the
+# waitlist endpoint (/api/waitlist) is a Vercel Function built by
+# @astrojs/vercel — it does not exist on Netlify. Moving hosts means swapping
+# the adapter (see docs/waitlist.md).
+[[redirects]]
+  from = "/signup"
+  to = "/waitlist"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/*"
+  to = "/404"
+  status = 404

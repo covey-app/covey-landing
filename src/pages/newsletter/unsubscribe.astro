@@ -1,0 +1,71 @@
+---
+/*
+ * /newsletter/unsubscribe/?token=<uuid> — server-rendered.
+ *   GET   shows an "Unsubscribe" button (scanners prefetch GETs).
+ *   POST  unsubscribes. That covers the button and RFC 8058 one-click: mail
+ *         providers POST "List-Unsubscribe=One-Click" to the List-Unsubscribe
+ *         URL (token in the query string) with no Origin header — which is
+ *         why astro.config.mjs turns off Astro's blanket checkOrigin.
+ * Idempotent: unsubscribing twice is fine.
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { unsubscribeNewsletter } from "../../lib/newsletter/handler";
+import { newsletterEnv, serverDeps } from "../../lib/newsletter/server";
+
+export const prerender = false;
+
+let token = Astro.url.searchParams.get("token") ?? "";
+let state: "ask" | "unsubscribed" | "invalid" | "unavailable" = token ? "ask" : "invalid";
+
+if (Astro.request.method === "POST") {
+  const form = await Astro.request.formData().catch(() => null);
+  const fromForm = form?.get("token");
+  if (typeof fromForm === "string" && fromForm) token = fromForm;
+  const { result } = await unsubscribeNewsletter(token, newsletterEnv(), serverDeps);
+  state = result === "not_configured" ? "unavailable" : result;
+}
+
+const copy = {
+  ask: { t: "unsubscribe from covey weekly?", d: "You'll stop getting the weekly email. Your Covey waitlist spot, if you have one, isn't affected." },
+  unsubscribed: { t: "you're unsubscribed.", d: "No more Covey Weekly emails. Changed your mind? You can subscribe again anytime." },
+  invalid: { t: "that link didn't work.", d: "Use the unsubscribe link from a recent edition, or email hello@coveyapp.co and we'll remove you." },
+  unavailable: { t: "we couldn't do that just now.", d: "Something went wrong on our side. Try again in a few minutes, or email hello@coveyapp.co and we'll remove you." },
+}[state];
+Astro.response.headers.set("cache-control", "no-store");
+Astro.response.headers.set("referrer-policy", "no-referrer");
+---
+
+<BaseLayout title="Unsubscribe" description="Unsubscribe from Covey Weekly." noIndex={true} page="newsletter" analytics={false}>
+  <section class="nl-page wrap" data-unsubscribe-state={state}>
+    <p class="kicker">Covey Weekly</p>
+    <h1 class="t-display">{copy.t}</h1>
+    <p>{copy.d}</p>
+    {
+      state === "ask" && (
+        <form method="post" action={`/newsletter/unsubscribe/?token=${encodeURIComponent(token)}`}>
+          <input type="hidden" name="token" value={token} />
+          <button type="submit" class="cta">Unsubscribe</button>
+        </form>
+      )
+    }
+    {state === "unsubscribed" && <a href="/newsletter" class="arrow-link">Subscribe again</a>}
+  </section>
+</BaseLayout>
+
+<style>
+  .nl-page {
+    display: grid;
+    gap: 1.1rem;
+    justify-items: start;
+    max-width: 44rem;
+    padding-block: clamp(3rem, 9vw, 7rem);
+  }
+  .nl-page h1 {
+    color: var(--ink);
+  }
+  .nl-page p:not(.kicker) {
+    font-size: var(--fs-lede);
+    line-height: 1.6;
+    color: var(--ink-muted);
+  }
+</style>

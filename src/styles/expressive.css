@@ -1,0 +1,392 @@
+/*
+ * Expressive layer — the 2026-10 redesign (docs/redesign-2026-10.md).
+ *
+ * Built on the tokens above it, never instead of them: Geist Mono display
+ * (lowercase), Instrument Sans reading copy, paper / ink, the nine category
+ * colors, matcha + coffee. What this layer adds:
+ *   1. An editorial scale (mega / display / title) for the big moments.
+ *   2. Page identities: each top-level page sets data-page on <body> and
+ *      gets its own ground + ink + accent, so the site has distinct rooms
+ *      that still read as one house.
+ *   3. Interaction primitives: the CTA button, arrow links, chips.
+ *   4. Motion primitives driven by src/lib/motion.ts (scroll progress,
+ *      pointer depth, reveals). Every one has a resting state that is the
+ *      final state, and none runs under prefers-reduced-motion.
+ */
+
+:root {
+  --fs-mega: clamp(3.4rem, 11.2vw, 11rem);
+  --fs-display: clamp(2.7rem, 6.4vw, 6.5rem);
+  --fs-title: clamp(2rem, 3.9vw, 3.6rem);
+  --gutter: clamp(1.25rem, 4vw, 3rem);
+  --wide: 86rem;
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-glide: cubic-bezier(0.65, 0, 0.35, 1);
+
+  --page-bg: var(--background);
+  --page-band: var(--paper);
+}
+
+/* ---------------- Page identities ---------------- */
+
+body {
+  background-color: var(--page-bg);
+}
+
+/* Waitlist: matcha, the brand accent as a whole room. Light mode is a pale
+   matcha latte with deep-matcha ink; dark mode is deep matcha, the page's
+   own night. */
+body[data-page="waitlist"] {
+  --page-bg: #e6eed8;
+  --background: #e6eed8;
+  --paper: #dce7cb;
+  --paper-elevated: #fbfdf6;
+  --paper-sunken: #d3dfc0;
+  --vellum: rgba(230, 238, 216, 0.84);
+  --ink: #142600;
+  --ink-muted: #46553a;
+  --ink-subtle: #6d7c5f;
+  --ink-inverse: #f7faef;
+  --edge: #c4d3ad;
+  --hairline: #c4d3ad;
+  --accent-ink: #3c6a12;
+  --accent-soft: #d2e3b8;
+  --danger-ink: #a8291f;
+  --field-edge-strong: #7d906a;
+  color-scheme: light;
+}
+.dark body[data-page="waitlist"],
+body[data-page="waitlist"]:where(.dark *) {
+  --page-bg: #112100;
+  --background: #112100;
+  --paper: #182c06;
+  --paper-elevated: #1c330a;
+  --paper-sunken: #0c1800;
+  --vellum: rgba(17, 33, 0, 0.82);
+  --ink: #f3f1e7;
+  --ink-muted: #bccab0;
+  --ink-subtle: #8fa07f;
+  --ink-inverse: #112100;
+  --edge: #2f4719;
+  --hairline: #2f4719;
+  --accent-ink: #cfe9a6;
+  --accent-soft: #24400c;
+  --danger-ink: #ffb4a6;
+  --field-edge-strong: #6f8a55;
+  color-scheme: dark;
+}
+
+/* Newsletter: newsprint. Warm paper, brown-black ink, a masthead red. */
+body[data-page="newsletter"] {
+  --page-bg: #f5efe3;
+  --background: #f5efe3;
+  --paper: #ece4d4;
+  --paper-elevated: #fbf7ef;
+  --paper-sunken: #e6dcc8;
+  --vellum: rgba(245, 239, 227, 0.86);
+  --ink: #241b12;
+  --ink-muted: #625140;
+  --edge: #d8cbb3;
+  --hairline: #d8cbb3;
+  --accent-ink: #a8361f;
+  --field-edge-strong: #8c7a64;
+}
+.dark body[data-page="newsletter"],
+body[data-page="newsletter"]:where(.dark *) {
+  --page-bg: #17120c;
+  --background: #17120c;
+  --paper: #1f1810;
+  --paper-elevated: #241c13;
+  --paper-sunken: #120e09;
+  --vellum: rgba(23, 18, 12, 0.86);
+  --ink: #f1e8d8;
+  --ink-muted: #bfae96;
+  --edge: #3a2f22;
+  --hairline: #3a2f22;
+  --accent-ink: #f08a6e;
+  --field-edge-strong: #6e604e;
+}
+
+/* About: sun-warmed clay. */
+body[data-page="about"] {
+  --page-bg: #f4ece3;
+  --background: #f4ece3;
+  --paper-elevated: #fbf6f0;
+  --edge: #e2d4c4;
+  --accent-ink: #8a4a2a;
+}
+.dark body[data-page="about"] {
+  --page-bg: #15110e;
+  --background: #15110e;
+  --paper-elevated: #1e1814;
+  --edge: #352a22;
+  --accent-ink: #e5a27b;
+}
+
+/* ---------------- Editorial type ---------------- */
+
+@layer components {
+  .t-mega {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: var(--fs-mega);
+    line-height: 0.9;
+    letter-spacing: -0.06em;
+    text-transform: lowercase;
+  }
+  .t-display {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: var(--fs-display);
+    line-height: 0.95;
+    letter-spacing: -0.05em;
+    text-transform: lowercase;
+  }
+  .t-title {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: var(--fs-title);
+    line-height: 1;
+    letter-spacing: -0.045em;
+    text-transform: lowercase;
+  }
+  /* Kicker: mono label with a short leading rule. */
+  .kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+  }
+  .kicker::before {
+    content: "";
+    width: 1.5rem;
+    height: 1.5px;
+    background: currentColor;
+    opacity: 0.7;
+  }
+  .kicker.no-rule::before {
+    display: none;
+  }
+  .measure {
+    max-width: 38rem;
+  }
+  .wrap {
+    width: 100%;
+    max-width: var(--wide);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  /* ---------------- Calls to action ----------------
+     The primary CTA: an ink pill whose arrow travels on hover while a
+     second arrow slides in behind it — the "go" gesture, not a glow. */
+  .cta {
+    --cta-bg: var(--ink);
+    --cta-fg: var(--ink-inverse);
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    min-height: 52px;
+    padding: 0.85rem 1.1rem 0.85rem 1.5rem;
+    border-radius: 999px;
+    background: var(--cta-bg);
+    color: var(--cta-fg);
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 0.9375rem;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    cursor: pointer;
+    isolation: isolate;
+    overflow: hidden;
+    transition:
+      transform 0.35s var(--ease-spring),
+      box-shadow 0.3s ease;
+    box-shadow: var(--shadow-paper);
+  }
+  .cta-arrow {
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--cta-fg) 16%, transparent);
+    overflow: hidden;
+    flex: none;
+  }
+  .cta-arrow svg {
+    grid-area: 1 / 1;
+    width: 1rem;
+    height: 1rem;
+    transition: transform 0.4s var(--ease-glide);
+  }
+  .cta-arrow svg + svg {
+    transform: translateX(-160%);
+  }
+  .cta-sm {
+    min-height: 40px;
+    padding: 0.45rem 0.55rem 0.45rem 1rem;
+    font-size: 0.8125rem;
+    gap: 0.5rem;
+  }
+  .cta-sm .cta-arrow {
+    width: 1.6rem;
+    height: 1.6rem;
+  }
+  .cta-light {
+    --cta-bg: var(--ink-inverse);
+    --cta-fg: var(--ink);
+  }
+  @media (pointer: fine) {
+    .cta:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-pinned);
+    }
+    .cta:hover .cta-arrow svg:first-child {
+      transform: translateX(160%);
+    }
+    .cta:hover .cta-arrow svg + svg {
+      transform: translateX(0);
+    }
+  }
+  .cta:active {
+    transform: scale(0.97);
+  }
+
+  /* Secondary: a text link with an arrow that leans in. */
+  .arrow-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    min-height: 44px;
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: 0.9375rem;
+    color: var(--ink);
+    text-decoration: underline;
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 0.3em;
+    text-decoration-color: color-mix(in oklab, currentColor 35%, transparent);
+    transition: text-decoration-color 0.2s ease;
+  }
+  .arrow-link svg {
+    width: 1rem;
+    height: 1rem;
+    transition: transform 0.3s var(--ease-spring);
+  }
+  @media (pointer: fine) {
+    .arrow-link:hover {
+      text-decoration-color: currentColor;
+    }
+    .arrow-link:hover svg {
+      transform: translateX(4px);
+    }
+  }
+
+  /* Filter / choice chip. */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    min-height: 40px;
+    padding: 0.35rem 0.9rem 0.35rem 0.4rem;
+    border-radius: 999px;
+    border: 1px solid color-mix(in oklab, var(--ink) 18%, transparent);
+    background: var(--paper-elevated);
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: 0.8125rem;
+    color: var(--ink);
+    cursor: pointer;
+    transition:
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      color 0.2s ease,
+      transform 0.3s var(--ease-spring);
+  }
+  .chip.no-art {
+    padding-left: 0.9rem;
+  }
+  .chip[aria-pressed="true"] {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--ink-inverse);
+  }
+  @media (pointer: fine) {
+    .chip:hover {
+      border-color: color-mix(in oklab, var(--ink) 45%, transparent);
+    }
+    .chip:active {
+      transform: scale(0.96);
+    }
+  }
+}
+
+/* ---------------- Motion primitives ----------------
+   src/lib/motion.ts sets --p (0→1 scroll progress) on [data-progress]
+   elements and --mx / --my (−1→1 pointer offset) on [data-pointer] roots.
+   Children opt in with --depth. Without JS or with reduced motion, the vars
+   stay at their resting values and nothing moves. */
+
+[data-pointer] [data-depth] {
+  --mx: 0;
+  --my: 0;
+  translate: calc(var(--mx) * var(--depth) * 1px) calc(var(--my) * var(--depth) * 1px);
+  transition: translate 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Reveal: rise into place once, when scrolled into view. */
+.js-motion [data-reveal]:not(.is-in) {
+  opacity: 0;
+  transform: translateY(24px);
+}
+.js-motion [data-reveal] {
+  transition:
+    opacity 0.7s var(--ease-out),
+    transform 0.8s var(--ease-out);
+  transition-delay: calc(var(--d, 0) * 70ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-pointer] [data-depth] {
+    translate: none;
+    transition: none;
+  }
+  .js-motion [data-reveal]:not(.is-in) {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---------------- Page transitions (Astro view transitions) ---------------- */
+@keyframes page-out {
+  to {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
+/* The paper "bloom" (global.css body::before) belongs to paper grounds. */
+body[data-page="waitlist"]::before {
+  display: none;
+}

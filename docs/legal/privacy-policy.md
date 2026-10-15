@@ -257,10 +257,28 @@ date and time of acceptance, and the registration method used; and the date and
 time of each consent you give or withdraw for AI features (Section 8) and for
 sensitive profile information (Sections 4.6 and 4.16).
 
-**4.14 Website information.** The website at www.coveyapp.co has no account,
-sign-up, or contact form, and collects no information that you type into it. It
-receives the connection information described in Section 4.11 and the error
-reports described in Section 12.3.
+**4.14 Website information.** The website at www.coveyapp.co has no account
+or contact form. It offers two optional sign-ups, which are separate from each
+other and from a Covey Account:
+
+&nbsp;&nbsp;&nbsp;&nbsp;(a) **the waitlist.** If you join it, Covey collects your email address and,
+if you choose to tell us, the city where you would use Covey. With your signup
+Covey records which page of the website you joined from, the campaign parameters
+in the link that brought you there (utm_source, utm_medium, utm_campaign,
+utm_content, utm_term), and the address of the external page that referred you,
+without its query string; and
+
+&nbsp;&nbsp;&nbsp;&nbsp;(b) **Covey Weekly**, an email newsletter. If you subscribe, Covey collects
+your email address, the wording of the consent you gave and the time you gave it,
+and the same page, campaign, and referrer details. Your subscription takes effect
+only once you confirm it from the email Covey sends you, and every edition
+contains a link to unsubscribe.
+
+To prevent abuse of these sign-ups, Covey derives a one-way keyed hash from your
+IP address, which it keeps for about a day; it does not store the IP address
+itself. The website also receives the connection information described in
+Section 4.11, the error reports described in Section 12.3, and the aggregate page
+measurements described in Section 12.4.
 
 **4.15 Telephone number.** Where you choose to verify a telephone number, the
 number, which must be a United States number, and the time of verification. Covey
@@ -327,10 +345,14 @@ features;
 5.10 to respond to support enquiries;
 
 5.11 to comply with legal obligations and to establish, exercise, or defend legal
-claims; and
+claims;
 
 5.12 to generate the Model Output described in Section 8, where you have agreed
-to it.
+to it; and
+
+5.13 where you join the waitlist or subscribe to Covey Weekly (Section 4.14), to
+tell you when Covey is available to you and about Covey's launch, to send you the
+newsletter until you unsubscribe, and to decide which cities to open next.
 
 Covey does not Process private communications or non-public Plan content for
 advertising purposes. Covey does not use your Personal Information to train
@@ -591,9 +613,20 @@ blocked User is not told.
 
 ## 12. COOKIES, LOCAL STORAGE, AND THE WEBSITE
 
-12.1 The website at www.coveyapp.co writes a single item to your browser's local
-storage, identified as `covey-theme`, recording your selection of a light or dark
-colour scheme. It remains on your device and is not transmitted to Covey.
+12.1 The website at www.coveyapp.co writes to your browser's storage only the
+following, none of which is a cookie:
+
+&nbsp;&nbsp;&nbsp;&nbsp;(a) `covey-theme`, in local storage, recording your selection of a light or
+dark colour scheme. It remains on your device and is not transmitted to Covey;
+
+&nbsp;&nbsp;&nbsp;&nbsp;(b) `covey-attribution`, in session storage, holding the campaign
+parameters and referring page described in Section 4.14. It is deleted when you
+close the tab and is sent to Covey only if you join the waitlist or subscribe to
+Covey Weekly; and
+
+&nbsp;&nbsp;&nbsp;&nbsp;(c) `covey-hero`, in session storage, recording that the home page's
+opening animation has played, so that it does not replay during the same visit.
+It is not transmitted to Covey.
 
 12.2 The website sets no cookies. Covey's web application stores your sign-in
 session in your browser's local storage so that you remain signed in; it is
@@ -608,8 +641,12 @@ error. It does not record your screen, your keystrokes, or what you type into
 forms, and on the website it does not measure performance. Sentry Processes these
 reports as Covey's Service Provider.
 
-12.4 The website and web application employ no advertising cookies, tracking
-pixels, or third-party analytics.
+12.4 **Page measurement on the website.** The website uses Vercel Web
+Analytics, which counts page views and a small number of named events, such as a
+completed waitlist sign-up, in aggregate. It sets no cookies, does not track you
+across websites, and receives no email address, name, or Account information.
+Pages that confirm or cancel a Covey Weekly subscription do not load it. The
+website and web application employ no advertising cookies or tracking pixels.
 
 12.5 The Covey mobile application does not employ cookies.
 
@@ -941,9 +978,9 @@ Covey.
 | Stripe, Inc. | Stripe Identity, where identity verification is offered and you choose to complete it (Section 4.5). Stripe Payments and Stripe Connect are not used in this version of the Service. | Identity document image, Selfie, and biometric data derived from them, all collected by Stripe directly; Covey's account identifier for the verification session |
 | Twilio Inc. | Twilio Verify: sending one-time codes by text message and checking them | Telephone number; the code entered |
 | Functional Software, Inc. d/b/a Sentry | Crash reporting, error tracing, and performance diagnostics for the mobile application, and error reporting for the website and web application | Account identifier (mobile and web application); Internet or network activity; device and browser type |
-| Vercel Inc. | Hosting of www.coveyapp.co and of Covey's web application | Connection information; for the web application, the information you submit through it |
+| Vercel Inc. | Hosting of www.coveyapp.co and of Covey's web application; server functions that process waitlist and Covey Weekly sign-ups; page measurement on the website (Section 12.4) | Connection information; the email address, city, and campaign details submitted through the website's sign-ups; aggregate page-view information; for the web application, the information you submit through it |
 | Cloudflare, Inc. | Hosting, content delivery, and network security for Covey's web services and domains | Connection information; the information transmitted through those services |
-| Plus Five Five, Inc. d/b/a Resend | Delivery of email alerts about new reports to Covey's trust-and-safety team | Report metadata only, such as the report's reference, category, and time. No report text, User Content, or reporter identity |
+| Plus Five Five, Inc. d/b/a Resend | Delivery of email alerts about new reports to Covey's trust-and-safety team; delivery of waitlist emails and of Covey Weekly | For report alerts, report metadata only, such as the report's reference, category, and time, and no report text, User Content, or reporter identity; for the website's sign-ups, your email address |
 
 Adding a Service Provider requires an amendment to this Annex under Section 20.
 
@@ -975,6 +1012,9 @@ Adding a Service Provider requires an amendment to this Annex under Section 20.
 | Feedback submitted in the application | Until Account deletion | Responding to you; improving the Service |
 | Support correspondence by email | For as long as needed to resolve your enquiry and for up to twenty-four (24) months after your last contact, or until you ask Covey to delete it | Legitimate interest in responding |
 | Connection information | Under the standard log retention of Covey's hosting and infrastructure providers | Security; abuse prevention |
+| Waitlist sign-ups | Until Covey is available to you and you have been invited, or until you ask Covey to delete it, and in any case no more than twenty-four (24) months after sign-up | Consent |
+| Covey Weekly subscriptions | Until you ask Covey to delete it. After you unsubscribe, or if you never confirm, Covey keeps your email address with that status, and sends it nothing further, so that it can honour the unsubscribe | Consent; legal obligation to honour unsubscribe requests |
+| Sign-up abuse-prevention keys (Section 4.14) | About one (1) day | Legitimate interest in preventing abuse |
 
 ---
 

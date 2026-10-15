@@ -1,0 +1,134 @@
+---
+/*
+ * ActivityRow — one line of a complete guide: time, what, where, price, and a
+ * link to the organizer. Carries data-* for the client-side filters
+ * (category, neighborhood, tags) in GuideFilters.
+ */
+import Icon from "../Icon.astro";
+import { CATEGORIES, TAG_LABELS } from "../../lib/categories";
+import { priceLabel, timeLabel, type Activity } from "../../lib/guide";
+
+interface Props {
+  activity: Activity;
+  pick?: boolean;
+}
+const { activity, pick = false } = Astro.props;
+const a = activity.data;
+const time = timeLabel(a) ?? (a.kind === "place" ? "Any time" : "");
+const price = priceLabel(a);
+---
+
+<li
+  class="row"
+  data-row
+  data-category={a.category}
+  data-hood={a.neighborhood}
+  data-tags={a.tags.join(" ")}
+  style={`--c:var(--cat-${a.category});--c-soft:var(--cat-${a.category}-soft)`}
+>
+  <span class="row-time">{time}</span>
+  <span class="row-orb" aria-hidden="true">
+    <span class="orb" style={`--c:var(--cat-${a.category});--orb:2.5rem`}><Icon name={CATEGORIES[a.category].icon} /></span>
+  </span>
+  <div class="row-main">
+    <p class="row-title">
+      <a href={a.source.url} target="_blank" rel="noopener">{a.title}<span class="sr-only"> (opens the organizer's page)</span></a>
+      {pick && <span class="row-pick">Top pick</span>}
+    </p>
+    <p class="row-meta">
+      <span>{CATEGORIES[a.category].short}</span>
+      <span>{a.venue}, {a.neighborhood}</span>
+      {a.tags.slice(0, 2).map((t) => <span>{TAG_LABELS[t]}</span>)}
+    </p>
+    <p class="row-summary">{a.summary}</p>
+  </div>
+  <span class="row-price">{price ?? "See listing"}</span>
+</li>
+
+<style>
+  .row {
+    position: relative;
+    display: grid;
+    grid-template-columns: 4.5rem 2.75rem minmax(0, 1fr);
+    gap: 0.25rem 0.9rem;
+    padding: 1.1rem 0;
+    border-top: 0.7px solid var(--edge);
+  }
+  .row[hidden] {
+    display: none;
+  }
+  .row-time {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: var(--ink);
+    padding-top: 0.15rem;
+  }
+  /* The app's stop bead: category-filled circle, white glyph (global .orb). */
+  .row-orb {
+    display: grid;
+    place-items: start center;
+    padding-top: 0.05rem;
+  }
+  .row-title {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 1.0625rem;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  .row-title a {
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-underline-offset: 0.2em;
+    transition: text-decoration-color 0.2s ease;
+  }
+  .row-title a:hover {
+    text-decoration-color: currentColor;
+  }
+  .row-pick {
+    display: inline-block;
+    margin-left: 0.5rem;
+    padding: 0.1rem 0.5rem;
+    border-radius: 999px;
+    background: var(--ink);
+    color: var(--ink-inverse);
+    font-size: 0.6875rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    vertical-align: 0.15em;
+  }
+  .row-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.15rem 0.85rem;
+    margin-top: 0.3rem;
+    font-size: 0.8125rem;
+    color: var(--ink-muted);
+  }
+  .row-summary {
+    margin-top: 0.45rem;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: var(--ink-muted);
+    max-width: 44rem;
+  }
+  .row-price {
+    grid-column: 3;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--ink);
+  }
+  @media (min-width: 768px) {
+    .row {
+      grid-template-columns: 5.5rem 3rem minmax(0, 1fr) 7rem;
+      align-items: start;
+    }
+    .row-price {
+      grid-column: auto;
+      text-align: right;
+      padding-top: 0.15rem;
+    }
+  }
+</style>

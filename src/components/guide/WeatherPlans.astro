@@ -1,0 +1,452 @@
+---
+/*
+ * WeatherPlans — "plans for the weather": for each upcoming day, the
+ * forecast (National Weather Service, via /api/weather), the sunset, one
+ * small-group idea that suits it (lib/weather/ideas.ts), and, when there is
+ * one, a listing from the guide that day that suits it too (outside on nice
+ * days, inside when it's wet or cold).
+ *
+ * The HTML carries weather-proof ideas ("if it's cold or wet…"), so no-JS
+ * visitors, a failed forecast, or a week already past still get something
+ * useful; the script replaces them with the forecast cards when it can.
+ */
+import Icon from "../Icon.astro";
+import { WHATEVER_THE_WEATHER } from "../../lib/weather/ideas";
+import type { GuideDay } from "../../lib/guide";
+import type { IconName } from "../../lib/icons";
+
+interface Props {
+  days: GuideDay[];
+  /** Only days that have listings (an edition's weekend), or every upcoming day. */
+  listedOnly?: boolean;
+  max?: number;
+  id: string;
+  heading?: "h2" | "h3";
+}
+const { days, listedOnly = false, max = 4, id, heading = "h2" } = Astro.props;
+const H = heading;
+const listings = days.map((d) => ({
+  date: d.date,
+  items: d.items.map((a) => ({ t: a.data.title, u: a.data.source.url, o: a.data.tags.includes("outdoors"), c: a.data.category })),
+}));
+---
+
+<section class="wx" id={id} data-wx data-listed-only={listedOnly ? "true" : undefined} data-max={max} aria-labelledby={`${id}-title`}>
+  <div class="wx-head">
+    <H id={`${id}-title`} class="wx-title">plans for the weather</H>
+    <p class="wx-sub" data-wx-sub>Ideas for whatever San Francisco does this week.</p>
+  </div>
+
+  <ul class="wx-days" data-wx-fallback>
+    {
+      WHATEVER_THE_WEATHER.map(({ when, mood, idea }) => (
+        <li class="wx-day wx-day--static" data-mood={mood}>
+          <p class="wx-when">{when}</p>
+          <div class="wx-idea">
+            <span class="orb" style="--orb:2.25rem" aria-hidden="true">
+              {/* The fallback ideas' icons are all in the build-time registry. */}
+              <Icon name={idea.icon as IconName} />
+            </span>
+            <div>
+              <p class="wx-idea-t">{idea.title}</p>
+              <p class="wx-idea-l">{idea.line}</p>
+            </div>
+          </div>
+        </li>
+      ))
+    }
+  </ul>
+  <ul class="wx-days" data-wx-live hidden></ul>
+  <p class="wx-credit" data-wx-credit hidden></p>
+  <script type="application/json" data-wx-listings set:html={JSON.stringify(listings)} />
+</section>
+
+<style>
+  .wx {
+    display: grid;
+    gap: 1.25rem;
+  }
+  .wx-head {
+    display: grid;
+    gap: 0.35rem;
+  }
+  .wx-title {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: clamp(1.5rem, 3vw, 2.25rem);
+    letter-spacing: -0.05em;
+    color: var(--ink);
+  }
+  .wx-sub {
+    color: var(--ink-muted);
+    line-height: 1.5;
+  }
+  .wx-days {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  }
+  .wx-days[hidden] {
+    display: none;
+  }
+  /* Phones: the days swipe sideways rather than stacking five tall cards.
+     The wrap's gutter is borrowed so cards run edge to edge while scrolling. */
+  @media (max-width: 639px) {
+    .wx {
+      min-width: 0;
+    }
+    .wx-days:not([hidden]) {
+      display: flex;
+      min-width: 0;
+      /* Contains absolutely positioned descendants (.sr-only), which would
+         otherwise escape the scroller and widen the page. */
+      position: relative;
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scroll-snap-type: x mandatory;
+      scroll-padding-inline: var(--gutter, 1.25rem);
+      margin-inline: calc(var(--gutter, 1.25rem) * -1);
+      padding: 0.25rem var(--gutter, 1.25rem) 0.5rem;
+      scrollbar-width: none;
+    }
+    .wx-days::-webkit-scrollbar {
+      display: none;
+    }
+    .wx-days > :global(.wx-day) {
+      flex: 0 0 min(80%, 19rem);
+      scroll-snap-align: start;
+    }
+  }
+  :global(.wx-day) {
+    --m: var(--cat-professional);
+    --m-soft: var(--cat-professional-soft);
+    --m-ink: var(--cat-professional-ink);
+    display: grid;
+    align-content: start;
+    gap: 0.6rem;
+    padding: 1.1rem 1.15rem 1.2rem;
+    border-radius: 1.25rem;
+    background: linear-gradient(180deg, var(--m-soft), var(--paper-elevated) 70%);
+    border: 0.7px solid color-mix(in oklab, var(--edge) 80%, transparent);
+  }
+  :global(.wx-day--static) {
+    background: var(--paper-elevated);
+  }
+  :global(.wx-day[data-mood="wet"]) {
+    --m: var(--cat-sports);
+    --m-soft: var(--cat-sports-soft);
+    --m-ink: var(--cat-sports-ink);
+  }
+  :global(.wx-day[data-mood="cold"]) {
+    --m: var(--cat-nightlife);
+    --m-soft: var(--cat-nightlife-soft);
+    --m-ink: var(--cat-nightlife-ink);
+  }
+  :global(.wx-day[data-mood="sunny"]) {
+    --m: var(--cat-arts);
+    --m-soft: var(--cat-arts-soft);
+    --m-ink: var(--cat-arts-ink);
+  }
+  :global(.wx-day[data-mood="warm"]) {
+    --m: var(--cat-food);
+    --m-soft: var(--cat-food-soft);
+    --m-ink: var(--cat-food-ink);
+  }
+  :global(.wx-day[data-mood="hot"]) {
+    --m: var(--cat-media);
+    --m-soft: var(--cat-media-soft);
+    --m-ink: var(--cat-media-ink);
+  }
+  :global(.wx-day[data-mood="windy"]) {
+    --m: var(--cat-outdoors);
+    --m-soft: var(--cat-outdoors-soft);
+    --m-ink: var(--cat-outdoors-ink);
+  }
+  :global(.wx-top) {
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+  :global(.wx-date) {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--ink-muted);
+  }
+  :global(.wx-dname) {
+    display: block;
+    font-weight: 600;
+    font-size: 1.25rem;
+    letter-spacing: -0.04em;
+    color: var(--ink);
+  }
+  :global(.wx-icon) {
+    color: var(--m-ink);
+  }
+  :global(.wx-icon svg) {
+    width: 2rem;
+    height: 2rem;
+  }
+  :global(.wx-temp) {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 2rem;
+    line-height: 1;
+    letter-spacing: -0.05em;
+    color: var(--ink);
+  }
+  :global(.wx-temp span) {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--ink-muted);
+    margin-left: 0.3rem;
+  }
+  :global(.wx-sky) {
+    font-size: 0.875rem;
+    line-height: 1.45;
+    color: var(--ink-muted);
+  }
+  .wx-when {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+  }
+  :global(.wx-idea) {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 0.75rem;
+    align-items: start;
+    padding-top: 0.7rem;
+    border-top: 0.7px solid color-mix(in oklab, var(--edge) 80%, transparent);
+  }
+  :global(.wx-day--static .wx-idea) {
+    border-top: 0;
+    padding-top: 0;
+  }
+  :global(.wx-idea .orb) {
+    --c: var(--m);
+  }
+  :global(.wx-idea-t) {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 1rem;
+    line-height: 1.25;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+  }
+  :global(.wx-idea-l) {
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--ink-muted);
+  }
+  :global(.wx-pair) {
+    font-size: 0.8125rem;
+    line-height: 1.45;
+    color: var(--ink-muted);
+  }
+  :global(.wx-pair a) {
+    color: var(--ink);
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-color: color-mix(in oklab, var(--ink) 30%, transparent);
+    text-underline-offset: 0.2em;
+  }
+  .wx-credit {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--ink-muted);
+  }
+  .wx-credit[hidden] {
+    display: none;
+  }
+</style>
+
+<script>
+  import { moodOf, ideasFor, sunsetSF, OUTDOOR_MOODS, type IdeaIcon, type Mood } from "../../lib/weather/ideas";
+  import type { ForecastDay, ForecastResponse } from "../../lib/weather/forecast";
+  import sun from "lucide-static/icons/sun.svg?raw";
+  import cloudSun from "lucide-static/icons/cloud-sun.svg?raw";
+  import cloudFog from "lucide-static/icons/cloud-fog.svg?raw";
+  import cloud from "lucide-static/icons/cloud.svg?raw";
+  import cloudRain from "lucide-static/icons/cloud-rain.svg?raw";
+  import cloudLightning from "lucide-static/icons/cloud-lightning.svg?raw";
+  import wind from "lucide-static/icons/wind.svg?raw";
+  import thermometerSun from "lucide-static/icons/thermometer-sun.svg?raw";
+  import soup from "lucide-static/icons/soup.svg?raw";
+  import dices from "lucide-static/icons/dices.svg?raw";
+  import landmark from "lucide-static/icons/landmark.svg?raw";
+  import popcorn from "lucide-static/icons/popcorn.svg?raw";
+  import cookingPot from "lucide-static/icons/cooking-pot.svg?raw";
+  import coffee from "lucide-static/icons/coffee.svg?raw";
+  import bookOpen from "lucide-static/icons/book-open.svg?raw";
+  import shoppingBag from "lucide-static/icons/shopping-bag.svg?raw";
+  import utensils from "lucide-static/icons/utensils.svg?raw";
+  import bike from "lucide-static/icons/bike.svg?raw";
+  import sunset from "lucide-static/icons/sunset.svg?raw";
+  import iceCream from "lucide-static/icons/ice-cream-cone.svg?raw";
+  import waves from "lucide-static/icons/waves.svg?raw";
+  import mountain from "lucide-static/icons/mountain.svg?raw";
+
+  const IDEA_ICONS: Record<IdeaIcon, string> = {
+    soup,
+    dices,
+    landmark,
+    popcorn,
+    "cooking-pot": cookingPot,
+    coffee,
+    "cloud-fog": cloudFog,
+    "book-open": bookOpen,
+    "shopping-bag": shoppingBag,
+    sun,
+    utensils,
+    bike,
+    sunset,
+    "ice-cream-cone": iceCream,
+    waves,
+    wind,
+    mountain,
+  };
+
+  function skyIcon(d: ForecastDay, mood: Mood): string {
+    const s = d.sky.toLowerCase();
+    if (/thunder/.test(s)) return cloudLightning;
+    if (mood === "wet") return cloudRain;
+    if (mood === "hot") return thermometerSun;
+    if (mood === "windy") return wind;
+    if (/fog/.test(s)) return cloudFog;
+    if (/partly|mostly cloudy/.test(s)) return cloudSun;
+    if (/cloud|overcast/.test(s)) return cloud;
+    return sun;
+  }
+
+  const DAY = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
+  const MONTH = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const dayName = (iso: string) => DAY[new Date(`${iso}T12:00:00Z`).getUTCDay()];
+  const shortDate = (iso: string) => `${MONTH[Number(iso.slice(5, 7)) - 1]} ${Number(iso.slice(8, 10))}`;
+
+  function el<K extends keyof HTMLElementTagNameMap>(tag: K, cls: string, text?: string): HTMLElementTagNameMap[K] {
+    const n = document.createElement(tag);
+    n.className = cls;
+    if (text) n.textContent = text;
+    return n;
+  }
+  function svg(raw: string, cls: string): HTMLElement {
+    const n = el("span", cls);
+    n.setAttribute("aria-hidden", "true");
+    n.innerHTML = raw; // trusted: bundled Lucide icons
+    return n;
+  }
+
+  interface Listing {
+    t: string;
+    u: string;
+    o: boolean;
+    c: string;
+  }
+  // Untagged markets, runs, and trails may still be outside; don't send
+  // people to them when it rains.
+  const MAYBE_OUTSIDE = ["outdoors", "sports", "fashion"];
+
+  function todaySF(): string {
+    const pinned = new URLSearchParams(location.search).get("today");
+    if (pinned && /^\d{4}-\d{2}-\d{2}$/.test(pinned)) return pinned;
+    return new Intl.DateTimeFormat("en-CA", { timeZone: "America/Los_Angeles" }).format(new Date());
+  }
+
+  async function initWeather(root: HTMLElement) {
+    if (root.dataset.bound) return;
+    root.dataset.bound = "true";
+    const listings: { date: string; items: Listing[] }[] = JSON.parse(root.querySelector("[data-wx-listings]")?.textContent ?? "[]");
+    const byDate = new Map(listings.map((d) => [d.date, d.items]));
+    const listedOnly = root.dataset.listedOnly === "true";
+    const max = Number(root.dataset.max) || 4;
+    const today = todaySF();
+
+    let data: ForecastResponse;
+    try {
+      const res = await fetch("/api/weather", { headers: { Accept: "application/json" } });
+      if (!res.ok) return;
+      data = await res.json();
+      if (!data.ok || !Array.isArray(data.days)) return;
+    } catch {
+      return; // keep the weather-proof ideas
+    }
+
+    const days = data.days
+      .filter((d) => d.date >= today && (d.high !== null || d.low !== null))
+      .filter((d) => !listedOnly || (byDate.get(d.date)?.length ?? 0) > 0)
+      .slice(0, max);
+    if (!days.length) return;
+
+    const moods = days.map((d) => moodOf(d));
+    const ideas = ideasFor(days.map((d, i) => ({ date: d.date, mood: moods[i] })));
+    const live = root.querySelector<HTMLElement>("[data-wx-live]")!;
+    live.replaceChildren();
+
+    days.forEach((d, i) => {
+      const mood = moods[i];
+      const idea = ideas[i];
+      const li = el("li", "wx-day");
+      li.dataset.mood = mood;
+      li.dataset.date = d.date;
+
+      const top = el("div", "wx-top");
+      const date = el("p", "wx-date");
+      date.append(el("span", "wx-dname", d.date === today ? "today" : dayName(d.date)), shortDate(d.date));
+      top.append(date, svg(skyIcon(d, mood), "wx-icon"));
+
+      const temp = el("p", "wx-temp", d.high !== null ? `${d.high}°` : `${d.low}°`);
+      if (d.high !== null && d.low !== null) temp.append(el("span", "", `/ ${d.low}°`));
+      else if (d.high === null) temp.append(el("span", "", "tonight"));
+
+      const bits = [d.sky, d.rain >= 20 ? `${d.rain}% chance of rain` : "", `sunset ${sunsetSF(d.date)}`].filter(Boolean);
+      const sky = el("p", "wx-sky", bits.join(" · "));
+
+      const ideaBox = el("div", "wx-idea");
+      const orb = svg(IDEA_ICONS[idea.icon], "orb");
+      orb.style.setProperty("--orb", "2.25rem");
+      const copy = el("div", "");
+      copy.append(el("p", "wx-idea-t", idea.title), el("p", "wx-idea-l", idea.line));
+      ideaBox.append(orb, copy);
+      li.append(top, temp, sky, ideaBox);
+
+      // A listing that day that suits the weather: outside on nice days,
+      // inside when it's wet, cold, or windy.
+      const outside = OUTDOOR_MOODS.includes(mood);
+      const match = (byDate.get(d.date) ?? []).find((l) => (outside ? l.o : !l.o && !MAYBE_OUTSIDE.includes(l.c)));
+      if (match) {
+        const pair = el("p", "wx-pair", outside ? "Or get outside with the guide: " : "Or stay in with the guide: ");
+        const a = el("a", "", match.t);
+        a.href = match.u;
+        a.target = "_blank";
+        a.rel = "noopener";
+        const sr = el("span", "sr-only", " (opens the organizer's page)");
+        a.append(sr);
+        pair.append(a);
+        li.append(pair);
+      }
+      live.append(li);
+    });
+
+    root.querySelector<HTMLElement>("[data-wx-fallback]")!.hidden = true;
+    live.hidden = false;
+    const sub = root.querySelector<HTMLElement>("[data-wx-sub]");
+    if (sub) sub.textContent = listedOnly ? "The forecast for this edition's days, and a plan to match each one." : "The next few days in San Francisco, and a plan to match each one.";
+    const credit = root.querySelector<HTMLElement>("[data-wx-credit]")!;
+    const updated = data.updated ? new Date(data.updated) : null;
+    credit.textContent = `Forecast: National Weather Service${updated && !Number.isNaN(+updated) ? `, updated ${updated.toLocaleTimeString("en-US", { timeZone: "America/Los_Angeles", hour: "numeric", minute: "2-digit" }).toLowerCase().replace(" ", "")}` : ""}. Downtown SF; the coast runs cooler.`;
+    credit.hidden = false;
+  }
+
+  function init() {
+    document.querySelectorAll<HTMLElement>("[data-wx]").forEach((r) => void initWeather(r));
+  }
+  init();
+  document.addEventListener("astro:page-load", init);
+</script>

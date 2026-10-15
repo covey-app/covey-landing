@@ -1,10 +1,32 @@
-import { defineConfig } from "astro/config";
+import { defineConfig, envField } from "astro/config";
 import tailwindcss from "@tailwindcss/vite";
 import sentry from "@sentry/astro";
+import vercel from "@astrojs/vercel";
 
 // https://astro.build/config
 export default defineConfig({
   site: "https://www.coveyapp.co",
+  // Pages stay static (output defaults to "static"). The adapter exists for one
+  // route, /api/waitlist (`prerender = false`), which becomes a Vercel Function.
+  adapter: vercel(),
+  // Astro's checkOrigin refuses every cross-site *and origin-less* form POST.
+  // Mail providers send RFC 8058 one-click unsubscribes origin-less, so it
+  // would break /newsletter/unsubscribe. The signup endpoints enforce origin
+  // themselves (isCrossSiteForm in src/lib/waitlist/handler.ts); the confirm
+  // and unsubscribe pages act only on an unguessable token.
+  security: { checkOrigin: false },
+  // Server-only secrets, read at request time — never inlined into the bundle
+  // and never exposed to the browser. Optional so a fresh clone still builds;
+  // the endpoint answers 503 "not_configured" until they're set.
+  env: {
+    schema: {
+      SUPABASE_URL: envField.string({ context: "server", access: "secret", optional: true }),
+      SUPABASE_SERVICE_ROLE_KEY: envField.string({ context: "server", access: "secret", optional: true }),
+      RESEND_API_KEY: envField.string({ context: "server", access: "secret", optional: true }),
+      WAITLIST_EMAIL_FROM: envField.string({ context: "server", access: "secret", optional: true }),
+      NEWSLETTER_EMAIL_FROM: envField.string({ context: "server", access: "secret", optional: true }),
+    },
+  },
   // Astro's default HTML compression collapses the whitespace-only text node
   // between a word and an inline element, so prose like
   // `email <a>support@coveyapp.co</a> if ...` shipped as

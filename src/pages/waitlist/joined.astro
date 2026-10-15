@@ -1,0 +1,40 @@
+---
+// Confirmation for the no-JS path: /api/waitlist redirects a successful native
+// form POST here. With JavaScript, the form confirms in place instead.
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import QuinnFace from "../../components/QuinnFace.astro";
+---
+
+<BaseLayout title="You're on the list" description="You're on the Covey waitlist." noIndex={true} page="waitlist">
+  <div class="joined wrap">
+    <div class="joined-quinn">
+      <QuinnFace palette="pink" moods={["laugh"]} initial="laugh" sizes="200px" eager />
+    </div>
+    <p class="kicker">Waitlist</p>
+    <h1 class="t-display joined-title">you're on the list!</h1>
+    <p class="joined-text">We'll let you know when Covey is ready, and we'll only email you about Covey's launch.</p>
+    <a href="/" class="cta">Back home</a>
+  </div>
+</BaseLayout>
+
+<style>
+  .joined {
+    display: grid;
+    justify-items: center;
+    text-align: center;
+    gap: 1rem;
+    padding-block: clamp(3rem, 8vw, 6rem);
+  }
+  .joined-quinn {
+    width: 11rem;
+  }
+  .joined-title {
+    color: var(--ink);
+  }
+  .joined-text {
+    max-width: 30rem;
+    color: var(--ink-muted);
+    line-height: 1.6;
+    margin-bottom: 0.5rem;
+  }
+</style>

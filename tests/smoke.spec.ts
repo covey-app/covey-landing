@@ -31,7 +31,7 @@ test("theme toggle flips the dark class and aria-pressed", async ({ page }) => {
 });
 
 test("FAQ exposes native expanded state", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/about");
   const details = page.locator("details.faq-item").first();
   await expect(details).not.toHaveAttribute("open", /.*/);
   await details.locator("summary").click();

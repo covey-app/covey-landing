@@ -1,0 +1,69 @@
+---
+/*
+ * /newsletter/confirm/?token=… — the double opt-in step, server-rendered.
+ * A GET only shows a "Confirm" button: link-scanning mail filters prefetch
+ * GETs, and confirming on one would subscribe addresses nobody confirmed.
+ * The button POSTs the token back here, and that confirms.
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { confirmNewsletter } from "../../lib/newsletter/handler";
+import { newsletterEnv, serverDeps } from "../../lib/newsletter/server";
+
+export const prerender = false;
+
+let token = Astro.url.searchParams.get("token") ?? "";
+let state: "ask" | "confirmed" | "already" | "invalid" | "unavailable" = token ? "ask" : "invalid";
+
+if (Astro.request.method === "POST") {
+  const form = await Astro.request.formData().catch(() => null);
+  token = String(form?.get("token") ?? token);
+  const { result } = await confirmNewsletter(token, newsletterEnv(), serverDeps);
+  state = result === "not_configured" ? "unavailable" : result;
+}
+
+const copy = {
+  ask: { t: "one tap to confirm.", d: "Confirm your subscription to Covey Weekly — things to do in San Francisco, once a week. You can unsubscribe from any edition." },
+  confirmed: { t: "you're subscribed.", d: "The next edition of Covey Weekly is yours. Every email has an unsubscribe link at the bottom." },
+  already: { t: "already confirmed.", d: "This subscription is active. Nothing else to do." },
+  invalid: { t: "that link didn't work.", d: "It may have expired (links last seven days) or already been replaced by a newer one. Subscribe again and we'll send a fresh link." },
+  unavailable: { t: "we couldn't confirm that just now.", d: "Something went wrong on our side. Please try the link again in a few minutes." },
+}[state];
+Astro.response.headers.set("cache-control", "no-store");
+Astro.response.headers.set("referrer-policy", "no-referrer");
+---
+
+<BaseLayout title="Confirm your subscription" description="Confirm your Covey Weekly subscription." noIndex={true} page="newsletter" analytics={false}>
+  <section class="nl-page wrap" data-confirm-state={state}>
+    <p class="kicker">Covey Weekly</p>
+    <h1 class="t-display">{copy.t}</h1>
+    <p>{copy.d}</p>
+    {
+      state === "ask" && (
+        <form method="post" action="/newsletter/confirm/">
+          <input type="hidden" name="token" value={token} />
+          <button type="submit" class="cta">Confirm subscription</button>
+        </form>
+      )
+    }
+    {(state === "invalid") && <a href="/newsletter" class="arrow-link">Subscribe again</a>}
+    {(state === "confirmed" || state === "already") && <a href="/newsletter" class="arrow-link">Read the latest edition</a>}
+  </section>
+</BaseLayout>
+
+<style>
+  .nl-page {
+    display: grid;
+    gap: 1.1rem;
+    justify-items: start;
+    max-width: 44rem;
+    padding-block: clamp(3rem, 9vw, 7rem);
+  }
+  .nl-page h1 {
+    color: var(--ink);
+  }
+  .nl-page p:not(.kicker) {
+    font-size: var(--fs-lede);
+    line-height: 1.6;
+    color: var(--ink-muted);
+  }
+</style>

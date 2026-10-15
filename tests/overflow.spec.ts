@@ -1,11 +1,15 @@
 import { test, expect } from "@playwright/test";
+import { mockWeather } from "./fixtures/weather";
 
 const ROUTES = [
   "/",
   "/about",
   "/contact",
   "/testimonials",
-  "/events",
+  "/activities?today=2026-10-14",
+  "/newsletter",
+  "/newsletter/2026-10-12?today=2026-10-14",
+  "/waitlist",
   "/terms",
   "/privacy",
   "/safety",
@@ -21,6 +25,7 @@ test.describe("no horizontal overflow", () => {
     for (const width of WIDTHS) {
       test(`${route} @ ${width}px`, async ({ page }) => {
         await page.setViewportSize({ width, height: 900 });
+        await mockWeather(page);
         await page.goto(route, { waitUntil: "networkidle" });
         const { scrollWidth, clientWidth } = await page.evaluate(() => ({
           scrollWidth: document.documentElement.scrollWidth,

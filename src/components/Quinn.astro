@@ -1,0 +1,123 @@
+---
+/*
+ * Quinn — Covey's full-body quail (COVEYcharacter-dev/QUINNversions.ai,
+ * artboard 8), rendered from the vector source at 300dpi. Five views: the
+ * turnaround's front ("front-hello" has the open beak), three-quarter sides,
+ * and back; plus line art for the same five.
+ *
+ * Every requested view is stacked on one baseline, so switching data-view is
+ * an instant, layout-free swap. Only the first view loads eagerly when
+ * `eager`. For a Quinn that actually turns, see src/lib/quinn3d/.
+ *
+ * Decorative by default; pass `alt` where Quinn carries meaning.
+ *
+ * As the poster for the 3D model (src/lib/quinn3d/), it's the host's first
+ * child: when the host gets data-quinn3d="ready" the canvas fades in over it
+ * and the poster fades out (and stays as the fallback otherwise).
+ */
+export type QuinnView = "front" | "front-hello" | "side-left" | "side-right" | "back";
+
+interface Props {
+  views?: QuinnView[];
+  line?: boolean;
+  /** Rendered height hint for srcset selection, e.g. "(min-width: 1024px) 560px, 60vw". */
+  sizes?: string;
+  alt?: string;
+  eager?: boolean;
+  class?: string;
+  /** Root attributes for behaviours (data-quinn-look, etc.). */
+  [key: `data-${string}`]: string | boolean | undefined;
+}
+
+const { views = ["front"], line = false, sizes = "320px", alt = "", eager = false, class: className, ...rest } = Astro.props;
+
+// Width ÷ height of each crop (the PNGs rendered from the .ai file).
+const RATIO: Record<QuinnView, number> = {
+  front: 539 / 1226,
+  "front-hello": 534 / 1032,
+  "side-left": 663 / 1223,
+  "side-right": 663 / 1223,
+  back: 539 / 1226,
+};
+const box = Math.max(...views.map((v) => RATIO[v]));
+
+const srcFor = (v: QuinnView) => {
+  if (line) return { src: `/brand/quinn/line-${v}-900.webp`, srcset: undefined };
+  const w = (h: number) => Math.round(RATIO[v] * h);
+  return {
+    src: `/brand/quinn/body-${v}-560.webp`,
+    srcset: `/brand/quinn/body-${v}-560.webp ${w(560)}w, /brand/quinn/body-${v}-1100.webp ${w(1100)}w`,
+  };
+};
+---
+
+<div
+  class:list={["quinn", className]}
+  data-quinn
+  data-view={views[0]}
+  style={`--box:${box.toFixed(4)}`}
+  role={alt ? "img" : undefined}
+  aria-label={alt || undefined}
+  aria-hidden={alt ? undefined : "true"}
+  {...rest}
+>
+  {
+    views.map((v, i) => {
+      const { src, srcset } = srcFor(v);
+      const h = line ? 900 : 1100;
+      return (
+        <img
+          class="quinn-view"
+          data-v={v}
+          src={src}
+          srcset={srcset}
+          sizes={srcset ? sizes : undefined}
+          width={Math.round(RATIO[v] * h)}
+          height={h}
+          alt=""
+          loading={eager && i === 0 ? "eager" : "lazy"}
+          fetchpriority={eager && i === 0 ? "high" : undefined}
+          decoding="async"
+          draggable="false"
+        />
+      );
+    })
+  }
+</div>
+
+<style>
+  .quinn {
+    position: relative;
+    aspect-ratio: var(--box);
+    user-select: none;
+    transition: opacity 0.35s var(--ease-out);
+  }
+  :global(.quinn-3d) {
+    opacity: 0;
+    transition: opacity 0.35s var(--ease-out);
+  }
+  :global([data-quinn3d="ready"] > .quinn-3d) {
+    opacity: 1;
+  }
+  :global([data-quinn3d="ready"]) > .quinn {
+    opacity: 0;
+    cursor: inherit;
+  }
+  .quinn-view {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    height: 100%;
+    width: auto;
+    max-width: none;
+    translate: -50% 0;
+    opacity: 0;
+  }
+  [data-view="front"] > [data-v="front"],
+  [data-view="front-hello"] > [data-v="front-hello"],
+  [data-view="side-left"] > [data-v="side-left"],
+  [data-view="side-right"] > [data-v="side-right"],
+  [data-view="back"] > [data-v="back"] {
+    opacity: 1;
+  }
+</style>

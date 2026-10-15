@@ -1,0 +1,208 @@
+---
+/*
+ * PickCard — one of Covey's Top Picks: big number, the category quail doing
+ * its thing, the title, why we picked it, and the facts. The title links to
+ * the organizer's page (the source of truth for times and prices).
+ */
+import Icon from "../Icon.astro";
+import { CATEGORIES, birdSrc } from "../../lib/categories";
+import { longDate, priceLabel, timeLabel, type Activity } from "../../lib/guide";
+
+interface Props {
+  activity: Activity;
+  why: string;
+  n: number;
+  size?: "lg" | "md";
+  /** Editions: the address and "know before you go" tips too. */
+  detailed?: boolean;
+}
+const { activity, why, n, size = "md", detailed = false } = Astro.props;
+const a = activity.data;
+const art = birdSrc(a.category);
+const when = a.kind === "event" && a.date ? longDate(a.date) : a.days?.map((d) => d[0].toUpperCase() + d.slice(1)).join(" & ");
+const where = detailed && a.address ? `${a.venue}, ${a.address} · ${a.neighborhood}` : `${a.venue}, ${a.neighborhood}`;
+const facts = [when, timeLabel(a), where, priceLabel(a)].filter(Boolean);
+---
+
+<article class:list={["pick", `pick--${size}`]} style={`--c:var(--cat-${a.category});--c-soft:var(--cat-${a.category}-soft);--c-ink:var(--cat-${a.category}-ink)`} data-category={a.category}>
+  <div class="pick-art" aria-hidden="true">
+    <span class="pick-n">{String(n).padStart(2, "0")}</span>
+    <img src={art.src} srcset={art.srcset} alt="" width="240" height="300" loading="lazy" decoding="async" />
+  </div>
+  <div class="pick-body">
+    <p class="pick-cat">{CATEGORIES[a.category].label}{a.activity && ` · ${a.activity}`}</p>
+    <h3 class="pick-title">
+      <a href={a.source.url} target="_blank" rel="noopener">{a.title}<span class="sr-only"> (opens the organizer's page)</span></a>
+    </h3>
+    <p class="pick-why">{why}</p>
+    <ul class="pick-facts">{facts.map((f) => <li>{f}</li>)}</ul>
+    {
+      detailed && a.tips.length > 0 && (
+        <ul class="pick-tips" aria-label="Know before you go">
+          {a.tips.map((t) => (
+            <li>
+              <Icon name="info" size={14} />
+              {t}
+            </li>
+          ))}
+        </ul>
+      )
+    }
+    <p class="pick-source">Details from {a.source.name} ↗</p>
+  </div>
+</article>
+
+<style>
+  /* Fills its grid cell, so cards in a row share one height; the source line
+     sits on the bottom edge whatever the copy length. */
+  .pick {
+    position: relative;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    height: 100%;
+    border-radius: 1.5rem;
+    background: var(--paper-elevated);
+    border: 0.7px solid color-mix(in oklab, var(--edge) 80%, transparent);
+    overflow: hidden;
+    transition:
+      transform 0.4s var(--ease-spring),
+      box-shadow 0.3s ease;
+  }
+  .pick:has(a:hover),
+  .pick:focus-within {
+    transform: translateY(-4px) rotate(-0.4deg);
+    box-shadow: var(--shadow-pinned);
+  }
+  .pick-art {
+    position: relative;
+    display: grid;
+    place-items: center;
+    aspect-ratio: 16 / 10;
+    background: var(--c-soft);
+    overflow: hidden;
+  }
+  .pick-art img {
+    width: auto;
+    height: 82%;
+    transition: transform 0.5s var(--ease-spring);
+  }
+  .pick:has(a:hover) .pick-art img {
+    transform: scale(1.06) rotate(-3deg);
+  }
+  .pick-n {
+    position: absolute;
+    top: 0.75rem;
+    left: 1rem;
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: clamp(2.5rem, 5vw, 3.75rem);
+    line-height: 1;
+    letter-spacing: -0.06em;
+    color: var(--c-ink);
+  }
+  .pick-body {
+    display: flex;
+    flex-direction: column;
+    padding: 1.25rem 1.35rem 1.4rem;
+  }
+  .pick-cat {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-bottom: 0.5rem;
+  }
+  .pick-title {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 1.35rem;
+    line-height: 1.1;
+    letter-spacing: -0.035em;
+    color: var(--ink);
+    margin-bottom: 0.7rem;
+  }
+  .pick-title a::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+  }
+  .pick-title a:focus-visible {
+    outline: none;
+  }
+  .pick:focus-within {
+    outline: 2px solid var(--accent-ink);
+    outline-offset: 3px;
+  }
+  .pick-why {
+    font-size: 1rem;
+    line-height: 1.55;
+    color: var(--ink);
+    margin-bottom: 1rem;
+  }
+  .pick-facts {
+    list-style: none;
+    margin: 0 0 0.8rem;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 1rem;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--ink-muted);
+  }
+  .pick-tips {
+    list-style: none;
+    margin: 0 0 0.9rem;
+    padding: 0;
+    display: grid;
+    gap: 0.3rem;
+    font-size: 0.875rem;
+    line-height: 1.45;
+    color: var(--ink);
+  }
+  .pick-tips li {
+    display: grid;
+    grid-template-columns: 14px minmax(0, 1fr);
+    gap: 0.5rem;
+  }
+  .pick-tips :global(svg) {
+    margin-top: 0.2rem;
+    color: var(--c-ink);
+  }
+  .pick-source {
+    margin-top: auto;
+    font-size: 0.8125rem;
+    color: var(--ink-muted);
+  }
+  @media (min-width: 900px) {
+    .pick--lg {
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1fr);
+      grid-template-rows: none;
+    }
+    .pick--lg .pick-art {
+      aspect-ratio: auto;
+      min-height: 100%;
+    }
+    .pick--lg .pick-body {
+      padding: 2rem;
+      justify-content: center;
+    }
+    .pick--lg .pick-source {
+      margin-top: 0;
+    }
+    .pick--lg .pick-title {
+      font-size: clamp(1.6rem, 2.4vw, 2.2rem);
+    }
+    .pick--lg .pick-why {
+      font-size: 1.125rem;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pick,
+    .pick-art img {
+      transition: none;
+      transform: none !important;
+    }
+  }
+</style>

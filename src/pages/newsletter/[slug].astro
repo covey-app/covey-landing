@@ -1,0 +1,471 @@
+---
+/*
+ * /newsletter/<YYYY-MM-DD> — one edition of Covey Weekly. The curated,
+ * read-it-with-coffee version of /activities: an editor's note, a weather
+ * plan, Top Picks with "know before you go" detail, ready-made plans that
+ * string listings into a day or a night, quick lists (free, after dark,
+ * outside), then the complete guide by day and part of day with every
+ * address, price, tip, and link. Built once per edition.
+ */
+import { render } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import NewsletterForm from "../../components/NewsletterForm.astro";
+import PickCard from "../../components/guide/PickCard.astro";
+import PlanCard from "../../components/guide/PlanCard.astro";
+import EditionGuide from "../../components/guide/EditionGuide.astro";
+import WeatherPlans from "../../components/guide/WeatherPlans.astro";
+import { publishedEditions, resolveEdition, publishedActivities, longDate, timeLabel, type Activity, type Edition } from "../../lib/guide";
+
+export async function getStaticPaths() {
+  const editions = await publishedEditions();
+  return editions.map((entry, i) => ({
+    params: { slug: entry.id },
+    props: { entry, issue: editions.length - i, newer: editions[i - 1]?.id ?? null, older: editions[i + 1]?.id ?? null },
+  }));
+}
+
+interface Props {
+  entry: Edition;
+  issue: number;
+  newer: string | null;
+  older: string | null;
+}
+const { entry, issue, newer, older } = Astro.props;
+const edition = await resolveEdition(entry, await publishedActivities());
+const { Content } = await render(entry);
+const hasNote = Boolean(entry.body?.trim());
+const d = entry.data;
+
+// Every listing once, with the first day it appears (for quick-list links).
+const firstDay = new Map<string, { a: Activity; date: string }>();
+for (const day of edition.days) for (const a of day.items) if (!firstDay.has(a.id)) firstDay.set(a.id, { a, date: day.date });
+const listings = [...firstDay.values()];
+const hoods = new Set(listings.map(({ a }) => a.data.neighborhood)).size;
+const isFree = (a: Activity) => a.data.priceMin === 0;
+
+const lists = [
+  { key: "free", title: "free", note: "No ticket needed (a few want an RSVP).", items: listings.filter(({ a }) => isFree(a)) },
+  { key: "outside", title: "outside", note: "For when the weather plan says go.", items: listings.filter(({ a }) => a.data.tags.includes("outdoors")) },
+  { key: "late", title: "after dark", note: "Starting at 7pm or later.", items: listings.filter(({ a }) => (a.data.time ?? "") >= "19:00") },
+].filter((l) => l.items.length >= 2);
+
+const glance = [
+  { n: edition.total, label: edition.total === 1 ? "thing to do" : "things to do" },
+  { n: listings.filter(({ a }) => isFree(a)).length, label: "free" },
+  { n: hoods, label: hoods === 1 ? "neighborhood" : "neighborhoods" },
+  { n: edition.plans.length, label: edition.plans.length === 1 ? "ready-made plan" : "ready-made plans" },
+].filter((g) => g.n > 0);
+
+const toc = [
+  hasNote && { href: "#note", label: "From the editors" },
+  { href: "#weather", label: "Plans for the weather" },
+  edition.picks.length > 0 && { href: "#picks", label: "Top picks" },
+  edition.plans.length > 0 && { href: "#plans", label: "Ready-made plans" },
+  lists.length > 0 && { href: "#lists", label: "Quick lists" },
+  { href: "#guide", label: "The complete guide" },
+].filter(Boolean) as { href: string; label: string }[];
+
+const dayShort = (iso: string) => longDate(iso).slice(0, 3);
+// One or two big lead picks, then the rest two to a row (an even count).
+const leads = edition.picks.length % 2 === 0 ? 2 : 1;
+---
+
+<BaseLayout title={`${d.title} · Covey Weekly`} description={d.dek} page="newsletter">
+  <article class="ed wrap">
+    <header class="ed-head">
+      <div class="ed-rule">
+        <a href="/newsletter" class="ed-mast">covey <span>weekly</span></a>
+        <span>No. {issue}</span>
+      </div>
+      <p class="kicker">{edition.span} · Published {longDate(d.publishedAt)}</p>
+      <h1 class="t-display ed-title">{d.title.toLowerCase()}</h1>
+      <p class="ed-dek">{d.dek}</p>
+      <ul class="ed-glance" aria-label="This edition at a glance">
+        {
+          glance.map((g) => (
+            <li>
+              <span class="ed-glance-n">{g.n}</span>
+              {g.label}
+            </li>
+          ))
+        }
+      </ul>
+      <nav class="ed-toc" aria-label="In this edition">
+        <p class="ed-toc-t">In this edition</p>
+        <ol>
+          {
+            toc.map((t, i) => (
+              <li>
+                <a href={t.href}>
+                  <span>{String(i + 1).padStart(2, "0")}</span>
+                  {t.label}
+                </a>
+              </li>
+            ))
+          }
+        </ol>
+      </nav>
+    </header>
+
+    {
+      hasNote && (
+        <section id="note" class="ed-section ed-note-wrap" aria-labelledby="note-title">
+          <h2 id="note-title" class="ed-h2">from the editors</h2>
+          <div class="ed-letter">
+            <Content />
+          </div>
+        </section>
+      )
+    }
+
+    <section id="weather" class="ed-section">
+      <WeatherPlans days={edition.days} listedOnly max={3} id="ed-weather" />
+    </section>
+
+    {
+      edition.picks.length > 0 && (
+        <section id="picks" aria-labelledby="picks-title" class="ed-section">
+          <h2 id="picks-title" class="ed-h2">top picks</h2>
+          <p class="ed-lede">What we'd actually go to, and why. The details are in each card; the organizer's page is the last word.</p>
+          <div class="ed-picks">
+            {edition.picks.slice(0, leads).map((p, i) => (
+              <PickCard activity={p.activity} why={p.why} n={i + 1} size="lg" detailed />
+            ))}
+          </div>
+          {edition.picks.length > leads && (
+            <div class="ed-picks ed-picks--grid">
+              {edition.picks.slice(leads).map((p, i) => (
+                <PickCard activity={p.activity} why={p.why} n={leads + i + 1} detailed />
+              ))}
+            </div>
+          )}
+        </section>
+      )
+    }
+
+    {
+      edition.plans.length > 0 && (
+        <section id="plans" aria-labelledby="plans-title" class="ed-section">
+          <h2 id="plans-title" class="ed-h2">ready-made plans</h2>
+          <p class="ed-lede">A few listings that fit together into one outing. Send one to the group chat and you're done planning.</p>
+          <div class="ed-plans">
+            {edition.plans.map((plan, i) => (
+              <PlanCard plan={plan} n={i + 1} />
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    {
+      lists.length > 0 && (
+        <section id="lists" aria-labelledby="lists-title" class="ed-section">
+          <h2 id="lists-title" class="ed-h2">quick lists</h2>
+          <div class="ed-lists">
+            {lists.map((l) => (
+              <div class="ed-list">
+                <h3 class="ed-list-t">
+                  {l.title} <span>{l.items.length}</span>
+                </h3>
+                <p class="ed-list-note">{l.note}</p>
+                <ul>
+                  {l.items.map(({ a, date }) => (
+                    <li>
+                      <span class="ed-list-when">
+                        {dayShort(date)} {timeLabel(a.data)?.split("–")[0] ?? ""}
+                      </span>
+                      <a href={`#ed-guide-${date}-${a.id}`}>{a.data.title}</a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    <section id="guide" aria-labelledby="guide-title" class="ed-section">
+      <h2 id="guide-title" class="ed-h2">the complete guide</h2>
+      <p class="ed-lede">
+        Everything we found and checked for {edition.span} — not every event in the city. Times and prices come from each organizer; check their
+        page before you go. Want it filterable? <a href="/activities">Browse it on Activities</a>.
+      </p>
+      <EditionGuide days={edition.days} pickIds={edition.picks.map((p) => p.activity.id)} id="ed-guide" />
+    </section>
+
+    <section class="ed-sub" aria-label="Subscribe">
+      <h2 class="t-title">get next week's in your inbox.</h2>
+      <NewsletterForm placement="edition" variant="slip" label="Subscribe — it's free" />
+    </section>
+
+    <nav class="ed-nav" aria-label="More editions">
+      {older ? <a href={`/newsletter/${older}`} class="arrow-link">← Previous edition</a> : <span />}
+      {newer ? <a href={`/newsletter/${newer}`} class="arrow-link">Next edition →</a> : <a href="/newsletter" class="arrow-link">All editions →</a>}
+    </nav>
+  </article>
+</BaseLayout>
+
+<style>
+  .ed {
+    padding-block: clamp(1.5rem, 4vw, 3rem) 2rem;
+  }
+  .ed-head {
+    display: grid;
+    gap: 1rem;
+    padding-bottom: clamp(2rem, 5vw, 3rem);
+    border-bottom: 3px solid var(--ink);
+  }
+  .ed-rule {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 0.7px solid var(--ink);
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--ink-muted);
+  }
+  .ed-mast {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 1.5rem;
+    letter-spacing: -0.06em;
+    color: var(--ink);
+  }
+  .ed-mast span {
+    color: var(--accent-ink);
+  }
+  .ed-title {
+    color: var(--ink);
+    max-width: 18ch;
+  }
+  .ed-dek {
+    font-size: var(--fs-lede);
+    line-height: 1.55;
+    color: var(--ink-muted);
+    max-width: 40rem;
+  }
+  .ed-glance {
+    list-style: none;
+    margin: 0.5rem 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.75rem;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--ink-muted);
+  }
+  .ed-glance li {
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+  }
+  .ed-glance-n {
+    font-weight: 600;
+    font-size: 1.75rem;
+    letter-spacing: -0.05em;
+    color: var(--ink);
+  }
+  .ed-toc {
+    margin-top: 0.75rem;
+    padding: 1rem 1.15rem;
+    border-radius: 1rem;
+    background: var(--paper-elevated);
+    border: 0.7px solid var(--edge);
+    max-width: 40rem;
+  }
+  .ed-toc-t {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-bottom: 0.4rem;
+  }
+  .ed-toc ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+    gap: 0 1.5rem;
+  }
+  .ed-toc a {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    min-height: 40px;
+    font-family: var(--font-mono);
+    font-size: 0.9375rem;
+    color: var(--ink);
+  }
+  .ed-toc a span {
+    font-size: 0.75rem;
+    color: var(--ink-muted);
+  }
+  .ed-toc a:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+  .ed-section {
+    padding-top: clamp(2.5rem, 6vw, 4rem);
+    scroll-margin-top: 4.5rem;
+  }
+  .ed-h2 {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: clamp(1.75rem, 3.5vw, 2.75rem);
+    letter-spacing: -0.05em;
+    color: var(--ink);
+    margin-bottom: 0.75rem;
+  }
+  .ed-lede {
+    max-width: 40rem;
+    color: var(--ink-muted);
+    line-height: 1.55;
+    margin-bottom: 1.5rem;
+  }
+  .ed-lede a {
+    color: var(--ink);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+  .ed-letter {
+    max-width: 40rem;
+    padding-left: 1.25rem;
+    border-left: 3px solid var(--accent-ink);
+    font-size: 1.125rem;
+    line-height: 1.65;
+    color: var(--ink);
+  }
+  .ed-letter :global(p + p) {
+    margin-top: 1rem;
+  }
+  /* The weather plan's own heading carries the h2 role here. */
+  #weather :global(.wx-title) {
+    font-size: clamp(1.75rem, 3.5vw, 2.75rem);
+  }
+  .ed-picks {
+    display: grid;
+    gap: 1rem;
+  }
+  .ed-picks--grid {
+    margin-top: 1rem;
+  }
+  @media (min-width: 768px) {
+    .ed-picks--grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  .ed-plans {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr));
+  }
+  .ed-lists {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+  }
+  .ed-list {
+    padding: 1.15rem 1.2rem 1.25rem;
+    border-radius: 1.25rem;
+    border: 0.7px solid var(--edge);
+    background: var(--paper-elevated);
+  }
+  .ed-list-t {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 1.35rem;
+    letter-spacing: -0.04em;
+    color: var(--ink);
+  }
+  .ed-list-t span {
+    font-size: 0.875rem;
+    color: var(--ink-muted);
+  }
+  .ed-list-note {
+    font-size: 0.8125rem;
+    color: var(--ink-muted);
+    margin: 0.2rem 0 0.75rem;
+  }
+  .ed-list ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .ed-list li {
+    display: grid;
+    grid-template-columns: 5.25rem minmax(0, 1fr);
+    gap: 0.5rem;
+    padding: 0.45rem 0;
+    border-top: 0.7px solid var(--edge);
+    font-size: 0.875rem;
+    line-height: 1.35;
+  }
+  .ed-list-when {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--ink-muted);
+    padding-top: 0.1rem;
+  }
+  .ed-list a {
+    color: var(--ink);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in oklab, var(--ink) 25%, transparent);
+    text-underline-offset: 0.2em;
+  }
+  @media (min-width: 1024px) {
+    .ed-head {
+      grid-template-columns: minmax(0, 1fr) 20rem;
+      column-gap: 3rem;
+    }
+    .ed-head > :not(.ed-toc) {
+      grid-column: 1;
+    }
+    .ed-rule {
+      grid-column: 1 / -1 !important;
+    }
+    .ed-toc {
+      grid-column: 2;
+      grid-row: 2 / span 4;
+      align-self: end;
+      margin-top: 0;
+    }
+    .ed-toc ol {
+      grid-template-columns: 1fr;
+    }
+    .ed-note-wrap {
+      display: grid;
+      grid-template-columns: 20rem minmax(0, 1fr);
+      gap: 3rem;
+      align-items: start;
+    }
+    .ed-note-wrap .ed-h2 {
+      line-height: 1.05;
+    }
+  }
+  .ed-sub {
+    display: grid;
+    gap: 1.25rem;
+    max-width: 40rem;
+    margin-top: clamp(3rem, 7vw, 5rem);
+  }
+  .ed-sub .t-title {
+    color: var(--ink);
+  }
+  .ed-nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 3rem;
+    padding-top: 1.25rem;
+    border-top: 0.7px solid var(--edge);
+  }
+</style>

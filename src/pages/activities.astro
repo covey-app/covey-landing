@@ -1,0 +1,244 @@
+---
+/*
+ * /activities — the directory of what Covey recommends: the next two weeks
+ * of verified listings, by day, filterable by category, neighborhood, and a
+ * few quick toggles. The loud room: a full-bleed sky-blue band with
+ * the whole flock parading across it (drifting with scroll, --p).
+ *
+ * Static and rebuilt weekly with each edition; days before today (in San
+ * Francisco, in the visitor's browser) hide themselves. Above the list, the
+ * weather plan suggests something for each of the next few days.
+ *
+ * This is the utility view: compact rows and filters. The newsletter edition
+ * is the curated one (picks, plans, tips, full detail).
+ */
+import BaseLayout from "../layouts/BaseLayout.astro";
+import GuideDays from "../components/guide/GuideDays.astro";
+import NewsletterForm from "../components/NewsletterForm.astro";
+import WeatherPlans from "../components/guide/WeatherPlans.astro";
+import { CATEGORY_KEYS, CATEGORIES, birdSrc } from "../lib/categories";
+import { groupByDay, latestEdition, mondayOf, publishedActivities, todaySF } from "../lib/guide";
+import { CITY_SHORT } from "../config";
+
+const all = await publishedActivities();
+const start = mondayOf(todaySF());
+const days = groupByDay(all, start, 14);
+const total = new Set(days.flatMap((d) => d.items.map((i) => i.id))).size;
+const latest = await latestEdition();
+const pickIds = latest?.picks.map((p) => p.activity.id) ?? [];
+---
+
+<BaseLayout
+  title="Things to do in San Francisco this week"
+  description={`Small, social things to do in ${CITY_SHORT} this week and next — after work and on weekends — picked and checked by Covey.`}
+  page="activities"
+>
+  <section class="band" data-progress aria-labelledby="act-title">
+    <div class="wrap band-inner">
+      <p class="kicker band-kicker">Activities · {CITY_SHORT}</p>
+      <h1 id="act-title" class="t-mega band-title">what's on.</h1>
+      <p class="band-lede">
+        Things worth doing with a few people — or on your own, to meet a few.
+        Picked and checked by Covey, linked to every organizer.
+      </p>
+    </div>
+    <div class="parade" aria-hidden="true">
+      <div class="parade-track">
+        {
+          [...CATEGORY_KEYS, ...CATEGORY_KEYS].map((c, i) => {
+            const art = birdSrc(c);
+            return (
+              <figure class="marcher" style={`--i:${i}`}>
+                <img src={art.src} srcset={art.srcset} alt="" width="240" height="300" loading={i < 9 ? "eager" : "lazy"} decoding="async" />
+                <figcaption>{CATEGORIES[c].doing}</figcaption>
+              </figure>
+            );
+          })
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="list wrap" aria-label="Upcoming activities">
+    {
+      latest && (
+        <a href={`/newsletter/${latest.slug}`} class="list-picks">
+          <span class="kicker no-rule">Covey Weekly · {latest.span}</span>
+          <span class="list-picks-t">Top picks, ready-made plans, and every detail are in this week's edition →</span>
+        </a>
+      )
+    }
+    <WeatherPlans days={days} max={4} id="act-weather" heading="h2" />
+    {
+      total > 0 ? (
+        <GuideDays days={days} pickIds={pickIds} hidePast id="activities-guide" />
+      ) : (
+        <div class="empty">
+          <h2 class="t-title">this week's guide isn't up yet.</h2>
+          <p>We publish listings once we've checked them with each organizer. Subscribe and you'll get them the moment they're ready.</p>
+          <div class="empty-form">
+            <NewsletterForm placement="activities" variant="slip" label="Get the weekly guide" />
+          </div>
+        </div>
+      )
+    }
+    <p class="list-note">
+      This isn't every event in {CITY_SHORT} — it's what we found, liked, and
+      checked. Times and prices are from each organizer; their page is the last
+      word. Know something we should add? <a href="/contact">Tell us</a>.
+    </p>
+  </section>
+
+  {
+    total > 0 && (
+      <section class="list-sub wrap" aria-label="Subscribe">
+        <div class="list-sub-copy">
+          <h2 class="t-title">get this in your inbox every week.</h2>
+          <p>Top picks plus the complete guide. Free; unsubscribe from any edition.</p>
+        </div>
+        <NewsletterForm placement="activities" variant="slip" label="Subscribe" />
+      </section>
+    )
+  }
+</BaseLayout>
+
+<style>
+  .band {
+    --p: 0.5;
+    position: relative;
+    /* Pale SF-sky blue: every category quail (orange, yellow, red included) reads against it. */
+    background: #d8eaf8;
+    color: #10203a;
+    overflow: hidden;
+    --ink: #10203a;
+    --ink-muted: #2c4058;
+  }
+  .band-inner {
+    padding-block: clamp(2.5rem, 7vw, 5.5rem) clamp(1.5rem, 3vw, 2rem);
+  }
+  .band-kicker {
+    color: #2c4058;
+    margin-bottom: 1rem;
+  }
+  .band-title {
+    font-size: clamp(3.75rem, 15vw, 11.5rem);
+    white-space: nowrap;
+    color: #10203a;
+    margin-bottom: 1.25rem;
+  }
+  .band-lede {
+    max-width: 34rem;
+    font-size: var(--fs-lede);
+    line-height: 1.55;
+    color: #1d3049;
+  }
+  .parade {
+    padding-block: 1.5rem 2rem;
+  }
+  .parade-track {
+    display: flex;
+    gap: clamp(1.5rem, 4vw, 3.5rem);
+    width: max-content;
+    padding-inline: var(--gutter);
+    transform: translateX(calc((var(--p) - 0.5) * -60vw));
+    will-change: transform;
+  }
+  .marcher {
+    display: grid;
+    justify-items: center;
+    gap: 0.5rem;
+    margin: 0;
+  }
+  .marcher img {
+    height: clamp(5.5rem, 12vw, 9rem);
+    width: auto;
+    filter: drop-shadow(0 8px 0 rgb(16 32 58 / 0.12));
+  }
+  .marcher figcaption {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #1d3049;
+    white-space: nowrap;
+  }
+  .list {
+    padding-block: clamp(1.5rem, 4vw, 2.5rem) 2rem;
+  }
+  .list :global(.wx) {
+    margin-block: 2rem 1rem;
+  }
+  .list-picks {
+    display: grid;
+    gap: 0.35rem;
+    margin-block: 0.5rem 0.5rem;
+    padding: 1rem 1.25rem;
+    border-radius: 1rem;
+    background: var(--paper-elevated);
+    border: 0.7px solid var(--edge);
+    transition: transform 0.3s var(--ease-spring);
+  }
+  .list-picks:hover {
+    transform: translateY(-2px);
+  }
+  .list-picks-t {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .empty {
+    display: grid;
+    gap: 1rem;
+    max-width: 40rem;
+    padding-block: 3rem;
+  }
+  .empty .t-title {
+    color: var(--ink);
+  }
+  .empty p {
+    color: var(--ink-muted);
+    line-height: 1.6;
+  }
+  .empty-form {
+    margin-top: 1rem;
+  }
+  .list-note {
+    margin-top: 3rem;
+    max-width: 44rem;
+    font-size: 0.875rem;
+    line-height: 1.55;
+    color: var(--ink-muted);
+  }
+  .list-note a {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+  .list-sub {
+    display: grid;
+    gap: 1.5rem;
+    padding-block: clamp(3rem, 6vw, 4.5rem) 0;
+    border-top: 0.7px solid var(--edge);
+    margin-top: 2rem;
+  }
+  .list-sub .t-title {
+    color: var(--ink);
+    margin-bottom: 0.6rem;
+  }
+  .list-sub p {
+    color: var(--ink-muted);
+  }
+  @media (min-width: 900px) {
+    .list-sub {
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .parade-track {
+      transform: none;
+    }
+    .list-picks {
+      transition: none;
+    }
+  }
+</style>

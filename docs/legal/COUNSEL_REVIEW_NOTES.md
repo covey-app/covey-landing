@@ -147,6 +147,37 @@ right.
   Terms § 23.2 for existing accounts? If yes, a re-consent screen is needed
   before or at launch; none exists.
 
+### 3.6 Website sign-ups added on merge (2026-10-15)
+
+This redraft was written on 2026-10-07, when the website had no forms. The site
+on `main` has since launched a waitlist (2026-10-14) and Covey Weekly, an email
+newsletter. Merging main into this branch added the following to the Privacy
+Policy, taken from the proposals in `docs/waitlist.md` §3.1 and
+`docs/redesign-2026-10.md` §8. **None of it has been reviewed.**
+
+- § 4.14 rewritten: the waitlist (email, optional city, page/campaign/referrer)
+  and Covey Weekly (email, consent wording and time, same attribution; double
+  opt-in; unsubscribe link). It also covers the one-day keyed IP hash used against abuse.
+- § 5.13 added: purposes for both sign-ups.
+- § 12.1 now lists `covey-attribution` and `covey-hero` (session storage) as well
+  as `covey-theme`. § 12.4 now describes Vercel Web Analytics (cookieless,
+  aggregate) instead of "no third-party analytics".
+- Annex B: Vercel's row covers the sign-up functions and analytics; Resend's row
+  covers waitlist and newsletter email.
+- Annex C: three rows (waitlist, Covey Weekly, abuse-prevention keys).
+
+Questions:
+- **Retention of unsubscribed and unconfirmed newsletter rows.** Today they are
+  kept indefinitely with that status (no purge job), which Annex C now states.
+  Is a suppression-list rationale enough, or should there be a limit (e.g. keep
+  only a hash of the address after unsubscribe)?
+- **CAN-SPAM.** Newsletter editions and waitlist launch emails are commercial
+  email and need a physical postal address. `{{POSTAL_ADDRESS}}` is still a
+  placeholder, and the site config has no address.
+- **The waitlist and "public launch".** The Terms drop the invitation gate, while
+  the site now says Covey is "opening in waves" from the waitlist. Is that
+  consistent, or should the Terms mention staged availability?
+
 ## 4. Service Providers: DPA checklist
 
 | Provider | Entity in Annex B | DPA confirmed? |
