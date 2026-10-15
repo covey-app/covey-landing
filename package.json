@@ -36,7 +36,7 @@
     "@types/node": "^26.1.1",
     "@types/three": "^0.160.0",
     "lucide-static": "^1.48.0",
-    "sharp": "^0.35.3",
+    "sharp": "^0.35.5",
     "tailwindcss": "^4.0.0",
     "typescript": "^6.0.3"
   }
