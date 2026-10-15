@@ -37,6 +37,10 @@ export const SITE = {
   appStoreUrl: null as string | null,
 
   city: "San Francisco, CA",
+  // Legal name and postal address. CAN-SPAM requires the address in every
+  // commercial email (Covey Weekly, waitlist mail); the legal docs use both.
+  legalName: "Covey Platforms Inc.",
+  postalAddress: "315 Montgomery Street, Suite 900, San Francisco, CA 94104",
   launchRegion: "US only, 18+, starting in San Francisco",
 
   emails: {

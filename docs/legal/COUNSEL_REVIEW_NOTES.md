@@ -10,8 +10,9 @@ This file is not published. Only the two documents are rendered on the site.
 
 ## 1. What has to happen before publication
 
-1. Form the entity. Replace `{{LEGAL_ENTITY}}` (7 places) and `{{POSTAL_ADDRESS}}`
-   (5 places). The name must match the App Store Connect seller name and the
+1. ~~Form the entity.~~ Done 2026-10-15: **Covey Platforms Inc.**, 315 Montgomery
+   Street, Suite 900, San Francisco, CA 94104, a Delaware corporation, filled into
+   both documents. The name must match the App Store Connect seller name and the
    copyright line. An Organization membership in App Store Connect is expected for
    an app that handles sensitive data (Guideline 5.1.1(ix)).
 2. Register a DMCA agent at dmca.copyright.gov ($6, renewed every 3 years) and
@@ -171,9 +172,9 @@ Questions:
   kept indefinitely with that status (no purge job), which Annex C now states.
   Is a suppression-list rationale enough, or should there be a limit (e.g. keep
   only a hash of the address after unsubscribe)?
-- **CAN-SPAM.** Newsletter editions and waitlist launch emails are commercial
-  email and need a physical postal address. `{{POSTAL_ADDRESS}}` is still a
-  placeholder, and the site config has no address.
+- **CAN-SPAM.** Newsletter editions and waitlist emails now carry the legal name
+  and postal address in their footer (`SITE.legalName`, `SITE.postalAddress`).
+  Confirm that is sufficient for the launch emails sent from the waitlist.
 - **The waitlist and "public launch".** The Terms drop the invitation gate, while
   the site now says Covey is "opening in waves" from the waitlist. Is that
   consistent, or should the Terms mention staged availability?

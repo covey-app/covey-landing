@@ -89,8 +89,8 @@ deployed to production with them in place.
 
 | Placeholder | Where | Replace with |
 |---|---|---|
-| `{{LEGAL_ENTITY}}` | Privacy header, §1.1, §21; Terms header, Recital A, §25, Annex D | Exact registered name, entity form, and state, e.g. "Example, Inc., a Delaware corporation". Must match the App Store Connect seller name and the copyright line |
-| `{{POSTAL_ADDRESS}}` | Privacy header, §21; Terms header, §25, Annex D | Postal address for notices and legal process |
+| ~~`{{LEGAL_ENTITY}}`~~ | Filled 2026-10-15 | Covey Platforms Inc., a Delaware corporation. Must match the App Store Connect seller name and the copyright line |
+| ~~`{{POSTAL_ADDRESS}}`~~ | Filled 2026-10-15 | 315 Montgomery Street, Suite 900, San Francisco, CA 94104 |
 | `{{DMCA_AGENT}}` | Terms Annex C | Designated agent's name, postal address, and telephone number, exactly as registered at dmca.copyright.gov |
 
 Everything else that needs a lawyer's decision is in `COUNSEL_REVIEW_NOTES.md`,

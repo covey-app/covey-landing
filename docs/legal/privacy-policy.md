@@ -1,6 +1,6 @@
 # COVEY PRIVACY POLICY
 
-**Controller / Business:** {{LEGAL_ENTITY}}, {{POSTAL_ADDRESS}}
+**Controller / Business:** Covey Platforms Inc., a Delaware corporation, 315 Montgomery Street, Suite 900, San Francisco, CA 94104
 **Document:** Privacy Policy (this "**Policy**")
 **Version:** 2026-10-15
 **Effective Date:** 15 October 2026
@@ -44,7 +44,7 @@
 
 ## 1. INTRODUCTION AND SCOPE
 
-1.1 {{LEGAL_ENTITY}} ("**Covey**", "**we**", "**us**") is the "controller" of
+1.1 Covey Platforms Inc., a Delaware corporation ("**Covey**", "**we**", "**us**") is the "controller" of
 Personal Information for the purposes of the General Data Protection Regulation
 and the "business" for the purposes of the California Consumer Privacy Act.
 
@@ -929,8 +929,8 @@ acceptance.
 
 ## 21. CONTACT
 
-{{LEGAL_ENTITY}}
-{{POSTAL_ADDRESS}}
+Covey Platforms Inc.
+315 Montgomery Street, Suite 900, San Francisco, CA 94104
 
 | Purpose | Address |
 |---|---|

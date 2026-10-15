@@ -1,6 +1,6 @@
 # COVEY TERMS OF SERVICE
 
-**Provider:** {{LEGAL_ENTITY}}, {{POSTAL_ADDRESS}}
+**Provider:** Covey Platforms Inc., a Delaware corporation, 315 Montgomery Street, Suite 900, San Francisco, CA 94104
 **Document:** Terms of Service (the "**Agreement**")
 **Version:** 2026-10-15
 **Effective Date:** 15 October 2026
@@ -38,7 +38,7 @@
 
 ## RECITALS
 
-**A.** {{LEGAL_ENTITY}} ("**Covey**", "**we**", "**us**", or "**our**") operates a
+**A.** Covey Platforms Inc., a Delaware corporation ("**Covey**", "**we**", "**us**", or "**our**") operates a
 mobile application and related website through which individuals discover, plan,
 and coordinate in-person social activities, and, at the User's election, seek
 romantic connections.
@@ -833,8 +833,8 @@ in the event of any conflict with a translation.
 
 ## 25. CONTACT
 
-{{LEGAL_ENTITY}}
-{{POSTAL_ADDRESS}}
+Covey Platforms Inc.
+315 Montgomery Street, Suite 900, San Francisco, CA 94104
 General and legal enquiries: support@coveyapp.co
 Privacy: privacy@coveyapp.co
 Trust and safety: safety@coveyapp.co
@@ -1012,8 +1012,8 @@ material is infringing, or was removed by mistake, may be liable for damages und
 
 | Particular | Value |
 |---|---|
-| Provider | {{LEGAL_ENTITY}} |
-| Address for notices and legal process | {{POSTAL_ADDRESS}} |
+| Provider | Covey Platforms Inc., a Delaware corporation |
+| Address for notices and legal process | 315 Montgomery Street, Suite 900, San Francisco, CA 94104 |
 | Email for notices | support@coveyapp.co |
 
 The Provider named above is the party to this Agreement, the controller named in
