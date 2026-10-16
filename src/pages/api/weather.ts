@@ -8,4 +8,4 @@ import { SITE } from "../../config";
 
 export const prerender = false;
 
-export const GET: APIRoute = () => handleWeatherRequest({ fetch, userAgent: `${SITE.domain} (${SITE.emails.hello})` });
+export const GET: APIRoute = () => handleWeatherRequest({ fetch, userAgent: `${SITE.domain} (${SITE.emails.support})` });

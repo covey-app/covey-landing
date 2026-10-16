@@ -116,7 +116,7 @@ Policy and Support URLs in the iOS App Store Connect listing.
 - [ ] Submit the contact form once in production and confirm it arrives
       (Netlify Forms does not run on Vercel — see "Deployment").
 - [ ] Set up inboxes/forwarding for every address in `src/config.ts`
-      (`hello@`, `press@`, `support@`, `safety@coveyapp.co`).
+      (`support@`, `safety@`, `privacy@`, `socials@`, `admin@coveyapp.co`).
 - [ ] Once iOS is approved, set `appStoreUrl` in `src/config.ts` and add a
       real App Store badge to the home page CTA.
 - [ ] Have the `/privacy` draft reviewed against your real data practices

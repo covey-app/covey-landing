@@ -28,14 +28,14 @@ test("handler: asks the NWS gridpoint with an identifying User-Agent, caches at 
     calls.push({ url, init });
     return new Response(JSON.stringify({ properties: { updateTime: "2026-10-14T19:00:00+00:00", periods: PERIODS } }), { status: 200 });
   }) as typeof globalThis.fetch;
-  const res = await handleWeatherRequest({ fetch, userAgent: "coveyapp.co (hello@coveyapp.co)" });
+  const res = await handleWeatherRequest({ fetch, userAgent: "coveyapp.co (support@coveyapp.co)" });
   assert.equal(res.status, 200);
   assert.match(res.headers.get("Cache-Control")!, /s-maxage=1800/);
   const body = await res.json();
   assert.equal(body.ok, true);
   assert.equal(body.days.length, 3);
   assert.equal(calls[0].url, NWS_FORECAST_URL);
-  assert.equal((calls[0].init!.headers as Record<string, string>)["User-Agent"], "coveyapp.co (hello@coveyapp.co)");
+  assert.equal((calls[0].init!.headers as Record<string, string>)["User-Agent"], "coveyapp.co (support@coveyapp.co)");
 });
 
 for (const [name, fetch] of [

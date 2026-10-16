@@ -257,7 +257,7 @@ test("confirmation email: sent once on create when configured; its failure never
   const h = harness((call) =>
     call.url.startsWith("https://api.resend.com") ? new Response("{}", { status: 500 }) : rpcOk({ result: "created", id: "abc" }),
   );
-  const res = await handleWaitlistRequest(jsonReq({ ...human, email: "Pat@Example.com" }), IP, { ...ENV, resendKey: "re_test", emailFrom: "Covey <hello@coveyapp.co>" }, h.deps);
+  const res = await handleWaitlistRequest(jsonReq({ ...human, email: "Pat@Example.com" }), IP, { ...ENV, resendKey: "re_test", emailFrom: "Covey <support@coveyapp.co>" }, h.deps);
   assert.equal(res.status, 201);
   const sent = h.calls.find((c) => c.url === "https://api.resend.com/emails");
   assert.ok(sent, "Resend was called");

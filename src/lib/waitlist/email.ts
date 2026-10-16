@@ -63,8 +63,8 @@ export async function sendConfirmation(
         subject,
         text,
         html,
-        reply_to: SITE.emails.hello,
-        headers: { "List-Unsubscribe": `<mailto:${SITE.emails.hello}?subject=unsubscribe>` },
+        reply_to: SITE.emails.support,
+        headers: { "List-Unsubscribe": `<mailto:${SITE.emails.support}?subject=unsubscribe>` },
       }),
       signal: AbortSignal.timeout(TIMEOUT_MS),
     });

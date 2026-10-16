@@ -75,7 +75,7 @@ async function sendBatch(batch) {
         to: [r.email],
         subject,
         html: personalize(r.unsubscribe_token),
-        reply_to: "hello@coveyapp.co",
+        reply_to: "support@coveyapp.co",
         headers: listUnsubscribeHeaders(r.unsubscribe_token),
       })),
     ),

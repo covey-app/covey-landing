@@ -30,7 +30,7 @@ export function unsubscribeUrl(token: string): string {
  */
 export function listUnsubscribeHeaders(token: string): Record<string, string> {
   return {
-    "List-Unsubscribe": `<${unsubscribeUrl(token)}>, <mailto:${SITE.emails.hello}?subject=unsubscribe>`,
+    "List-Unsubscribe": `<${unsubscribeUrl(token)}>, <mailto:${SITE.emails.support}?subject=unsubscribe>`,
     "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
   };
 }
@@ -80,7 +80,7 @@ export async function sendNewsletterConfirmation(
         // Resend de-duplicates a retried send with the same key for 24h.
         "idempotency-key": idempotencyKey,
       },
-      body: JSON.stringify({ from: cfg.from, to: [to], subject, text, html, reply_to: SITE.emails.hello }),
+      body: JSON.stringify({ from: cfg.from, to: [to], subject, text, html, reply_to: SITE.emails.support }),
       signal: AbortSignal.timeout(TIMEOUT_MS),
     });
     return res.ok;

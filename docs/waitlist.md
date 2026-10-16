@@ -217,7 +217,7 @@ Set these in **Vercel → Project → Settings → Environment Variables**, scop
 | `SUPABASE_URL` | The project's API URL (covey-web uses `https://api.coveyapp.co`) | Yes |
 | `SUPABASE_SERVICE_ROLE_KEY` | **Mint a dedicated `sb_secret_…` key for this project** (Supabase → Settings → API keys) so the marketing site's access can be revoked without touching the apps. The legacy `service_role` JWT also works | Yes |
 | `RESEND_API_KEY` | Resend API key, for the optional confirmation email | No |
-| `WAITLIST_EMAIL_FROM` | e.g. `Covey <hello@coveyapp.co>`, on a domain verified in Resend | No (both or neither) |
+| `WAITLIST_EMAIL_FROM` | e.g. `Covey <support@coveyapp.co>`, on a domain verified in Resend | No (both or neither) |
 
 Don't give **Preview** deployments the production key, or test signups land in
 the real table. Without it, previews answer `503 not_configured` and the form

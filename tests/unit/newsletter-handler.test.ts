@@ -458,7 +458,7 @@ test("unsubscribe URL and one-click List-Unsubscribe headers", () => {
   const t = "11111111-2222-4333-8444-555555555555";
   assert.equal(unsubscribeUrl(t), `https://www.coveyapp.co/newsletter/unsubscribe/?token=${t}`);
   assert.deepEqual(listUnsubscribeHeaders(t), {
-    "List-Unsubscribe": `<https://www.coveyapp.co/newsletter/unsubscribe/?token=${t}>, <mailto:hello@coveyapp.co?subject=unsubscribe>`,
+    "List-Unsubscribe": `<https://www.coveyapp.co/newsletter/unsubscribe/?token=${t}>, <mailto:support@coveyapp.co?subject=unsubscribe>`,
     "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
   });
   const mail = newsletterConfirmationEmail("A".repeat(43));
