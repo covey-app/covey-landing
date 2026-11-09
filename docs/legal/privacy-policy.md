@@ -162,9 +162,10 @@ feature and you choose to share it, the age range Apple provides (Covey does not
 receive your date of birth from Apple); and your gender. Covey uses these to
 enforce the minimum age of eighteen (18), to apply the minimum age of
 twenty-one (21) to Plans centred on alcohol, and to apply the age and gender
-criteria that Plan hosts and Users of Dating Features specify. Your date of birth
-is stored separately from your published profile and is not disclosed to other
-Users.
+criteria that Plan hosts and Users of Dating Features specify. Your age in whole
+years, derived from your date of birth, is shown on your profile (Section 11.1).
+Your date of birth itself is stored separately from your published profile and is
+not disclosed to other Users.
 
 **4.5 Identity verification information.** Covey may offer optional identity
 verification. It is not offered in every version of the application, and it is
@@ -564,8 +565,9 @@ request to the extent any is applicable.
 
 ## 11. DISCLOSURE TO OTHER USERS
 
-11.1 **Profile.** Your display name, username, profile photographs, biography,
-home city, preference selections, and social links are visible to other Users,
+11.1 **Profile.** Your display name, username, profile photographs, age in whole
+years, biography, home city, preference selections, and social links are visible
+to other Users,
 subject to the discovery visibility setting you select. Each optional profile
 detail under Section 4.16 is visible to other Users only if you have added it and
 have not hidden it.
@@ -575,11 +577,11 @@ public Plan is visible to Users browsing the Service, and a limited preview of i
 may be shown to visitors who are not signed in; a friends-only or invitation-only
 Plan is not.
 
-11.3 **Date of birth.** Your date of birth is not disclosed to any other User. It
-is stored separately from your published profile and is readable only by you.
-Where a Plan or dating criterion depends on age, Covey's servers derive your age
-from your date of birth in order to determine eligibility; the date itself is not
-transmitted.
+11.3 **Date of birth and age.** Your date of birth is not disclosed to any other
+User. It is stored separately from your published profile and is readable only by
+you. Covey's servers derive your age in whole years from it. That age is shown on
+your profile, and other Users may filter Plans by the age of the host. The date
+itself is never transmitted to another User.
 
 11.4 **Dating information.** Disclosed only to other Users who have enabled Dating
 Features and who fall within the criteria that you and they have specified, and

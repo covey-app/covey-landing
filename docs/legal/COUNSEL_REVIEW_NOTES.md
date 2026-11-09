@@ -179,6 +179,18 @@ Questions:
   the site now says Covey is "opening in waves" from the waitlist. Is that
   consistent, or should the Terms mention staged availability?
 
+### 3.7 Age shown on every profile (2026-11-09)
+
+Owner decision 2026-10-27, live in prod since 2026-11-09 (migration
+`20261027100000`): every profile shows the member's age in whole years, and
+Explore's host-age filter is exact to the year. The date of birth is still never
+returned to another User. Sections 4.4, 11.1 and 11.3 now say so. This matches
+Hinge and Bumble; age is not "sensitive personal information" under the CPRA or
+the other state laws in Section 17. The live 2026-09-01 policy still says age is
+used only for eligibility, so this redraft has to be published before the App
+Store launch. Confirm no separate notice is owed to TestFlight members who
+accepted the earlier wording.
+
 ## 4. Service Providers: DPA checklist
 
 | Provider | Entity in Annex B | DPA confirmed? |
