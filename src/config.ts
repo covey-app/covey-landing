@@ -43,13 +43,14 @@ export const SITE = {
   postalAddress: "315 Montgomery Street, Suite 900, San Francisco, CA 94104",
   launchRegion: "US only, 18+, starting in San Francisco",
 
-  // Only addresses with a real inbox behind them. General questions and
-  // email replies go to support@; press and partnerships to socials@.
+  // Every inbox is admin@ now. The keys stay so each call site still says
+  // what kind of mail it expects; point one back at its own address here if
+  // that inbox comes back.
   emails: {
-    support: "support@coveyapp.co",
-    safety: "safety@coveyapp.co",
-    privacy: "privacy@coveyapp.co",
-    socials: "socials@coveyapp.co",
+    support: "admin@coveyapp.co",
+    safety: "admin@coveyapp.co",
+    privacy: "admin@coveyapp.co",
+    socials: "admin@coveyapp.co",
     admin: "admin@coveyapp.co",
   },
 
