@@ -3,7 +3,7 @@
 **Provider:** Covey Platforms Inc., a Delaware corporation, 315 Montgomery Street, Suite 900, San Francisco, CA 94104
 **Document:** Terms of Service (the "**Agreement**")
 **Version:** 2026-10-15
-**Effective Date:** 15 October 2026
+**Effective Date:** 9 November 2026
 **Supersedes:** Version 2026-09-01
 **Publication URL:** https://www.coveyapp.co/terms
 
@@ -973,7 +973,8 @@ a third-party beneficiary.
 **C.1 Designated agent.** Notifications of claimed infringement and
 counter-notifications must be sent to Covey's designated agent:
 
-{{DMCA_AGENT}}
+Copyright Agent, Covey Platforms Inc.
+315 Montgomery Street, Suite 900, San Francisco, CA 94104
 
 Email: support@coveyapp.co, with the subject line "DMCA Notice".
 

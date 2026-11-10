@@ -3,7 +3,7 @@
 **Controller / Business:** Covey Platforms Inc., a Delaware corporation, 315 Montgomery Street, Suite 900, San Francisco, CA 94104
 **Document:** Privacy Policy (this "**Policy**")
 **Version:** 2026-10-15
-**Effective Date:** 15 October 2026
+**Effective Date:** 9 November 2026
 **Supersedes:** Version 2026-09-01
 **Publication URL:** https://www.coveyapp.co/privacy
 

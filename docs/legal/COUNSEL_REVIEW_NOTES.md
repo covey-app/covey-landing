@@ -19,12 +19,20 @@ This file is not published. Only the two documents are rendered on the site.
    replace `{{DMCA_AGENT}}` in Terms Annex C with the registered name, address and
    telephone number. Until it is registered, the § 512(c) safe harbour is not
    available.
+   Published 2026-11-09 with an interim agent block (Copyright Agent, Covey
+   Platforms Inc., at the company address, plus support@coveyapp.co). Add the
+   registered name and a telephone number to Annex C once registered.
 3. Confirm a data processing agreement (DPA) is in place with each Service Provider
    in Privacy Annex B (section 4 below).
 4. Decide each question in section 3.
 5. Deploy the site, then apply the `current_policy_version()` migration (covey PR
    "Bump policy version to 2026-10-15"), and ship the iOS and web builds that send
    `2026-10-15`.
+
+6. Published 2026-11-09. Both documents keep the Version identifier
+   `2026-10-15`, because that is what `current_policy_version()` and the apps
+   record as accepted. The Effective Date is the publication date, 9 November
+   2026, so it isn't backdated.
 
 ## 2. Judgment calls made in the drafts
 
