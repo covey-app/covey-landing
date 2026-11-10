@@ -43,16 +43,18 @@ export const SITE = {
   postalAddress: "315 Montgomery Street, Suite 900, San Francisco, CA 94104",
   launchRegion: "US only, 18+, starting in San Francisco",
 
+  // Only addresses with a real inbox behind them. General questions and
+  // email replies go to support@; press and partnerships to socials@.
   emails: {
-    hello: "hello@coveyapp.co",
-    press: "press@coveyapp.co",
     support: "support@coveyapp.co",
     safety: "safety@coveyapp.co",
     privacy: "privacy@coveyapp.co",
+    socials: "socials@coveyapp.co",
+    admin: "admin@coveyapp.co",
   },
 
   social: {
-    instagram: "https://instagram.com/coveyapp",
+    instagram: "https://www.instagram.com/covey.hq/",
   },
 } as const;
 

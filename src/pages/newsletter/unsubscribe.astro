@@ -28,8 +28,8 @@ if (Astro.request.method === "POST") {
 const copy = {
   ask: { t: "unsubscribe from covey weekly?", d: "You'll stop getting the weekly email. Your Covey waitlist spot, if you have one, isn't affected." },
   unsubscribed: { t: "you're unsubscribed.", d: "No more Covey Weekly emails. Changed your mind? You can subscribe again anytime." },
-  invalid: { t: "that link didn't work.", d: "Use the unsubscribe link from a recent edition, or email hello@coveyapp.co and we'll remove you." },
-  unavailable: { t: "we couldn't do that just now.", d: "Something went wrong on our side. Try again in a few minutes, or email hello@coveyapp.co and we'll remove you." },
+  invalid: { t: "that link didn't work.", d: "Use the unsubscribe link from a recent edition, or email support@coveyapp.co and we'll remove you." },
+  unavailable: { t: "we couldn't do that just now.", d: "Something went wrong on our side. Try again in a few minutes, or email support@coveyapp.co and we'll remove you." },
 }[state];
 Astro.response.headers.set("cache-control", "no-store");
 Astro.response.headers.set("referrer-policy", "no-referrer");
