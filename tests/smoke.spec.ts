@@ -38,13 +38,13 @@ test("FAQ exposes native expanded state", async ({ page }) => {
   await expect(details).toHaveAttribute("open", /.*/);
 });
 
-test("contact form surfaces validation before submit", async ({ page }) => {
-  await page.goto("/contact");
-  await page.locator("form[name='contact'] button[type='submit']").click();
-  const name = page.locator("#field-name");
-  await expect(name).toHaveAttribute("aria-invalid", "true");
-  // Still on the contact page (submit was blocked).
-  await expect(page).toHaveURL(/\/contact\/?$/);
+test("contact and support offer email, not a form that goes nowhere", async ({ page }) => {
+  // The Netlify form was removed: the site runs on Vercel, where it did nothing.
+  for (const route of ["/contact", "/support"]) {
+    await page.goto(route);
+    await expect(page.locator("main form")).toHaveCount(0);
+    await expect(page.locator('main a[href="mailto:support@coveyapp.co"]').first()).toBeVisible();
+  }
 });
 
 test("interactive touch targets meet 44px", async ({ page }) => {

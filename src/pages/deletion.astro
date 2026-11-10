@@ -1,13 +1,20 @@
 ---
+/*
+ * Must match what the 1.0 app does on deletion (privacy policy §15.6 and
+ * Annex C): delete_my_account runs immediately; storage objects are purged
+ * within 24 hours; the Sign in with Apple grant is revoked; a Stripe Identity
+ * session, if any, is redacted. The in-app path is covey-ios SettingsCatalog
+ * (Account → "Delete account").
+ */
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { SITE } from "../config";
 
-const lastUpdated = "August 18, 2026";
+const lastUpdated = "October 15, 2026";
 ---
 
 <BaseLayout
   title="Account Deletion"
-  description="How to request deletion of a Covey account and related data."
+  description="How to delete your Covey account in the app, what is removed and when, and what is kept."
 >
   <div class="max-w-3xl mx-auto px-6 py-[var(--section-y)]">
     <div class="eyebrow mb-3">Deletion</div>
@@ -18,55 +25,69 @@ const lastUpdated = "August 18, 2026";
 
     <div class="card p-6 mb-12">
       <p class="text-ink-muted leading-relaxed">
-        You can request account deletion from the Covey app when signed in. If
-        you cannot access your account, contact support from the email address
-        tied to the account.
+        In the Covey app, go to
+        <strong class="text-ink font-medium">Profile → Settings → Account → Delete account</strong>.
+        Deletion happens as soon as you confirm, and your photos are removed
+        from our storage within 24 hours.
       </p>
     </div>
 
     <div class="space-y-10 text-ink-muted leading-relaxed text-lg">
       <section>
         <h2 class="title-mono text-2xl text-ink mb-3">In the app</h2>
-        <p>
-          Open Covey, go to your profile or account settings, and choose the
-          account deletion option. The app will ask you to confirm before the
-          request is submitted.
+        <ol class="list-decimal pl-6 space-y-2">
+          <li>Open Covey and go to your <strong class="text-ink font-medium">Profile</strong>.</li>
+          <li>Tap the gear to open <strong class="text-ink font-medium">Settings</strong>.</li>
+          <li>Under <strong class="text-ink font-medium">Account</strong>, tap <strong class="text-ink font-medium">Delete account</strong>.</li>
+          <li>Turn on "I understand this is permanent", type DELETE, and confirm.</li>
+        </ol>
+        <p class="mt-4">
+          This is permanent and can't be undone. Signing in again with the same
+          email or Apple ID afterwards creates a brand-new, empty account.
         </p>
       </section>
 
       <section>
-        <h2 class="title-mono text-2xl text-ink mb-3">By email</h2>
+        <h2 class="title-mono text-2xl text-ink mb-3">What is deleted</h2>
+        <p class="mb-4">As soon as you confirm, we delete:</p>
+        <ul class="list-disc pl-6 space-y-2">
+          <li>your account, sign-in details, profile, preferences and date of birth;</li>
+          <li>the plans you host, your place in other people's plans, your recaps and your bookmarks;</li>
+          <li>every message you sent, including from other people's chats;</li>
+          <li>your verified phone number, your plan-suggestion area, and your consent settings.</li>
+        </ul>
+        <p class="mt-4">
+          Your photos and other uploads are removed from storage within
+          <strong class="text-ink font-medium">24 hours</strong>. If you signed
+          in with Apple, we revoke Covey's access to your Apple ID. If you
+          completed identity verification, we ask Stripe to delete that
+          verification.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="title-mono text-2xl text-ink mb-3">What is kept</h2>
         <p>
-          If you need help, email
-          <a href={`mailto:${SITE.emails.support}`} class="text-accent-ink underline underline-offset-2 decoration-1">
-            {SITE.emails.support}
+          Reports you filed are kept with your name and the text you wrote
+          removed, so we can finish acting on them. Reports about you and
+          moderation records are kept so a banned account can't simply return.
+          App usage records are kept without your account ID for up to 90 days.
+          Copies someone else made outside Covey, like a screenshot, are beyond
+          our reach. The retention table in our
+          <a href="/privacy" class="text-accent-ink underline underline-offset-2 decoration-1">Privacy Policy</a>
+          (Annex C) lists every category.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="title-mono text-2xl text-ink mb-3">Can't get into the app?</h2>
+        <p>
+          Email
+          <a href={`mailto:${SITE.emails.privacy}?subject=Account%20deletion`} class="text-accent-ink underline underline-offset-2 decoration-1">
+            {SITE.emails.privacy}
           </a>
-          with "Account deletion" in the subject. Please write from the email
-          address on your Covey account so we can verify the request.
-        </p>
-      </section>
-
-      <section>
-        <h2 class="title-mono text-2xl text-ink mb-3">What deletion covers</h2>
-        <p>
-          Deletion is meant to remove or de-identify account information and
-          personal content tied to your profile, including account details,
-          profile information, and app data where removal is technically and
-          legally possible.
-        </p>
-      </section>
-
-      <section>
-        <h2 class="title-mono text-2xl text-ink mb-3">What may remain</h2>
-        <p>
-          Some records are kept for security, fraud prevention, legal
-          obligations, backups, dispute handling, or safety investigations —
-          including reports and enforcement records, so that a banned account
-          cannot simply return. The
-          <a href="/privacy#retention" class="text-accent-ink underline underline-offset-2 decoration-1">retention table in our Privacy Policy</a>
-          lists each category and why we keep it. Content that other people
-          already received, such as messages or plan context, may not disappear
-          from their accounts immediately.
+          with "Account deletion" in the subject, from the email address on your
+          Covey account so we can verify the request.
         </p>
       </section>
     </div>

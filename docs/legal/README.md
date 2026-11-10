@@ -4,11 +4,15 @@ This directory holds the **authoritative text** of Covey's legal documents.
 
 | File | Document | Version |
 |---|---|---|
-| `terms-of-service.md` | Terms of Service | 2026-09-01 |
-| `privacy-policy.md` | Privacy Policy | 2026-09-01 |
+| `terms-of-service.md` | Terms of Service | 2026-10-15 (pending publication) |
+| `privacy-policy.md` | Privacy Policy | 2026-10-15 (pending publication) |
 
-`../legal-audit-2026-09-01.md` records the code audit these were drafted from, the
-engineering work they require, and the questions outstanding for counsel.
+Version 2026-10-15 was redrafted from the App Store audit of 2026-10-07
+(`covey/docs/audits/app-store-audit-2026-10-07/PRIVACY_AND_DATA_MAP.md`) and
+describes the 1.0 launch build. `COUNSEL_REVIEW_NOTES.md` lists every legal
+judgment call in it and the questions open for counsel. The live site served
+2026-09-01 while the app stamped acceptances as 2026-09-08; 2026-10-15 closes
+that gap only if all four constants below move together.
 
 ---
 
@@ -46,7 +50,9 @@ must move together:
 |---|---|
 | `docs/legal/*.md` | the `**Version:**` header line — **the authority** |
 | `covey/ios/Covey/App/LegalPolicy.swift` | `LegalPolicy.currentVersion` |
-| `covey/supabase/migrations/…_signup_policy_consent.sql` | `current_policy_version()` |
+| `covey/supabase/migrations/…_policy_version_*.sql` (newest) | `current_policy_version()` |
+| `covey/src/lib/legal.ts` | `CURRENT_POLICY_VERSION` (TanStack web app) |
+| `covey-web/lib/config/legal.ts` | `LEGAL_POLICY_VERSION` (Expo web app) |
 
 The landing site holds no version constant of its own; it renders the Markdown, so
 the header line is the only value it can show.
@@ -58,8 +64,9 @@ than having no ledger — it is a record that affirmatively misstates what happe
 test with a message naming the migration to bump alongside it.
 
 Bumping the version does **not** re-prompt existing users. `has_accepted_current_policy()`
-exists but nothing calls it as a gate. Until a re-consent flow ships, every account
-created before a bump remains bound only to the version it accepted.
+gates only onboarding completion (`complete_onboarding_bundle`), so it binds new
+accounts and nobody else. Until a re-consent flow ships, every account created
+before a bump remains bound only to the version it accepted.
 
 ## Amending a document
 
@@ -69,29 +76,25 @@ created before a bump remains bound only to the version it accepted.
    Privacy § 20. If it is, a re-consent prompt is required, not just a publish.
 3. Bump the Version and Effective Date in the header, and record what the previous
    version was in `**Supersedes:**`.
-4. Bump the other three constants in the same commit.
+4. Bump the app, server, and web constants in the same release, and apply the
+   server migration only after this site is deployed.
 5. Rebuild and redeploy the landing site. No mirroring step is required — the
    pages render these files.
 
 ## Placeholders still open
 
-Both documents contain bracketed blocks that must be resolved before publication:
+Three placeholders remain, deliberately, because no legal entity has been formed
+yet. Each renders literally until it is replaced, so the site must not be
+deployed to production with them in place.
 
-- **Entity particulars** — Terms Annex D. Drafted as "Covey, Inc., a Delaware
-  corporation" on instruction. The exact registered name must be verified against
-  the certificate of incorporation and must match the App Store Connect account.
-  Registered office, principal place of business, and a notice address for legal
-  process are all missing.
-- **DMCA designated agent** — Terms Annex C. No agent is registered with the
-  Copyright Office. Registration costs $6 at dmca.copyright.gov and is what
-  secures the § 512(c) safe harbour. Until it is done, the safe harbour is not
-  available.
-- **Privacy contact** — Privacy § 21. Currently `support@`; a dedicated `privacy@`
-  alias is customary. A postal address is required.
-- **Identity document retention period** — Privacy Annex C. Committed to in the
-  text but not yet fixed or implemented. The policy is inaccurate until it is.
-- **Service Provider entity names and DPAs** — Privacy Annex B. Each needs a
-  countersigned data processing agreement.
+| Placeholder | Where | Replace with |
+|---|---|---|
+| ~~`{{LEGAL_ENTITY}}`~~ | Filled 2026-10-15 | Covey Platforms Inc., a Delaware corporation. Must match the App Store Connect seller name and the copyright line |
+| ~~`{{POSTAL_ADDRESS}}`~~ | Filled 2026-10-15 | 315 Montgomery Street, Suite 900, San Francisco, CA 94104 |
+| `{{DMCA_AGENT}}` | Terms Annex C | Designated agent's name, postal address, and telephone number, exactly as registered at dmca.copyright.gov |
+
+Everything else that needs a lawyer's decision is in `COUNSEL_REVIEW_NOTES.md`,
+not in the documents.
 
 ---
 

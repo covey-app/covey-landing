@@ -174,3 +174,45 @@ test("redirects: /signup → /waitlist, /events → /activities", async ({ reque
   const fallback = await (await request.get("/signup/index.html")).text();
   expect(fallback).toContain("url=/waitlist");
 });
+
+test.describe("public claims match the 1.0 build (App Store audit F-14)", () => {
+  const ROUTES = ["/", "/about", "/support", "/safety", "/deletion", "/contact", "/status"];
+
+  test("no invite gate, no 'verified' adults, no availability feature", async ({ page }) => {
+    for (const route of ROUTES) {
+      await page.goto(route);
+      const text = (await page.locator("main").innerText()).toLowerCase();
+      expect(text, route).not.toContain("by invite");
+      // "invite-only" is allowed: it is a real Covey and plan join mode.
+      expect(text, route).not.toMatch(/ios (launch|app is rolling out)/);
+      expect(text, route).not.toContain("adults, verified");
+      expect(text, route).not.toContain("everyone free");
+    }
+  });
+
+  test("the App Store listing is named but not claimed live while appStoreUrl is null", async ({ page }) => {
+    await page.goto("/support");
+    const text = await page.locator("main").innerText();
+    expect(text).toContain("Covey: Do It Together");
+    expect(text).toContain("coming soon to the App Store");
+  });
+
+  test("/deletion names the in-app path and the photo window", async ({ page }) => {
+    await page.goto("/deletion");
+    const text = await page.locator("main").innerText();
+    expect(text).toContain("Profile → Settings → Account → Delete account");
+    expect(text).toContain("24 hours");
+  });
+});
+
+test.describe("legal documents (App Store audit F-01)", () => {
+  for (const route of ["/privacy", "/terms"]) {
+    test(`${route} has no drafting notes and carries version 2026-10-15`, async ({ page }) => {
+      await page.goto(route);
+      const text = await page.locator("article.legal-doc").innerText();
+      expect(text).not.toMatch(/TO BE (CONFIRMED|VERIFIED|COMPLETED)|OUTSTANDING|\[|\]/);
+      expect(text).toContain("Version: 2026-10-15");
+      expect(text).not.toContain("Netlify");
+    });
+  }
+});
