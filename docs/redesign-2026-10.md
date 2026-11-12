@@ -1,4 +1,4 @@
-# Redesign, October 2026 — "a small flock in a big city"
+# Redesign, October 2026 — "a small crew in a big city"
 
 The second pass on coveyapp.co this month. The first pass (docs/waitlist.md)
 turned the site into a waitlist funnel. This one turns it into a brand: a
@@ -30,7 +30,7 @@ Found by searching the repos, git history, Figma, Drive, and Downloads:
 
 The art was rendered from the vector `.ai` at 300dpi (its gradients are
 Illustrator freeform meshes, which SVG can't express), cut per figure, and
-encoded as WebP at two sizes (`public/brand/quinn/`, `public/brand/flock/`).
+encoded as WebP at two sizes (`public/brand/quinn/`, `public/brand/quails/`).
 Nothing was redrawn or invented.
 
 **Not found:** California poppy or toyon artwork, or any other "supporting
@@ -45,13 +45,13 @@ the About page ("meet quinn"). Change it there if the name isn't final.
 
 ## 3. Creative direction
 
-**"A small flock in a big city."** Keep Covey's printed-itinerary voice
+**"A small crew in a big city."** Keep Covey's printed-itinerary voice
 (lowercase Geist Mono, paper, ink, category color) and push the execution:
 
 - **Editorial scale.** `t-mega` (up to ~11rem) for one statement per page,
   type layered with characters, full-bleed color fields.
 - **A cast, not clip art.** Quinn is the protagonist. The category quails are
-  the flock, each doing its own thing. The primary mark only identifies the
+  the quails, each doing its own thing. The primary mark only identifies the
   brand.
 - **Rooms.** Each page sets `data-page` and gets its own ground:
   Home on paper with color bursts, **Waitlist in deep matcha** (the brand accent
@@ -89,13 +89,13 @@ states use plain text links. Enforced by `tests/landing.spec.ts`.
 
 | Moment | What happens | Driver |
 |---|---|---|
-| Hero entrance (once per session) | Words rise out of masks; Quinn appears facing away; the flock flies in from the edges; Quinn turns (side, then "hello" with open beak, then front) | CSS + 3 view swaps |
-| Hero, after | Quinn turns toward the pointer; the flock drifts with pointer depth; scrolling away gathers the flock around Quinn | pointer (`data-pointer`), scroll (`--p`) |
+| Hero entrance (once per session) | Words rise out of masks; Quinn appears facing away; the quails fly in from the edges; Quinn turns (side, then "hello" with open beak, then front) | CSS + 3 view swaps |
+| Hero, after | Quinn turns toward the pointer; the quails drift with pointer depth; scrolling away gathers them around Quinn | pointer (`data-pointer`), scroll (`--p`) |
 | Problem | Pinned band; three beats light up in turn, then the 50-hours fact, then the answer | scroll, pinned (`data-progress="pin"`) |
 | How it works | Sticky stage re-composes per step: scattered → seated → a covey | IntersectionObserver |
-| Waitlist | Headline rises; card lifts; Quinn peeks over it. Quinn reacts: focus "oh", typing content, invalid skeptical, submitting focused, joined laughing while the flock springs up around the card, already-on-list unimpressed | CSS + form events |
+| Waitlist | Headline rises; card lifts; Quinn peeks over it. Quinn reacts: focus "oh", typing content, invalid skeptical, submitting focused, joined laughing while the quails spring up around the card, already-on-list unimpressed | CSS + form events |
 | Newsletter | Masthead quail settles in; pick cards lift and tilt on hover | CSS |
-| Activities | The flock parades across the band | scroll (`--p`) |
+| Events | The quails parade across the band | scroll (`--p`) |
 | About | Quinn turns through the turnaround (front → right → back → left) | scroll, pinned |
 | Micro | CTA arrow hand-off, arrow-link nudge, chip press, nav marker glide, page rise | CSS |
 

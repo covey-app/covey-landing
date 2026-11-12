@@ -1,35 +1,40 @@
 ---
 /*
- * How it works — three steps, told as sticky storytelling on wide screens:
- * the stage (HowStage) stays pinned while the steps scroll past, and the
- * step in the middle of the viewport sets its composition. On phones each
- * step carries its own static frame.
+ * How it works — three steps, told on the real iOS app. On wide screens a
+ * phone stands on a panel of Meadow lawn, pinned while the steps scroll
+ * past, and the step in the middle of the viewport picks its screen. On
+ * phones each step is a swipe card carrying its own screen, cropped.
  */
-import HowStage from "./HowStage.astro";
+import Phone from "../Phone.astro";
+import MeadowGround from "../MeadowGround.astro";
 import Icon from "../Icon.astro";
+import type { AppScreen } from "../../lib/app-screens";
 
 const steps = [
   {
     n: "01",
+    screen: "explore",
     t: "find a plan worth leaving the house for.",
     d: "Browse small plans around the city — a run then coffee, a ramen crawl, a sunset walk — or post your own in a few taps. You see exactly where, when, and who's going.",
   },
   {
     n: "02",
+    screen: "plan",
     t: "take one of a few seats.",
     d: "Hosts set the headcount, six by default, so everyone actually talks. Open plans take one tap; request-to-join plans go to the host first.",
   },
   {
     n: "03",
+    screen: "chat",
     t: "then do it again.",
     d: "When a group clicks, make it a Covey: a standing group with a recurring plan, so the second hangout doesn't depend on someone remembering to ask.",
   },
-] as const;
+] as const satisfies readonly { n: string; screen: AppScreen; t: string; d: string }[];
 
 const safety = ["Small by design", "Hosts approve requests", "18+ (21+ for drinks)", "Public places first"];
 ---
 
-<section class="how wrap" aria-labelledby="how-title">
+<section id="how" class="how wrap" aria-labelledby="how-title">
   <div class="how-head" data-reveal>
     <p class="kicker">How Covey works</p>
     <h2 id="how-title" class="t-title">three steps.<br />then it's a habit.</h2>
@@ -38,7 +43,10 @@ const safety = ["Small by design", "Hosts approve requests", "18+ (21+ for drink
   <div class="how-grid">
     <div class="how-stage-col" aria-hidden="true">
       <div class="how-sticky">
-        <HowStage live step={1} />
+        <div class="how-panel meadow">
+          <MeadowGround />
+          <Phone screens={steps.map((s) => s.screen)} sizes="(min-width: 900px) 300px, 60vw" class="how-phone" />
+        </div>
       </div>
     </div>
 
@@ -46,9 +54,10 @@ const safety = ["Small by design", "Hosts approve requests", "18+ (21+ for drink
     <ol class="how-steps" tabindex="0" aria-label="How Covey works, in three steps">
       {
         steps.map((s, i) => (
-          <li class="how-step" data-how-step={i + 1}>
-            <div class="how-step-frame">
-              <HowStage step={(i + 1) as 1 | 2 | 3} />
+          <li class="how-step" data-how-step={i + 1} data-screen={s.screen}>
+            <div class="how-step-frame meadow" aria-hidden="true">
+              <MeadowGround />
+              <Phone screens={[s.screen]} sizes="70vw" class="frame-phone" />
             </div>
             <span class="how-n">{s.n}</span>
             <h3 class="how-t">{s.t}</h3>
@@ -100,6 +109,19 @@ const safety = ["Small by design", "Hosts approve requests", "18+ (21+ for drink
   .how-step-frame {
     width: min(100%, 26rem);
     margin-bottom: 1.5rem;
+  }
+  /* The lawn panel the phone stands on: Mobbin's screen-in-a-soft-panel,
+     in Meadow. */
+  .how-panel {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 5 / 6;
+    border-radius: var(--rad-sheet);
+    overflow: hidden;
+    padding: 2rem;
+  }
+  .how-panel :global(.how-phone) {
+    width: min(62%, 19rem);
   }
   .how-swipe {
     display: none;
@@ -164,7 +186,7 @@ const safety = ["Small by design", "Hosts approve requests", "18+ (21+ for drink
 
   /* Phones and tablets: the three steps become a swipeable row of cards,
      each carrying its own frame of the stage, clipped to the card so the
-     flock never drifts past the screen edge. The next card peeks in to show
+     quails never drift past the screen edge. The next card peeks in to show
      there's more. */
   @media (max-width: 899px) {
     .how-steps {
@@ -200,23 +222,21 @@ const safety = ["Small by design", "Hosts approve requests", "18+ (21+ for drink
       border: 0.7px solid color-mix(in oklab, var(--edge) 80%, transparent);
       box-shadow: var(--shadow-paper);
     }
+    /* The top of the screen, cropped by the card: the phone rises from
+       the lawn and runs off the bottom edge. */
     .how-step-frame {
       width: 100%;
+      height: 19rem;
       margin-bottom: 1.1rem;
       border-radius: calc(var(--rad-sheet) - 0.5rem);
-      background: var(--paper);
       overflow: clip;
+      display: flex;
+      justify-content: center;
+      padding-top: 1.5rem;
     }
-    /* The frame is narrower than the desktop stage, so the plan card's
-       readable minimum type would wrap inside its usual 62cqi width. */
-    .how-step-frame :global(.plan) {
-      width: 76cqi;
-    }
-    /* …and the covey tag would run off the frame's right edge, so it moves
-       under the card. (Its poses are inline custom properties.) */
-    .how-step-frame :global(.covey-tag) {
-      --x3: 4 !important;
-      --y3: 47 !important;
+    .how-step-frame :global(.frame-phone) {
+      width: 72%;
+      flex: none;
     }
     .how-n,
     .how-t,
@@ -290,7 +310,7 @@ const safety = ["Small by design", "Hosts approve requests", "18+ (21+ for drink
 
 <script>
   function initHow() {
-    const stage = document.querySelector<HTMLElement>("[data-how-stage].is-live");
+    const stage = document.querySelector<HTMLElement>(".how-sticky .phone");
     const steps = Array.from(document.querySelectorAll<HTMLElement>("[data-how-step]"));
     if (!stage || !steps.length || stage.dataset.bound) return;
     stage.dataset.bound = "true";
@@ -298,8 +318,8 @@ const safety = ["Small by design", "Hosts approve requests", "18+ (21+ for drink
       (entries) => {
         for (const e of entries) {
           if (!e.isIntersecting) continue;
-          const n = (e.target as HTMLElement).dataset.howStep!;
-          stage.dataset.step = n;
+          const step = e.target as HTMLElement;
+          stage.dataset.screen = step.dataset.screen!;
           steps.forEach((s) => s.classList.toggle("is-current", s === e.target));
         }
       },

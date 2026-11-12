@@ -9,6 +9,8 @@
 /* The 2026-10 redesign layer: editorial scale, page identities, CTA and motion
    primitives. Imported here (imports must precede rules); it only reads tokens. */
 @import "./expressive.css";
+/* Meadow: the lawn ground and liquid glass (the app's canvas theme, 2026-11). */
+@import "./meadow.css";
 
 /*
  * Covey — landing page design system.
@@ -165,6 +167,11 @@
   --cat-culture: #6f4e37;     --cat-culture-soft: #efe3d8;     --cat-culture-ink: #3e2a1b;
   --cat-fashion: #d86fa3;     --cat-fashion-soft: #fbe8f1;     --cat-fashion-ink: #6a2448;
   --cat-nightlife: #4b2a78;   --cat-nightlife-soft: #eee6f7;   --cat-nightlife-ink: #241038;
+
+  /* Quinn's plumage (the app icon / QUINNversions gradient: orange cheek,
+     magenta crown, lavender side) deepened so every stop clears 4.3:1 on
+     --paper. For display words via .quinn-word. */
+  --quinn-ink: linear-gradient(100deg, #a9581a 0%, #b0447f 52%, #7a5ca3 100%);
 }
 
 .dark {
@@ -226,6 +233,9 @@
   --cat-culture: #b08968;     --cat-culture-soft: #3a2a1d;     --cat-culture-ink: #ebd9c6;
   --cat-fashion: #e598bd;     --cat-fashion-soft: #3f1a2e;     --cat-fashion-ink: #f6d2e2;
   --cat-nightlife: #8260bc;   --cat-nightlife-soft: #281445;   --cat-nightlife-ink: #e1d2f5;
+
+  /* Quinn's plumage, lifted for dark grounds (every stop ≥ 6:1). */
+  --quinn-ink: linear-gradient(100deg, #e8a058 0%, #e07ab4 52%, #b09ad0 100%);
 }
 
 @layer base {
@@ -879,6 +889,24 @@
     color: var(--accent-ink);
   }
 
+  /* A display word painted in Quinn's gradient. The solid color is the
+     fallback where background-clip: text isn't supported. */
+  .quinn-word {
+    color: var(--accent-ink);
+    background-image: var(--quinn-ink);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+  @media (forced-colors: active) {
+    .quinn-word {
+      background: none;
+      -webkit-text-fill-color: currentColor;
+    }
+  }
+
   /*
    * Stop orb — CategoryStopBead: a category-filled circle carrying a white
    * glyph and the `bead` shadow. Set --c to the category primary and --orb to
@@ -992,11 +1020,12 @@
   --motion-snappy: 0.22s cubic-bezier(0.3, 0.8, 0.3, 1);
   --motion-card: 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 
-  /* Easing curves, named by feel. `pop` approximates premiumOrb
-     (spring 0.48 / 0.72): one small overshoot, no bounce-back wobble. */
+  /* Easing curves, named by feel. No overshoot anywhere: the owner's rule
+     since Meadow (2026-11) is that everything eases in critically damped,
+     so `pop` lands like the app's springs without passing its mark. */
   --ease-standard: cubic-bezier(0.33, 0, 0.2, 1);
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  --ease-pop: cubic-bezier(0.34, 1.35, 0.64, 1);
+  --ease-pop: cubic-bezier(0.2, 0.9, 0.3, 1);
   --ease-exit: cubic-bezier(0.4, 0, 1, 1);
 }
 

@@ -421,7 +421,7 @@ The first pass of this branch built a hero around the app-icon quail in its
 tile, refined from the Figma "Circle orbit motion". The October redesign
 retired that: the primary mark is now reserved for brand identification, and
 the hero is a cast of Quinn plus the nine category quails, whose entrance
-keeps the Figma idea of the flock arriving and gathering. The waitlist page has
+keeps the Figma idea of the quails arriving and gathering. The waitlist page has
 Quinn's expressions react to the form. See docs/redesign-2026-10.md §5 for the
 motion map.
 

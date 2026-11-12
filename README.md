@@ -45,7 +45,7 @@ redesign's expressive layer (`src/styles/expressive.css`): the editorial scale
 - **Characters:** the primary mark (app-icon quail) only identifies the
   brand. **Quinn** (`Quinn.astro`: five views + line art; `QuinnFace.astro`:
   seven expressions) is the protagonist. The nine **category quails**
-  (`public/brand/flock/`, `src/lib/categories.ts`) are the flock.
+  (`public/brand/quails/`, `src/lib/categories.ts`) are the category quails.
 - **Rooms:** home on paper, waitlist in deep matcha, newsletter as newsprint,
   activities in sky blue, about in clay.
 - **Motion:** pointer- and scroll-driven, transforms and opacity only, no idle

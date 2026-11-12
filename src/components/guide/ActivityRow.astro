@@ -10,9 +10,8 @@ import { priceLabel, timeLabel, type Activity } from "../../lib/guide";
 
 interface Props {
   activity: Activity;
-  pick?: boolean;
 }
-const { activity, pick = false } = Astro.props;
+const { activity } = Astro.props;
 const a = activity.data;
 const time = timeLabel(a) ?? (a.kind === "place" ? "Any time" : "");
 const price = priceLabel(a);
@@ -33,7 +32,6 @@ const price = priceLabel(a);
   <div class="row-main">
     <p class="row-title">
       <a href={a.source.url} target="_blank" rel="noopener">{a.title}<span class="sr-only"> (opens the organizer's page)</span></a>
-      {pick && <span class="row-pick">Top pick</span>}
     </p>
     <p class="row-meta">
       <span>{CATEGORIES[a.category].short}</span>
@@ -86,18 +84,6 @@ const price = priceLabel(a);
   }
   .row-title a:hover {
     text-decoration-color: currentColor;
-  }
-  .row-pick {
-    display: inline-block;
-    margin-left: 0.5rem;
-    padding: 0.1rem 0.5rem;
-    border-radius: 999px;
-    background: var(--ink);
-    color: var(--ink-inverse);
-    font-size: 0.6875rem;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    vertical-align: 0.15em;
   }
   .row-meta {
     display: flex;

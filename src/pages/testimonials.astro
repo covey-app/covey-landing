@@ -1,6 +1,5 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import CoveyMark from "../components/CoveyMark.astro";
 import EmptyState from "../components/EmptyState.astro";
 import { SITE } from "../config";
 ---
@@ -10,10 +9,7 @@ import { SITE } from "../config";
   description="Real stories from early Covey hosts and joiners are coming soon, ahead of launch."
 >
   <div class="max-w-4xl mx-auto px-6 py-[var(--section-y)]">
-    <div class="eyebrow mb-3 flex items-center gap-2.5">
-      <CoveyMark variant="dots" dotSize={6} />
-      Testimonials
-    </div>
+    <div class="eyebrow mb-3">Testimonials</div>
     <h1 class="display t-h1 mb-6 text-balance">
       Real stories, coming soon.
     </h1>

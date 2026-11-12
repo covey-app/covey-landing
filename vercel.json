@@ -6,8 +6,18 @@
       "permanent": false
     },
     {
-      "source": "/events",
-      "destination": "/activities",
+      "source": "/activities",
+      "destination": "/events",
+      "permanent": true
+    },
+    {
+      "source": "/newsletter",
+      "destination": "/events",
+      "permanent": true
+    },
+    {
+      "source": "/newsletter/:path*",
+      "destination": "/events",
       "permanent": true
     }
   ],

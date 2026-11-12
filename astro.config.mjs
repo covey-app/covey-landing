@@ -10,10 +10,8 @@ export default defineConfig({
   // route, /api/waitlist (`prerender = false`), which becomes a Vercel Function.
   adapter: vercel(),
   // Astro's checkOrigin refuses every cross-site *and origin-less* form POST.
-  // Mail providers send RFC 8058 one-click unsubscribes origin-less, so it
-  // would break /newsletter/unsubscribe. The signup endpoints enforce origin
-  // themselves (isCrossSiteForm in src/lib/waitlist/handler.ts); the confirm
-  // and unsubscribe pages act only on an unguessable token.
+  // The waitlist endpoint enforces origin itself (isCrossSiteForm in
+  // src/lib/waitlist/handler.ts).
   security: { checkOrigin: false },
   // Server-only secrets, read at request time — never inlined into the bundle
   // and never exposed to the browser. Optional so a fresh clone still builds;
@@ -24,7 +22,6 @@ export default defineConfig({
       SUPABASE_SERVICE_ROLE_KEY: envField.string({ context: "server", access: "secret", optional: true }),
       RESEND_API_KEY: envField.string({ context: "server", access: "secret", optional: true }),
       WAITLIST_EMAIL_FROM: envField.string({ context: "server", access: "secret", optional: true }),
-      NEWSLETTER_EMAIL_FROM: envField.string({ context: "server", access: "secret", optional: true }),
     },
   },
   // Astro's default HTML compression collapses the whitespace-only text node

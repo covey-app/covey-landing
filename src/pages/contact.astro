@@ -7,7 +7,6 @@
  * backend and a privacy policy update (§4.14) first.
  */
 import BaseLayout from "../layouts/BaseLayout.astro";
-import CoveyMark from "../components/CoveyMark.astro";
 import { SITE } from "../config";
 
 // One inbox for everything. The topics stay so people know what they can write about.
@@ -24,10 +23,7 @@ const topics = [
   description="Get in touch with the Covey team by email — support, safety, privacy, press, or just to say hi."
 >
   <div class="max-w-3xl mx-auto px-6 py-[var(--section-y)]">
-    <div class="eyebrow flex items-center gap-2.5 mb-3">
-      <CoveyMark variant="dots" dotSize={6} />
-      Contact
-    </div>
+    <div class="eyebrow mb-3">Contact</div>
     <h1 class="display t-h1 mb-6">Say hi.</h1>
     <p class="text-ink-muted text-lg leading-relaxed mb-8">
       One inbox for everything. A person reads every email and we try to reply

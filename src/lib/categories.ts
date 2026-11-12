@@ -1,13 +1,13 @@
 /*
- * The nine plan categories, shared by the content schema, the activities
- * directory, the newsletter, and the hero cast. Keys match `--cat-*` in
+ * The nine plan categories, shared by the content schema, the events
+ * directory, and the hero cast. Keys match `--cat-*` in
  * global.css (ActivityCategoryPalette.swift) and CategoryKey in plans.ts.
  *
  * `icon` is the app's category glyph (covey-ios ActivityGlyph.categoryGlyphs,
  * the white symbol inside a CategoryStopBead) translated to its closest Lucide
  * icon — SF Symbols can't be used on the web. `bird` is the category quail
  * from covey-ios (OnboardingBird*), restored from the asset catalog's history
- * into public/brand/flock/, used for illustration, not as an icon.
+ * into public/brand/quails/, used for illustration, not as an icon.
  */
 import type { IconName } from "./icons";
 
@@ -52,5 +52,5 @@ export const TAG_LABELS: Record<Tag, string> = {
 /** srcset for a category quail illustration. */
 export function birdSrc(category: Category): { src: string; srcset: string } {
   const b = CATEGORIES[category].bird;
-  return { src: `/brand/flock/${b}-240.webp`, srcset: `/brand/flock/${b}-240.webp 1x, /brand/flock/${b}-480.webp 2x` };
+  return { src: `/brand/quails/${b}-240.webp`, srcset: `/brand/quails/${b}-240.webp 1x, /brand/quails/${b}-480.webp 2x` };
 }

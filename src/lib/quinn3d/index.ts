@@ -108,6 +108,12 @@ export interface MountOptions {
   follow?: boolean;
   /** Starting angle, as for setTurn. */
   turn?: number;
+  /**
+   * What he's standing on. "paper" (default): neutral light with a lavender
+   * bounce. "meadow": warm sun with green bounce light off the lawn and a
+   * shadow in the lawn's shade, so he sits in the grass, not on top of it.
+   */
+  light?: "paper" | "meadow";
 }
 
 export async function mountQuinn3D(host: HTMLElement, opts: MountOptions): Promise<Quinn3D> {
@@ -155,8 +161,10 @@ export async function mountQuinn3D(host: HTMLElement, opts: MountOptions): Promi
   const scene = new Scene();
   const camera = new PerspectiveCamera(18, 1, 0.1, 100);
 
-  const hemi = new HemisphereLight(0xffffff, 0xd9d2e3, 0.6); scene.add(hemi);
-  const key = new DirectionalLight(0xffffff, 0.6);
+  const meadow = opts.light === "meadow";
+  const hemi = meadow ? new HemisphereLight(0xfff6e2, 0x8ea65a, 0.62) : new HemisphereLight(0xffffff, 0xd9d2e3, 0.6);
+  scene.add(hemi);
+  const key = new DirectionalLight(meadow ? 0xfff4dc : 0xffffff, 0.6);
   key.position.set(2, 9, 6); key.castShadow = true; key.shadow.mapSize.set(1024, 1024);
   Object.assign(key.shadow.camera, { left: -4, right: 4, top: 4, bottom: -4, near: 1, far: 25 }); key.shadow.bias = -0.0005; key.shadow.normalBias = 0.02;
   scene.add(key);
@@ -420,10 +428,11 @@ float stroke(float v, float px){ float w = max(fwidth(v), 1e-4); return 1.0 - sm
   }
 
   // contact shadow (the page draws its own ground ellipse; this is just the bird's own shadow)
-  const ground = new Mesh(new PlaneGeometry(60, 60), new ShadowMaterial({ opacity: 0.08 }));
+  const ground = new Mesh(new PlaneGeometry(60, 60), new ShadowMaterial(meadow ? { color: 0x122806, opacity: 0.16 } : { opacity: 0.08 }));
   ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; ground.userData.noDepth = true; scene.add(ground);
   const cv = document.createElement("canvas"); cv.width = cv.height = 128; const cx = cv.getContext("2d")!;
-  const gr = cx.createRadialGradient(64, 64, 0, 64, 64, 64); gr.addColorStop(0, "rgba(40,20,50,0.22)"); gr.addColorStop(1, "rgba(40,20,50,0)");
+  const gr = cx.createRadialGradient(64, 64, 0, 64, 64, 64); const shade = meadow ? "18,40,6" : "40,20,50";
+  gr.addColorStop(0, `rgba(${shade},${meadow ? 0.32 : 0.22})`); gr.addColorStop(1, `rgba(${shade},0)`);
   cx.fillStyle = gr; cx.fillRect(0, 0, 128, 128);
   const blob = new Mesh(new PlaneGeometry(1.9, 1.9), new MeshBasicMaterial({ map: new CanvasTexture(cv), transparent: true, depthWrite: false }));
   blob.rotation.x = -Math.PI / 2; blob.position.y = 0.002; blob.userData.noDepth = true; scene.add(blob);

@@ -12,10 +12,9 @@ const ROUTES = [
   "/",
   "/about",
   "/contact",
+  "/links",
   "/testimonials",
-  "/activities?today=2026-10-14",
-  "/newsletter",
-  "/newsletter/2026-10-12?today=2026-10-14",
+  "/events?today=2026-10-14",
   "/terms",
   "/privacy",
   "/safety",
@@ -58,7 +57,7 @@ test.describe("accessibility (axe)", () => {
   });
 
   // Weather cards are tinted per mood and drawn by script; check them in dark too.
-  for (const route of ["/activities?today=2026-10-14", "/newsletter/2026-10-12?today=2026-10-14"]) {
+  for (const route of ["/events?today=2026-10-14"]) {
     test(`dark mode ${route} (weather plans drawn) has no serious/critical violations`, async ({ page }) => {
       await page.emulateMedia({ colorScheme: "dark" });
       await mockWeather(page);

@@ -5,8 +5,8 @@
 //
 //   1. vercel.json redirects
 //   2. files in .vercel/output/static ("handle": "filesystem")
-//   3. routes whose dest is the Astro function (/api/*, /newsletter/confirm,
-//      /newsletter/unsubscribe) → the built function's fetch() handler
+//   3. routes whose dest is the Astro function (/api/*) → the built
+//      function's fetch() handler
 //   4. everything else → /404.html
 //
 //   npm run build && npm run preview            # http://localhost:4321
@@ -28,6 +28,10 @@ const PORT = Number(portArg > -1 ? process.argv[portArg + 1] : process.env.PORT 
 
 const vercel = JSON.parse(await readFile(join(root, "vercel.json"), "utf8"));
 const redirects = new Map((vercel.redirects ?? []).map((r) => [r.source, r]));
+// "/x/:path*" sources match anything under /x/ (destinations here don't reuse :path).
+const prefixRedirects = (vercel.redirects ?? [])
+  .filter((r) => r.source.endsWith("/:path*"))
+  .map((r) => [r.source.slice(0, -"/:path*".length) + "/", r]);
 const config = JSON.parse(await readFile(join(OUT, "config.json"), "utf8"));
 const fnRoutes = config.routes.filter((r) => r.dest === "_render").map((r) => new RegExp(r.src));
 const fnConfig = JSON.parse(await readFile(join(OUT, "functions/_render.func/.vc-config.json"), "utf8"));
@@ -65,7 +69,7 @@ createServer(async (req, res) => {
   const url = new URL(req.url ?? "/", `http://localhost:${PORT}`);
   const path = url.pathname.replace(/\/+$/, "") || "/";
 
-  const redirect = redirects.get(path);
+  const redirect = redirects.get(path) ?? prefixRedirects.find(([prefix]) => path.startsWith(prefix))?.[1];
   if (redirect) {
     res.writeHead(redirect.permanent ? 308 : 307, { location: redirect.destination }).end();
     return;

@@ -30,7 +30,7 @@ export class WaitlistStoreError extends Error {
 
 const TIMEOUT_MS = 8000;
 
-/** PostgREST auth headers for a service-role key. Shared with the newsletter. */
+/** PostgREST auth headers for a service-role key. */
 export function headers(cfg: SupabaseConfig): Record<string, string> {
   const h: Record<string, string> = {
     apikey: cfg.serviceKey,

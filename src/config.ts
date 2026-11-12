@@ -38,7 +38,7 @@ export const SITE = {
 
   city: "San Francisco, CA",
   // Legal name and postal address. CAN-SPAM requires the address in every
-  // commercial email (Covey Weekly, waitlist mail); the legal docs use both.
+  // commercial email (waitlist mail); the legal docs use both.
   legalName: "Covey Platforms Inc.",
   postalAddress: "315 Montgomery Street, Suite 900, San Francisco, CA 94104",
   launchRegion: "US only, 18+, starting in San Francisco",
@@ -54,8 +54,13 @@ export const SITE = {
     admin: "admin@coveyapp.co",
   },
 
+  // Instagram and X are @coveysocial, TikTok is @covey.hq, and LinkedIn is
+  // the company page. All four are listed on /links.
   social: {
-    instagram: "https://www.instagram.com/covey.hq/",
+    instagram: "https://www.instagram.com/coveysocial/",
+    tiktok: "https://www.tiktok.com/@covey.hq",
+    x: "https://x.com/coveysocial",
+    linkedin: "https://www.linkedin.com/company/covey-platforms/",
   },
 } as const;
 

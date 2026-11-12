@@ -13,6 +13,10 @@
  *                    over it (fine pointers only). Children opt in with
  *                    --depth (px of travel at the edge).
  *   [data-reveal]    gets .is-in the first time it enters the viewport.
+ *   [data-meadow]    (MeadowGround) gets --lawn-y / --bands-y: the lawn
+ *                    drifts at 0.35× scroll on screen and the shade bands at
+ *                    1.3× that (Meadow SPEC §3), each kept within one tile
+ *                    period so the transform stays small and seamless.
  *
  * One passive scroll listener and one rAF per frame at most; elements are
  * only measured while an IntersectionObserver says they're near the screen.
@@ -25,10 +29,23 @@ const reduced = () => window.matchMedia("(prefers-reduced-motion: reduce)").matc
 const active = new Set<HTMLElement>();
 let ticking = false;
 
+// Meadow tile height (CSS px) and on-screen drift rates.
+const MEADOW_TILE = 1080;
+const LAWN_RATE = 0.35;
+const BANDS_RATE = LAWN_RATE * 1.3;
+
 function measure() {
   ticking = false;
   const vh = window.innerHeight;
   for (const el of active) {
+    if (el.dataset.meadow !== undefined) {
+      // The layer rides with its section (rate 1), so it's pushed back by
+      // the difference to drift at its own rate on screen.
+      const y = window.scrollY;
+      el.style.setProperty("--lawn-y", ((y * (1 - LAWN_RATE)) % MEADOW_TILE).toFixed(1));
+      el.style.setProperty("--bands-y", ((y * (1 - BANDS_RATE)) % MEADOW_TILE).toFixed(1));
+      continue;
+    }
     const r = el.getBoundingClientRect();
     let p: number;
     if (el.dataset.progress === "pin") {
@@ -69,7 +86,7 @@ function wireProgress() {
     },
     { rootMargin: "20% 0px" },
   );
-  document.querySelectorAll<HTMLElement>("[data-progress]").forEach((el) => {
+  document.querySelectorAll<HTMLElement>("[data-progress], [data-meadow]").forEach((el) => {
     if (el.dataset.motionBound) return;
     el.dataset.motionBound = "true";
     progressObserver!.observe(el);
