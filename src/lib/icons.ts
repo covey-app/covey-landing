@@ -23,6 +23,7 @@ import croissant from "lucide-static/icons/croissant.svg?raw";
 import dumbbell from "lucide-static/icons/dumbbell.svg?raw";
 import film from "lucide-static/icons/film.svg?raw";
 import flame from "lucide-static/icons/flame.svg?raw";
+import globe from "lucide-static/icons/globe.svg?raw";
 import footprints from "lucide-static/icons/footprints.svg?raw";
 import gamepad from "lucide-static/icons/gamepad-2.svg?raw";
 import hand from "lucide-static/icons/hand.svg?raw";
@@ -42,6 +43,7 @@ import repeat from "lucide-static/icons/repeat.svg?raw";
 import shieldCheck from "lucide-static/icons/shield-check.svg?raw";
 import shoppingBag from "lucide-static/icons/shopping-bag.svg?raw";
 import squarePlay from "lucide-static/icons/square-play.svg?raw";
+import smartphone from "lucide-static/icons/smartphone.svg?raw";
 import soup from "lucide-static/icons/soup.svg?raw";
 import sparkles from "lucide-static/icons/sparkles.svg?raw";
 import sunset from "lucide-static/icons/sunset.svg?raw";
@@ -57,7 +59,10 @@ import info from "lucide-static/icons/info.svg?raw";
 import sun from "lucide-static/icons/sun.svg?raw";
 import ticket from "lucide-static/icons/ticket.svg?raw";
 
+import { BRAND_GLYPHS } from "./brand-glyphs";
+
 const RAW = {
+  ...BRAND_GLYPHS,
   "arrow-down": arrowDown,
   "arrow-right": arrowRight,
   "badge-check": badgeCheck,
@@ -77,6 +82,7 @@ const RAW = {
   film,
   flame,
   footprints,
+  globe,
   gamepad,
   hand,
   "ice-cream": iceCream,
@@ -95,6 +101,7 @@ const RAW = {
   repeat,
   "shield-check": shieldCheck,
   "shopping-bag": shoppingBag,
+  smartphone,
   "square-play": squarePlay,
   soup,
   sparkles,

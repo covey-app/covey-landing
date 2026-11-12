@@ -8,16 +8,15 @@ import { test, expect } from "@playwright/test";
  */
 
 test.describe("navigation", () => {
-  test("desktop: three destinations, the current one marked, one waitlist CTA", async ({ page }) => {
+  test("desktop: two destinations, the current one marked, one waitlist CTA", async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
     for (const [path, label] of [
-      ["/activities", "Activities"],
-      ["/newsletter", "Newsletter"],
+      ["/events", "Events"],
       ["/about", "About"],
     ] as const) {
       await page.goto(path);
       const nav = page.locator('nav[aria-label="Primary"]');
-      await expect(nav.getByRole("link")).toHaveText(["Activities", "Newsletter", "About"]);
+      await expect(nav.getByRole("link")).toHaveText(["Events", "About"]);
       await expect(nav.locator('a[aria-current="page"]')).toHaveText(label);
     }
     await expect(page.locator("[data-menu-btn]")).toBeHidden();
@@ -37,7 +36,7 @@ test.describe("navigation", () => {
     await page.locator("[data-menu-btn]").click();
     const menu = page.locator("[data-menu-panel]");
     await expect(menu).toBeVisible();
-    await expect(menu.locator(".menu-list a")).toHaveText(["Home", "Activities", "Newsletter", "About"]);
+    await expect(menu.locator(".menu-list a")).toHaveText(["Home", "Events", "About"]);
     await expect(menu.getByRole("link", { name: "Join the waitlist" })).toHaveAttribute("href", "/waitlist");
     await expect(menu.getByRole("link", { name: /Sign in/ })).toHaveAttribute("href", "https://go.coveyapp.co/login");
   });
@@ -45,12 +44,12 @@ test.describe("navigation", () => {
   test("soft navigation between pages keeps working (view transitions)", async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
     await page.goto("/");
-    await page.locator('nav[aria-label="Primary"]').getByRole("link", { name: "Activities" }).click();
-    await expect(page).toHaveURL(/\/activities\/?$/);
+    await page.locator('nav[aria-label="Primary"]').getByRole("link", { name: "Events" }).click();
+    await expect(page).toHaveURL(/\/events\/?$/);
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("what's on.");
-    await page.locator('nav[aria-label="Primary"]').getByRole("link", { name: "Newsletter" }).click();
-    await expect(page).toHaveURL(/\/newsletter\/?$/);
-    await expect(page.locator('nav[aria-label="Primary"] a[aria-current="page"]')).toHaveText("Newsletter");
+    await page.locator('nav[aria-label="Primary"]').getByRole("link", { name: "About" }).click();
+    await expect(page).toHaveURL(/\/about\/?$/);
+    await expect(page.locator('nav[aria-label="Primary"] a[aria-current="page"]')).toHaveText("About");
   });
 });
 
@@ -72,15 +71,14 @@ test.describe("home page (acceptance criteria)", () => {
     await page.goto("/");
     await expect(page.locator("main img[src*='app-icon']")).toHaveCount(0);
     await expect(page.locator("main .tile")).toHaveCount(0);
-    await expect(page.locator("[data-hero] img[src*='/brand/flock/']")).not.toHaveCount(0);
+    await expect(page.locator("[data-hero] img[src*='/brand/quails/']")).not.toHaveCount(0);
     await expect(page.locator("[data-hero] [data-quinn]")).toHaveCount(1);
     expect(await page.locator("header img[src*='app-icon'], footer img[src*='app-icon']").count()).toBe(2);
   });
 
-  test("contextual actions lead to the newsletter and activities, not more waitlist buttons", async ({ page }) => {
+  test("contextual actions lead to events, not more waitlist buttons", async ({ page }) => {
     await page.goto("/");
-    await expect(page.locator("main [data-newsletter]")).toHaveCount(1);
-    await expect(page.locator("main a[href='/activities']")).not.toHaveCount(0);
+    await expect(page.locator("main a[href='/events']")).not.toHaveCount(0);
   });
 
   test("group size claims match the product", async ({ page }) => {
@@ -164,13 +162,15 @@ test("reduced motion: final frames, no entrance, pinned beats fully visible", as
   await ctx.close();
 });
 
-test("redirects: /signup → /waitlist, /events → /activities", async ({ request }) => {
+test("redirects: /signup → /waitlist, /activities and /newsletter → /events", async ({ request }) => {
   const signup = await request.get("/signup", { maxRedirects: 0 });
   expect(signup.status()).toBe(307);
   expect(signup.headers()["location"]).toBe("/waitlist");
-  const events = await request.get("/events", { maxRedirects: 0 });
-  expect(events.status()).toBe(308);
-  expect(events.headers()["location"]).toBe("/activities");
+  for (const from of ["/activities", "/newsletter", "/newsletter/2026-10-12"]) {
+    const res = await request.get(from, { maxRedirects: 0 });
+    expect(res.status(), from).toBe(308);
+    expect(res.headers()["location"], from).toBe("/events");
+  }
   const fallback = await (await request.get("/signup/index.html")).text();
   expect(fallback).toContain("url=/waitlist");
 });

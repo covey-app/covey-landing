@@ -34,7 +34,7 @@ async function trackEvents(page: Page) {
 
 const waitLikeAPerson = (page: Page) => page.waitForTimeout(1300);
 
-test("new signup: Quinn reacts, the flock cheers, focus moves, city follow-up, attribution, analytics", async ({ page }) => {
+test("new signup: Quinn reacts, the quails cheer, focus moves, city follow-up, attribution, analytics", async ({ page }) => {
   const events = await trackEvents(page);
   const bodies = await mockApi(page, (body) =>
     body.intent === "city" ? { status: 200, json: { ok: true } } : { status: 201, json: { ok: true, result: "created", followupToken: "A".repeat(43) } },

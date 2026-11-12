@@ -6,14 +6,14 @@
  * thing its category is about. Choreography (once per session, ~2s, CSS):
  *   0.00  headline words rise out of their masks
  *   0.15  Quinn pops up
- *   0.35  the flock flies in from the edges, staggered
+ *   0.35  the quails fly in from the edges, staggered
  *   1.25  Quinn says hello (open beak)
  * Quinn is the 3D model (src/lib/quinn3d/), loaded after the page is idle;
  * the front illustration is the poster until then and the fallback without
  * WebGL. Once it's in, Quinn turns a full circle to greet first-time
  * visitors, looks toward the pointer, can be dragged round, and flaps when
- * tapped. The flock drifts with pointer depth, and scrolling the hero away
- * gathers the flock in around Quinn. No-JS, reduced motion, and repeat
+ * tapped. The quails drift with pointer depth, and scrolling the hero away
+ * gathers them in around Quinn. No-JS, reduced motion, and repeat
  * visits in a session get the final frame.
  */
 import Quinn from "../Quinn.astro";
@@ -22,7 +22,7 @@ import { SITE, CITY_SHORT } from "../../config";
 
 // x/y/w: % of the stage. depth: px of pointer travel. f: fly-in offset (vw/vh).
 // g: gather vector toward Quinn (% of own size). back: sits behind Quinn.
-const flock: { c: Category; x: number; y: number; w: number; depth: number; rot: number; fx: number; fy: number; back?: boolean; mobile?: boolean }[] = [
+const quails: { c: Category; x: number; y: number; w: number; depth: number; rot: number; fx: number; fy: number; back?: boolean; mobile?: boolean }[] = [
   { c: "outdoors", x: 2, y: 14, w: 19, depth: 28, rot: -5, fx: -60, fy: -10, mobile: true },
   { c: "nightlife", x: 26, y: -2, w: 14, depth: 16, rot: 3, fx: -10, fy: -60, back: true },
   { c: "arts", x: 66, y: 0, w: 20, depth: 24, rot: 4, fx: 40, fy: -60, mobile: true },
@@ -55,7 +55,7 @@ const arrow = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
           Join the waitlist
           <span class="cta-arrow" set:html={arrow + arrow} />
         </a>
-        <a href="/activities" class="arrow-link">
+        <a href="/events" class="arrow-link">
           See what's on this week
           <span set:html={arrow} />
         </a>
@@ -64,7 +64,7 @@ const arrow = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
 
     <div class="stage" data-stage>
       {
-        flock.map((b, i) => {
+        quails.map((b, i) => {
           const art = birdSrc(b.c);
           return (
             <div
@@ -115,7 +115,7 @@ const arrow = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
   }
   /* The copy column is the container the headline is sized against, so
      "strangers" (the longest word, ~4.9em wide) can never outgrow it, whatever
-     the viewport, zoom level, or fallback font. It also sits above the flock,
+     the viewport, zoom level, or fallback font. It also sits above the quails,
      which overlaps the column's edge on wide screens. */
   .hero-copy {
     position: relative;
@@ -336,7 +336,7 @@ const arrow = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
       if (gone) return q.destroy();
       q3 = q;
       setView(quinn, "front");
-      // First visit: a full turn to say hi, after the flock has landed (not if it'd come out of nowhere).
+      // First visit: a full turn to say hi, after the quails have landed (not if it'd come out of nowhere).
       const since = performance.now() - started;
       if (intro && since < 6000) window.setTimeout(() => q.greet(), Math.max(400, 1600 - since));
     };

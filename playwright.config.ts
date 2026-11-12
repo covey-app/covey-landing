@@ -33,8 +33,8 @@ export default defineConfig({
   },
   projects: only ? allProjects.filter((p) => p.name === only) : allProjects,
   webServer: {
-    // The real listings with a pinned "today" (the week of the first
-    // edition), so the guide pages are deterministic whatever day it runs.
+    // The real listings with a pinned "today" (the week of Oct 17–18), so the
+    // events pages are deterministic whatever day it runs.
     command: "COVEY_TODAY=2026-10-14 npm run build && npm run preview",
     url: `http://localhost:${PORT}`,
     reuseExistingServer: !process.env.CI,

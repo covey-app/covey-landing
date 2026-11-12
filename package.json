@@ -16,8 +16,7 @@
     "test:unit": "node --test tests/unit/*.test.ts",
     "test:db": "sh scripts/test-db.sh",
     "test": "npm run test:unit && astro check && astro build && playwright test",
-    "content:import": "node scripts/content/import-sheet.mjs",
-    "newsletter:send": "node --env-file-if-exists=.env scripts/newsletter/send-edition.mjs"
+    "content:import": "node scripts/content/import-sheet.mjs"
   },
   "dependencies": {
     "@astrojs/vercel": "^11.0.14",

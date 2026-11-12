@@ -17,7 +17,7 @@ import type { IconName } from "../../lib/icons";
 
 interface Props {
   days: GuideDay[];
-  /** Only days that have listings (an edition's weekend), or every upcoming day. */
+  /** Only days that have listings, or every upcoming day. */
   listedOnly?: boolean;
   max?: number;
   id: string;
@@ -437,7 +437,7 @@ const listings = days.map((d) => ({
     root.querySelector<HTMLElement>("[data-wx-fallback]")!.hidden = true;
     live.hidden = false;
     const sub = root.querySelector<HTMLElement>("[data-wx-sub]");
-    if (sub) sub.textContent = listedOnly ? "The forecast for this edition's days, and a plan to match each one." : "The next few days in San Francisco, and a plan to match each one.";
+    if (sub) sub.textContent = listedOnly ? "The forecast for the listed days, and a plan to match each one." : "The next few days in San Francisco, and a plan to match each one.";
     const credit = root.querySelector<HTMLElement>("[data-wx-credit]")!;
     const updated = data.updated ? new Date(data.updated) : null;
     credit.textContent = `Forecast: National Weather Service${updated && !Number.isNaN(+updated) ? `, updated ${updated.toLocaleTimeString("en-US", { timeZone: "America/Los_Angeles", hour: "numeric", minute: "2-digit" }).toLowerCase().replace(" ", "")}` : ""}. Downtown SF; the coast runs cooler.`;

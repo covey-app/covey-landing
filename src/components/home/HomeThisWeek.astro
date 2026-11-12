@@ -1,16 +1,14 @@
 ---
 /*
- * "This week in SF" — the doorway to the newsletter and the activities guide.
- * Borrows the newsletter's newsprint identity so it reads as a different room
- * you can step into. Its action is the newsletter (contextual, secondary),
- * never a third waitlist button.
+ * "This week in SF" — the doorway to /events: the next three listings, in a
+ * warm newsprint room of their own. Its action is the events guide
+ * (contextual, secondary), never a third waitlist button. Rebuilt with each
+ * deploy; the build's "today" (todaySF) decides what's upcoming.
  */
 import PickCard from "../guide/PickCard.astro";
-import NewsletterForm from "../NewsletterForm.astro";
-import { latestEdition } from "../../lib/guide";
+import { publishedActivities, todaySF, upcomingEvents } from "../../lib/guide";
 
-const edition = await latestEdition();
-const picks = edition?.picks.slice(0, 3) ?? [];
+const picks = upcomingEvents(await publishedActivities(), todaySF(), 3);
 const arrow = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>`;
 ---
 
@@ -18,41 +16,36 @@ const arrow = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
   <div class="wrap">
     <div class="tw-head" data-reveal>
       <div>
-        <p class="kicker">Covey Weekly · San Francisco</p>
+        <p class="kicker">Events · San Francisco</p>
         <h2 id="thisweek-title" class="t-title">not sure what<br />to do this week?</h2>
       </div>
       <p class="tw-lede">
-        Every week we pick a few things worth leaving the house for — after
-        work, on the weekend, with people or on your own — and list every
-        other good thing we found.
+        We find things worth leaving the house for — after work, on the
+        weekend, with people or on your own — and check every one with the
+        organizer.
       </p>
     </div>
 
     {
-      edition && picks.length ? (
+      picks.length ? (
         <>
-          <p class="tw-edition" data-reveal>
-            Top picks · {edition.span} · <a href={`/newsletter/${edition.slug}`}>read the whole edition</a>
-          </p>
+          <p class="tw-edition" data-reveal>Coming up</p>
           <div class="tw-picks">
-            {picks.map((p, i) => (
+            {picks.map((a, i) => (
               <div data-reveal style={`--d:${i}`}>
-                <PickCard activity={p.activity} why={p.why} n={i + 1} />
+                <PickCard activity={a} why={a.data.summary} n={i + 1} />
               </div>
             ))}
           </div>
         </>
       ) : (
-        <p class="tw-empty" data-reveal>The first edition is being put together now. Subscribe and it lands in your inbox.</p>
+        <p class="tw-empty" data-reveal>The next batch of listings is being checked now. Check back soon.</p>
       )
     }
 
     <div class="tw-foot" data-reveal>
-      <div class="tw-form">
-        <NewsletterForm placement="home" label="Get the weekly picks" />
-      </div>
-      <a href="/activities" class="arrow-link">
-        Browse everything on this week
+      <a href="/events" class="arrow-link">
+        See all events
         <span set:html={arrow} />
       </a>
     </div>
@@ -68,7 +61,6 @@ const arrow = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
     --ink-muted: #625140;
     --ink-inverse: #f5efe3;
     --accent-ink: #a8361f;
-    --field-edge-strong: #8c7a64;
     background: var(--page-bg);
     color: var(--ink);
     padding-block: clamp(4.5rem, 9vw, 7.5rem);
@@ -82,7 +74,6 @@ const arrow = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
     --ink-muted: #bfae96;
     --ink-inverse: #17120c;
     --accent-ink: #f08a6e;
-    --field-edge-strong: #6e604e;
   }
   .tw-head {
     display: grid;
@@ -105,11 +96,6 @@ const arrow = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
     color: var(--ink-muted);
     margin-bottom: 1rem;
   }
-  .tw-edition a {
-    color: var(--accent-ink);
-    text-decoration: underline;
-    text-underline-offset: 0.2em;
-  }
   .tw-picks {
     display: grid;
     gap: 1rem;
@@ -126,9 +112,6 @@ const arrow = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
     gap: 1.5rem;
     align-items: end;
     margin-top: 3rem;
-  }
-  .tw-form {
-    max-width: 34rem;
   }
   /* Phones: the three picks swipe sideways instead of stacking into three
      screens of cards. */
@@ -170,8 +153,7 @@ const arrow = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
       grid-template-columns: repeat(3, minmax(0, 1fr));
     }
     .tw-foot {
-      grid-template-columns: minmax(0, 1.2fr) auto;
-      justify-content: space-between;
+      justify-content: end;
     }
   }
 </style>

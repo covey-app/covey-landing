@@ -15,7 +15,7 @@ import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import { SITE } from "../config";
 
-export type PageIdentity = "home" | "waitlist" | "newsletter" | "activities" | "about" | "default";
+export type PageIdentity = "home" | "waitlist" | "events" | "about" | "default";
 
 interface Props {
   title: string;
@@ -23,8 +23,8 @@ interface Props {
   noIndex?: boolean;
   /** The page's room in the design system (styles/expressive.css). */
   page?: PageIdentity;
-  /** false on pages whose URL carries a secret token (newsletter confirm /
-      unsubscribe), so it never reaches analytics. */
+  /** false on pages whose URL carries a secret token, so it never reaches
+      analytics. */
   analytics?: boolean;
 }
 

@@ -1,0 +1,473 @@
+---
+/*
+ * /links — the link-in-bio page for our social profiles: get the app, use it
+ * on the web, and every Covey account in one place.
+ *
+ * Built from the app's own vocabulary: Quinn, the category quails, and
+ * category colors and stop orbs
+ * (ActivityCategoryPalette / CategoryStopBead).
+ *
+ * Quinn laughs over the top of the Get Covey card (the /waitlist peek). His
+ * blink is the blink frame's eyes only, laid over the laugh frame, so the
+ * beak stays open: he blinks once after he pops up and again when you reach
+ * for the card. No idle loop; no-JS and reduced motion get the still laugh.
+ *
+ * App Store: Apple's official badge (public/brand/app-store/, from
+ * tools.applemediaservices.com, unmodified) appears only once
+ * `SITE.appStoreUrl` is set: Apple's guidelines and APP_STORE both forbid
+ * showing "Download on the App Store" before the listing is live. Until then
+ * the same slot says "coming soon" and points at the waitlist.
+ */
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Icon from "../components/Icon.astro";
+import type { IconName } from "../lib/icons";
+import { birdSrc, type Category } from "../lib/categories";
+import { SITE, APP_STORE } from "../config";
+
+const socials: { name: string; handle: string; href: string; icon: IconName; cat: Category }[] = [
+  { name: "Instagram", handle: "@coveysocial", href: SITE.social.instagram, icon: "instagram", cat: "fashion" },
+  { name: "TikTok", handle: "@covey.hq", href: SITE.social.tiktok, icon: "tiktok", cat: "nightlife" },
+  { name: "X", handle: "@coveysocial", href: SITE.social.x, icon: "x", cat: "food" },
+  { name: "LinkedIn", handle: "Covey Platforms", href: SITE.social.linkedin, icon: "linkedin", cat: "professional" },
+];
+
+const arrow = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>`;
+---
+
+<BaseLayout
+  title="Links"
+  description="Get Covey on iPhone or the web, and follow Covey on Instagram, TikTok, X and LinkedIn."
+>
+  <div class="links">
+    <section class="hero" data-links-hero aria-labelledby="links-title">
+      <div class="intro">
+        <h1 id="links-title" class="t-title intro-title">
+          come do it <span class="quinn-word">together.</span>
+        </h1>
+        <p class="intro-lede">{SITE.tagline}</p>
+      </div>
+    </section>
+
+    <div class="get-stage" data-get-stage data-reveal style="--d:1">
+      <div class="peek" data-peek aria-hidden="true">
+        <img src="/brand/quinn/face-pink-laugh-320.webp" srcset="/brand/quinn/face-pink-laugh-320.webp 320w, /brand/quinn/face-pink-laugh-640.webp 640w" sizes="8rem" width="640" height="1165" alt="" fetchpriority="high" decoding="async" draggable="false" />
+        <img class="peek-blink" src="/brand/quinn/face-pink-blink-320.webp" srcset="/brand/quinn/face-pink-blink-320.webp 320w, /brand/quinn/face-pink-blink-640.webp 640w" sizes="8rem" width="640" height="1165" alt="" decoding="async" draggable="false" />
+      </div>
+      <section class="get card-pinned" aria-labelledby="get-covey">
+        <h2 id="get-covey" class="kicker no-rule mb-4">Get Covey</h2>
+
+        {
+          APP_STORE.live ? (
+            <a href={APP_STORE.url!} class="store-badge" target="_blank" rel="noreferrer">
+              <img class="badge-light" src="/brand/app-store/download-on-the-app-store-black.svg" width="180" height="60" alt={`Download ${APP_STORE.name} on the App Store`} />
+              <img class="badge-dark" src="/brand/app-store/download-on-the-app-store-white.svg" width="180" height="60" alt="" />
+              <span class="sr-only"> (opens in a new tab)</span>
+            </a>
+          ) : (
+            <a href={SITE.waitlistPath} class="store-soon">
+              <Icon name="smartphone" size={26} stroke={1.75} />
+              <span class="store-soon-text">
+                <span class="store-soon-small">Coming soon to</span>
+                <span class="store-soon-big">the App Store</span>
+              </span>
+            </a>
+          )
+        }
+        <p class="get-caption">
+          {APP_STORE.live ? "Covey for iPhone. Free, 18+." : "The iPhone app is on its way. Tap to join the waitlist."}
+        </p>
+
+        <div class="or" aria-hidden="true"><span>or</span></div>
+
+        <a href={SITE.appUrl} class="cta web-cta">
+          <Icon name="globe" size={18} />
+          Use Covey on the web
+          <span class="cta-arrow" set:html={arrow + arrow} />
+        </a>
+      </section>
+    </div>
+
+    <section class="follow" aria-labelledby="follow-title">
+      <h2 id="follow-title" class="sr-only">Follow Covey</h2>
+      <ul class="social-grid">
+        {
+          socials.map((s, i) => {
+            const art = birdSrc(s.cat);
+            return (
+              <li data-reveal style={`--d:${3 + i}`}>
+                <a
+                  href={s.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  class="social"
+                  style={`--c:var(--cat-${s.cat});--soft:var(--cat-${s.cat}-soft);--cink:var(--cat-${s.cat}-ink)`}
+                >
+                  <span class="orb social-orb">
+                    <Icon name={s.icon} size={20} />
+                  </span>
+                  <span class="social-text">
+                    <span class="social-name">{s.name}</span>
+                    <span class="social-handle">{s.handle}</span>
+                  </span>
+                  <img class="social-bird" src={art.src} srcset={art.srcset} alt="" width="240" height="300" loading="lazy" decoding="async" draggable="false" />
+                  <span class="sr-only"> (opens in a new tab)</span>
+                </a>
+              </li>
+            );
+          })
+        }
+      </ul>
+    </section>
+  </div>
+</BaseLayout>
+
+<script is:inline>
+  // Pre-paint: play the entrance unless motion is reduced. Without this the
+  // page renders its final frame.
+  (function () {
+    var hero = document.querySelector("[data-links-hero]");
+    if (!hero) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    hero.classList.add("is-intro");
+  })();
+</script>
+
+<script>
+  import { reducedMotion } from "../lib/quinn";
+
+  // Quinn blinks once he's up, then whenever someone reaches for the card.
+  function initPeek() {
+    const stage = document.querySelector<HTMLElement>("[data-get-stage]");
+    const peek = stage?.querySelector<HTMLElement>("[data-peek]");
+    if (!stage || !peek || stage.dataset.bound) return;
+    stage.dataset.bound = "true";
+    let busy = false;
+    const blink = () => {
+      if (busy || reducedMotion()) return;
+      busy = true;
+      peek.classList.add("is-blink");
+      window.setTimeout(() => {
+        peek.classList.remove("is-blink");
+        window.setTimeout(() => (busy = false), 250);
+      }, 140);
+    };
+    window.setTimeout(blink, 1500);
+    stage.addEventListener("pointerenter", blink);
+    stage.addEventListener("focusin", blink);
+  }
+  initPeek();
+  document.addEventListener("astro:page-load", initPeek);
+</script>
+
+<style>
+  .links {
+    width: 100%;
+    max-width: 36rem;
+    margin-inline: auto;
+    padding: clamp(1rem, 4vw, 2.5rem) var(--space-md) var(--space-huge);
+    overflow-x: clip;
+  }
+
+  /* ---------------- Hero ---------------- */
+  .hero {
+    text-align: center;
+  }
+  .intro {
+    position: relative;
+    z-index: 5;
+  }
+  .intro-title {
+    color: var(--ink);
+    font-size: clamp(2.1rem, 9vw, 3rem);
+    margin-bottom: var(--space-sm);
+  }
+  .intro-lede {
+    color: var(--ink-muted);
+    font-size: 1.0625rem;
+    line-height: 1.5;
+  }
+
+  /* Entrance */
+  .is-intro .intro > * {
+    animation: rise 0.7s var(--ease-out) both;
+  }
+  .is-intro .intro > :nth-child(2) {
+    animation-delay: 0.08s;
+  }
+  .is-intro .intro > :nth-child(3) {
+    animation-delay: 0.16s;
+  }
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+  }
+
+  /* ---------------- Get Covey ---------------- */
+  /* Quinn's bust is 1.82× as tall as it is wide. Above the card shows the
+     plume, face and laughing beak (the top ~58%); the rest sits behind it. */
+  .get-stage {
+    --qw: clamp(7rem, 28vw, 8.75rem);
+    position: relative;
+    margin-top: var(--space-xl);
+    padding-top: calc(var(--qw) * 1.1);
+  }
+  .peek {
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    left: 50%;
+    width: var(--qw);
+    margin-left: calc(var(--qw) / -2);
+    aspect-ratio: 640 / 1165;
+    transition: translate 0.4s var(--ease-out);
+  }
+  .peek img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  /* The blink frame matches the laugh frame pixel for pixel apart from eyes
+     and beak; show only its two eye bands so the open laugh stays put. */
+  .peek-blink {
+    clip-path: polygon(5% 42%, 5% 53%, 25% 53%, 25% 42%, 75% 42%, 75% 53%, 95% 53%, 95% 42%);
+    opacity: 0;
+  }
+  .peek.is-blink .peek-blink {
+    opacity: 1;
+  }
+  @media (pointer: fine) {
+    .get-stage:hover .peek {
+      translate: 0 -6px;
+    }
+  }
+  .get-stage:focus-within .peek {
+    translate: 0 -6px;
+  }
+  .is-intro + .get-stage .peek {
+    animation: peek 0.8s cubic-bezier(0.2, 0.9, 0.25, 1.15) 0.35s both;
+  }
+  @keyframes peek {
+    from {
+      transform: translateY(62%);
+    }
+  }
+  .get {
+    position: relative;
+    z-index: 2;
+    padding: var(--space-card-lg) var(--space-card-md);
+    text-align: center;
+  }
+  .get .kicker {
+    justify-content: center;
+    display: flex;
+  }
+  .store-badge {
+    display: inline-block;
+    border-radius: 12px;
+    transition: transform var(--motion-snappy);
+  }
+  .store-badge img {
+    display: block;
+    width: 180px;
+    height: auto;
+  }
+  /* Apple's black badge on light grounds, its white badge on dark. */
+  .store-badge .badge-dark,
+  :global(.dark) .store-badge .badge-light {
+    display: none;
+  }
+  :global(.dark) .store-badge .badge-dark {
+    display: block;
+  }
+  .store-soon {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    min-height: 60px;
+    padding: 0.6rem 1.4rem 0.6rem 1.1rem;
+    border-radius: 12px;
+    background: var(--ink);
+    color: var(--ink-inverse);
+    text-align: left;
+    box-shadow: var(--shadow-paper);
+    transition:
+      transform var(--motion-snappy),
+      box-shadow 0.25s ease;
+  }
+  .store-soon-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+  }
+  .store-soon-small {
+    font-size: 0.75rem;
+    opacity: 0.85;
+  }
+  .store-soon-big {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 1.125rem;
+    letter-spacing: -0.02em;
+  }
+  @media (pointer: fine) {
+    .store-badge:hover,
+    .store-soon:hover {
+      transform: translateY(-2px);
+    }
+    .store-soon:hover {
+      box-shadow: var(--shadow-pinned);
+    }
+  }
+  .store-badge:active,
+  .store-soon:active {
+    transform: scale(0.97);
+  }
+  .get-caption {
+    margin-top: var(--space-sm);
+    color: var(--ink-muted);
+    font-size: 0.875rem;
+  }
+  .or {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    margin: var(--space-xl) 0;
+    color: var(--ink-muted);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .or::before,
+  .or::after {
+    content: "";
+    flex: 1;
+    height: 0.7px;
+    background: var(--edge);
+  }
+  .web-cta {
+    white-space: normal;
+  }
+
+  /* ---------------- Follow ---------------- */
+  .follow {
+    margin-top: var(--space-xxl);
+  }
+  .social-grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    gap: var(--space-sm);
+  }
+  .social-grid li {
+    display: flex;
+  }
+  .social {
+    flex: 1;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    min-height: 84px;
+    padding: var(--space-md) 4.25rem var(--space-md) var(--space-md);
+    border-radius: var(--rad-large);
+    background: var(--soft);
+    border: 1px solid color-mix(in oklab, var(--c) 30%, transparent);
+    color: var(--ink);
+    overflow: hidden;
+    isolation: isolate;
+    transition:
+      transform 0.35s var(--ease-out),
+      box-shadow 0.3s ease,
+      border-color 0.3s ease;
+  }
+  .social-orb {
+    --orb: 44px;
+    transition: rotate 0.35s var(--ease-out);
+  }
+  .social-orb :global(svg) {
+    width: 22px;
+    height: 22px;
+  }
+  .social-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .social-name {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 1rem;
+    letter-spacing: -0.01em;
+  }
+  .social-handle {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--cink);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .social-bird {
+    position: absolute;
+    right: -0.25rem;
+    bottom: -2rem;
+    width: 4rem;
+    height: auto;
+    z-index: -1;
+    rotate: -4deg;
+    transition:
+      translate 0.4s var(--ease-out),
+      rotate 0.4s var(--ease-out);
+  }
+  @media (pointer: fine) {
+    .social:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-pinned);
+      border-color: color-mix(in oklab, var(--c) 60%, transparent);
+    }
+    .social:hover .social-bird {
+      translate: 0 -0.6rem;
+      rotate: 4deg;
+    }
+    .social:hover .social-orb {
+      rotate: -10deg;
+    }
+  }
+  .social:active {
+    transform: scale(0.98);
+  }
+  .social:focus-visible .social-bird {
+    translate: 0 -0.6rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .social,
+    .social-bird,
+    .social-orb,
+    .store-soon,
+    .store-badge,
+    .peek {
+      transition: none;
+    }
+    .get-stage:hover .peek,
+    .get-stage:focus-within .peek {
+      translate: none;
+    }
+    .social:hover,
+    .social:active,
+    .store-soon:hover,
+    .store-badge:hover {
+      transform: none;
+    }
+    .social:hover .social-bird,
+    .social:focus-visible .social-bird {
+      translate: none;
+    }
+  }
+</style>

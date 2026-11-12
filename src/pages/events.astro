@@ -1,7 +1,173 @@
 ---
-// /events was a placeholder for launch events; /activities is the living guide
-// to what's on. vercel.json redirects first; this covers other hosts.
-import RedirectPage from "../components/RedirectPage.astro";
+/*
+ * /events — the directory of what Covey recommends: the next two weeks
+ * of verified listings, by day, filterable by category, neighborhood, and a
+ * few quick toggles. The loud room: a full-bleed sky-blue band with
+ * every category quail parading across it (drifting with scroll, --p).
+ *
+ * Static and rebuilt weekly; days before today (in San Francisco, in the
+ * visitor's browser) hide themselves. Above the list, the weather plan
+ * suggests something for each of the next few days. (Formerly /activities,
+ * which now redirects here.)
+ */
+import BaseLayout from "../layouts/BaseLayout.astro";
+import GuideDays from "../components/guide/GuideDays.astro";
+import WeatherPlans from "../components/guide/WeatherPlans.astro";
+import { CATEGORY_KEYS, CATEGORIES, birdSrc } from "../lib/categories";
+import { groupByDay, mondayOf, publishedActivities, todaySF } from "../lib/guide";
+import { CITY_SHORT } from "../config";
+
+const all = await publishedActivities();
+const start = mondayOf(todaySF());
+const days = groupByDay(all, start, 14);
+const total = new Set(days.flatMap((d) => d.items.map((i) => i.id))).size;
 ---
 
-<RedirectPage to="/activities" title="Activities" />
+<BaseLayout
+  title="Things to do in San Francisco this week"
+  description={`Small, social things to do in ${CITY_SHORT} this week and next — after work and on weekends — picked and checked by Covey.`}
+  page="events"
+>
+  <section class="band" data-progress aria-labelledby="act-title">
+    <div class="wrap band-inner">
+      <p class="kicker band-kicker">Events · {CITY_SHORT}</p>
+      <h1 id="act-title" class="t-mega band-title">what's on.</h1>
+      <p class="band-lede">
+        Things worth doing with a few people — or on your own, to meet a few.
+        Picked and checked by Covey, linked to every organizer.
+      </p>
+    </div>
+    <div class="parade" aria-hidden="true">
+      <div class="parade-track">
+        {
+          [...CATEGORY_KEYS, ...CATEGORY_KEYS].map((c, i) => {
+            const art = birdSrc(c);
+            return (
+              <figure class="marcher" style={`--i:${i}`}>
+                <img src={art.src} srcset={art.srcset} alt="" width="240" height="300" loading={i < 9 ? "eager" : "lazy"} decoding="async" />
+                <figcaption>{CATEGORIES[c].doing}</figcaption>
+              </figure>
+            );
+          })
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="list wrap" aria-label="Upcoming events">
+    <WeatherPlans days={days} max={4} id="act-weather" heading="h2" />
+    {
+      total > 0 ? (
+        <GuideDays days={days} hidePast id="events-guide" />
+      ) : (
+        <div class="empty">
+          <h2 class="t-title">this week's guide isn't up yet.</h2>
+          <p>We publish listings once we've checked them with each organizer. Check back soon.</p>
+        </div>
+      )
+    }
+    <p class="list-note">
+      This isn't every event in {CITY_SHORT} — it's what we found, liked, and
+      checked. Times and prices are from each organizer; their page is the last
+      word. Know something we should add? <a href="/contact">Tell us</a>.
+    </p>
+  </section>
+
+</BaseLayout>
+
+<style>
+  .band {
+    --p: 0.5;
+    position: relative;
+    /* Pale SF-sky blue: every category quail (orange, yellow, red included) reads against it. */
+    background: #d8eaf8;
+    color: #10203a;
+    overflow: hidden;
+    --ink: #10203a;
+    --ink-muted: #2c4058;
+  }
+  .band-inner {
+    padding-block: clamp(2.5rem, 7vw, 5.5rem) clamp(1.5rem, 3vw, 2rem);
+  }
+  .band-kicker {
+    color: #2c4058;
+    margin-bottom: 1rem;
+  }
+  .band-title {
+    font-size: clamp(3.75rem, 15vw, 11.5rem);
+    white-space: nowrap;
+    color: #10203a;
+    margin-bottom: 1.25rem;
+  }
+  .band-lede {
+    max-width: 34rem;
+    font-size: var(--fs-lede);
+    line-height: 1.55;
+    color: #1d3049;
+  }
+  .parade {
+    padding-block: 1.5rem 2rem;
+  }
+  .parade-track {
+    display: flex;
+    gap: clamp(1.5rem, 4vw, 3.5rem);
+    width: max-content;
+    padding-inline: var(--gutter);
+    transform: translateX(calc((var(--p) - 0.5) * -60vw));
+    will-change: transform;
+  }
+  .marcher {
+    display: grid;
+    justify-items: center;
+    gap: 0.5rem;
+    margin: 0;
+  }
+  .marcher img {
+    height: clamp(5.5rem, 12vw, 9rem);
+    width: auto;
+    filter: drop-shadow(0 8px 0 rgb(16 32 58 / 0.12));
+  }
+  .marcher figcaption {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #1d3049;
+    white-space: nowrap;
+  }
+  .list {
+    padding-block: clamp(1.5rem, 4vw, 2.5rem) 2rem;
+  }
+  .list :global(.wx) {
+    margin-block: 2rem 1rem;
+  }
+  .empty {
+    display: grid;
+    gap: 1rem;
+    max-width: 40rem;
+    padding-block: 3rem;
+  }
+  .empty .t-title {
+    color: var(--ink);
+  }
+  .empty p {
+    color: var(--ink-muted);
+    line-height: 1.6;
+  }
+  .list-note {
+    margin-top: 3rem;
+    max-width: 44rem;
+    font-size: 0.875rem;
+    line-height: 1.55;
+    color: var(--ink-muted);
+  }
+  .list-note a {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .parade-track {
+      transform: none;
+    }
+  }
+</style>

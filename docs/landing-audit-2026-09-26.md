@@ -133,7 +133,7 @@ Severity levels:
 
 **P0-1. The primary CTA sends new visitors to a returning-user sign-in screen.** [observed]
 
-- **Where:** every "Join the flock" button → `SITE.joinUrl = go.coveyapp.co/login`
+- **Where:** every old waitlist button → `SITE.joinUrl = go.coveyapp.co/login`
   (`src/config.ts:30`).
 - **Problem:**
   - The destination is headed "WELCOME BACK / sign in."

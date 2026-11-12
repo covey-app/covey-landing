@@ -76,37 +76,6 @@ body[data-page="waitlist"]:where(.dark *) {
   color-scheme: dark;
 }
 
-/* Newsletter: newsprint. Warm paper, brown-black ink, a masthead red. */
-body[data-page="newsletter"] {
-  --page-bg: #f5efe3;
-  --background: #f5efe3;
-  --paper: #ece4d4;
-  --paper-elevated: #fbf7ef;
-  --paper-sunken: #e6dcc8;
-  --vellum: rgba(245, 239, 227, 0.86);
-  --ink: #241b12;
-  --ink-muted: #625140;
-  --edge: #d8cbb3;
-  --hairline: #d8cbb3;
-  --accent-ink: #a8361f;
-  --field-edge-strong: #8c7a64;
-}
-.dark body[data-page="newsletter"],
-body[data-page="newsletter"]:where(.dark *) {
-  --page-bg: #17120c;
-  --background: #17120c;
-  --paper: #1f1810;
-  --paper-elevated: #241c13;
-  --paper-sunken: #120e09;
-  --vellum: rgba(23, 18, 12, 0.86);
-  --ink: #f1e8d8;
-  --ink-muted: #bfae96;
-  --edge: #3a2f22;
-  --hairline: #3a2f22;
-  --accent-ink: #f08a6e;
-  --field-edge-strong: #6e604e;
-}
-
 /* About: sun-warmed clay. */
 body[data-page="about"] {
   --page-bg: #f4ece3;

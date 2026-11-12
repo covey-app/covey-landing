@@ -15,11 +15,10 @@ import { longDate, neighborhoods, type GuideDay } from "../../lib/guide";
 
 interface Props {
   days: GuideDay[];
-  pickIds?: string[];
   hidePast?: boolean;
   id?: string;
 }
-const { days, pickIds = [], hidePast = false, id = "guide" } = Astro.props;
+const { days, hidePast = false, id = "guide" } = Astro.props;
 const all = days.flatMap((d) => d.items);
 const present = CATEGORY_KEYS.filter((c) => all.some((a) => a.data.category === c)) as Category[];
 const hoods = neighborhoods(all);
@@ -72,7 +71,7 @@ const quick = [
           </h3>
           <ul class="rows">
             {d.items.map((a) => (
-              <ActivityRow activity={a} pick={pickIds.includes(a.id)} />
+              <ActivityRow activity={a} />
             ))}
           </ul>
         </section>
