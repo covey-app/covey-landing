@@ -7,25 +7,22 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { SITE, CITY_SHORT, APP_STORE } from "../config";
 
+// All four topics go to the one inbox in the button above.
 const channels = [
   {
     title: "Help with Covey",
-    value: SITE.emails.support,
     body: "Your account, signing in, plans, messages, the app or the website.",
   },
   {
     title: "Trust & safety",
-    value: SITE.emails.safety,
     body: "Reporting a person or content you can't report in the app, and urgent safety concerns.",
   },
   {
     title: "Privacy",
-    value: SITE.emails.privacy,
     body: "Requests to access, correct or delete your data, and privacy questions.",
   },
   {
     title: "Press & partnerships",
-    value: SITE.emails.socials,
     body: "Media inquiries, partnership proposals, and collaboration requests.",
   },
 ];
@@ -76,12 +73,6 @@ const answers = [
         channels.map((item) => (
           <div class="card p-6">
             <h2 class="title-mono text-xl text-ink mb-2">{item.title}</h2>
-            <a
-              href={`mailto:${item.value}`}
-              class="font-mono text-xs uppercase tracking-[0.14em] text-accent-ink mb-3 block hover:underline break-all"
-            >
-              {item.value}
-            </a>
             <p class="text-ink-muted leading-relaxed">{item.body}</p>
           </div>
         ))

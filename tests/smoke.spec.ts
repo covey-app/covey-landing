@@ -43,7 +43,7 @@ test("contact and support offer email, not a form that goes nowhere", async ({ p
   for (const route of ["/contact", "/support"]) {
     await page.goto(route);
     await expect(page.locator("main form")).toHaveCount(0);
-    await expect(page.locator('main a[href="mailto:support@coveyapp.co"]').first()).toBeVisible();
+    await expect(page.locator('main a[href="mailto:admin@coveyapp.co"]').first()).toBeVisible();
   }
 });
 

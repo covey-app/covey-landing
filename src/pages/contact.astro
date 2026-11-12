@@ -10,13 +10,14 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import CoveyMark from "../components/CoveyMark.astro";
 import { SITE } from "../config";
 
-const channels = [
-  { label: "Support", value: SITE.emails.support, body: "Your account, the app, or the website." },
-  { label: "Safety", value: SITE.emails.safety, body: "Reporting a person or content, and urgent safety concerns." },
-  { label: "Privacy", value: SITE.emails.privacy, body: "Data requests and privacy questions." },
-  { label: "Press & partnerships", value: SITE.emails.socials, body: "Media inquiries, partnerships and collaborations." },
-];
----
+// One inbox for everything. The topics stay so people know what they can write about.
+const email = SITE.emails.admin;
+const topics = [
+  { label: "Support", body: "Your account, the app, or the website." },
+  { label: "Safety", body: "Reporting a person or content, and urgent safety concerns." },
+  { label: "Privacy", body: "Data requests and privacy questions." },
+  { label: "Press & partnerships", body: "Media inquiries, partnerships and collaborations." },
+];---
 
 <BaseLayout
   title="Contact"
@@ -28,26 +29,25 @@ const channels = [
       Contact
     </div>
     <h1 class="display t-h1 mb-6">Say hi.</h1>
-    <p class="text-ink-muted text-lg leading-relaxed mb-12">
-      Email whichever inbox fits. A person reads everything and we try to reply
+    <p class="text-ink-muted text-lg leading-relaxed mb-8">
+      One inbox for everything. A person reads every email and we try to reply
       within a few days. We use what you send only to answer you; see our
       <a href="/privacy" class="text-accent-ink underline underline-offset-2 decoration-1">Privacy Policy</a>.
     </p>
 
+    <a
+      href={`mailto:${email}`}
+      class="inline-block font-mono text-lg sm:text-xl text-ink hover:text-accent-ink transition-colors underline decoration-transparent hover:decoration-current underline-offset-4 break-all mb-12"
+    >
+      {email}
+    </a>
+
     <dl class="space-y-6 border-t pt-8">
       {
-        channels.map((row) => (
+        topics.map((row) => (
           <div class="grid sm:grid-cols-12 gap-1 sm:gap-6 items-baseline">
             <dt class="eyebrow sm:col-span-3">{row.label}</dt>
-            <dd class="sm:col-span-9">
-              <a
-                href={`mailto:${row.value}`}
-                class="font-mono text-sm text-ink hover:text-accent-ink transition-colors underline decoration-transparent hover:decoration-current underline-offset-4 break-all"
-              >
-                {row.value}
-              </a>
-              <p class="text-ink-muted leading-relaxed mt-1">{row.body}</p>
-            </dd>
+            <dd class="sm:col-span-9 text-ink-muted leading-relaxed">{row.body}</dd>
           </div>
         ))
       }
