@@ -3,8 +3,9 @@
  * Inside the app — a bento of liquid-glass tiles on the Meadow lawn, the way
  * the app's own cards sit on it. Three tiles carry a real screen (cropped,
  * light/dark with the site), two carry a fact. Every fact is in the 1.0
- * build (covey-marketing claims table): six seats by default, a reminder on
- * every plan to meet somewhere public, report and block from anywhere.
+ * build (covey-marketing claims table): Coveys repeat weekly, every two
+ * weeks or monthly; every plan reminds you to meet somewhere public; report
+ * and block from anywhere.
  */
 import Phone from "../Phone.astro";
 import MeadowGround from "../MeadowGround.astro";
@@ -17,24 +18,23 @@ import Icon from "../Icon.astro";
     <div class="app-head" data-reveal>
       <p class="kicker">Inside the app</p>
       <h2 id="app-title" class="app-title">
-        <span>everything you need to show up.</span>
-        <span class="app-title-rest">the plan, the chat, and your week, in one app.</span>
+        know where you're going, and who's coming.
       </h2>
     </div>
 
     <div class="bento">
       <article class="bento-tile liquid-glass bento-tile--tall" data-reveal>
         <div class="tile-text">
-          <h3 class="tile-title">Your week, planned</h3>
-          <p class="tile-copy">Everything you're hosting or going to, in one list or on a calendar.</p>
+          <h3 class="tile-title">Your plans</h3>
+          <p class="tile-copy">Everything you're hosting or going to, as a list or a calendar.</p>
         </div>
         <div class="tile-shot"><Phone screens={["myplans"]} sizes="(min-width: 900px) 300px, 70vw" /></div>
       </article>
 
       <article class="bento-tile liquid-glass" data-reveal style="--d:1">
         <div class="tile-text">
-          <h3 class="tile-title">The itinerary is the plan</h3>
-          <p class="tile-copy">Where, when, every stop, and who's hosting, before you say yes.</p>
+          <h3 class="tile-title">See the whole plan first</h3>
+          <p class="tile-copy">Where, when, every stop, and who's hosting.</p>
         </div>
         <div class="tile-shot"><Phone screens={["plan"]} sizes="(min-width: 900px) 260px, 70vw" /></div>
       </article>
@@ -48,18 +48,22 @@ import Icon from "../Icon.astro";
       </article>
 
       <article class="bento-tile liquid-glass bento-tile--fact" data-reveal style="--d:3">
-        <p class="fact-big" aria-hidden="true">6</p>
+        <p class="cadence" aria-hidden="true">
+          <span>weekly</span>
+          <span class="is-on"><Icon name="repeat" size={15} stroke={2.25} />every 2 weeks</span>
+          <span>monthly</span>
+        </p>
         <div class="tile-text">
-          <h3 class="tile-title">Six seats by default</h3>
-          <p class="tile-copy">Hosts set the headcount, so everyone actually talks.</p>
+          <h3 class="tile-title">Keep the group</h3>
+          <p class="tile-copy">Like the people? Make it a Covey that meets weekly, every two weeks, or monthly.</p>
         </div>
       </article>
 
       <article class="bento-tile liquid-glass bento-tile--fact" data-reveal style="--d:4">
         <p class="fact-icon" aria-hidden="true"><Icon name="shield-check" size={28} /></p>
         <div class="tile-text">
-          <h3 class="tile-title">Meet somewhere public</h3>
-          <p class="tile-copy">Every plan reminds you to, and you can report or block from anywhere.</p>
+          <h3 class="tile-title">Safety in every plan</h3>
+          <p class="tile-copy">Each plan reminds you to meet somewhere public. Report or block anyone, from anywhere in the app.</p>
         </div>
       </article>
     </div>
@@ -93,12 +97,6 @@ import Icon from "../Icon.astro";
     letter-spacing: -0.045em;
     text-transform: lowercase;
     color: var(--ink);
-  }
-  .app-title-rest {
-    color: color-mix(in oklab, var(--ink) 62%, rgb(var(--meadow-sun)));
-  }
-  :global(.dark) .app-title-rest {
-    color: color-mix(in oklab, var(--ink) 66%, var(--meadow-ground));
   }
 
   .bento {
@@ -151,14 +149,30 @@ import Icon from "../Icon.astro";
     justify-content: space-between;
     padding-bottom: 1.6rem;
   }
-  .fact-big {
-    padding: 1.4rem 1.6rem 0;
+  /* A Covey's repeat options, as the app's segmented picker: one picked. */
+  .cadence {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    padding: 1.6rem 1.6rem 0;
+  }
+  .cadence span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.45rem 0.8rem;
+    border-radius: 999px;
     font-family: var(--font-mono);
+    font-size: 0.875rem;
     font-weight: 600;
-    font-size: clamp(4.5rem, 8vw, 6.5rem);
-    line-height: 0.9;
-    letter-spacing: -0.06em;
+    letter-spacing: -0.02em;
     color: var(--ink);
+    border: 1px solid color-mix(in oklab, var(--ink) 22%, transparent);
+  }
+  .cadence .is-on {
+    background: var(--ink);
+    color: var(--page-bg);
+    border-color: var(--ink);
   }
   .fact-icon {
     padding: 1.6rem 1.6rem 0;

@@ -15,29 +15,29 @@ const steps = [
     n: "01",
     screen: "explore",
     t: "find a plan worth leaving the house for.",
-    d: "Browse small plans around the city — a run then coffee, a ramen crawl, a sunset walk — or post your own in a few taps. You see exactly where, when, and who's going.",
+    d: "Browse plans near you, like a run and coffee or a pottery class, or post your own. Each one shows where, when, and who's going.",
   },
   {
     n: "02",
     screen: "plan",
-    t: "take one of a few seats.",
-    d: "Hosts set the headcount, six by default, so everyone actually talks. Open plans take one tap; request-to-join plans go to the host first.",
+    t: "join, or ask the host.",
+    d: "Some plans you can join right away. Others go to the host first.",
   },
   {
     n: "03",
     screen: "chat",
     t: "then do it again.",
-    d: "When a group clicks, make it a Covey: a standing group with a recurring plan, so the second hangout doesn't depend on someone remembering to ask.",
+    d: "When a group clicks, make it a Covey: the same group, meeting every week, every two weeks, or monthly. Nobody has to remember to ask.",
   },
 ] as const satisfies readonly { n: string; screen: AppScreen; t: string; d: string }[];
 
-const safety = ["Small by design", "Hosts approve requests", "18+ (21+ for drinks)", "Public places first"];
+const safety = ["18+ only", "21+ for drink plans", "Hosts can approve who joins", "Report or block anyone"];
 ---
 
 <section id="how" class="how wrap" aria-labelledby="how-title">
   <div class="how-head" data-reveal>
     <p class="kicker">How Covey works</p>
-    <h2 id="how-title" class="t-title">three steps.<br />then it's a habit.</h2>
+    <h2 id="how-title" class="t-title">three steps.</h2>
   </div>
 
   <div class="how-grid">

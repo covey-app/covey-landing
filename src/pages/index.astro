@@ -2,7 +2,7 @@
 /*
  * Home — the mission first, then the product, in five movements: the hero
  * (do it together, with the app in hand), the problem (pinned beats),
- * the mission (find the people you've been missing), how it works (the real
+ * the mission (make friends doing things you'd do anyway), how it works (the real
  * iOS app, step by step), and inside the app (a bento of its screens).
  *
  * Every screen is a capture of the iOS app in the Meadow theme with demo
@@ -19,12 +19,11 @@ import HomeProblem from "../components/home/HomeProblem.astro";
 import HomeMission from "../components/home/HomeMission.astro";
 import HomeHow from "../components/home/HomeHow.astro";
 import HomeApp from "../components/home/HomeApp.astro";
-import { CITY_SHORT } from "../config";
 ---
 
 <BaseLayout
   title="Do it together"
-  description={`Covey is where you find the people who are down to do the things you're doing: small-group plans and repeat hangouts in ${CITY_SHORT}. Join the waitlist.`}
+  description="Your friends aren't into everything you're into. Covey finds people who are, so you don't have to go alone, and next time you've got someone to go with. Join the waitlist."
   page="home"
 >
   <HomeHero />

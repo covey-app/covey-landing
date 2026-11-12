@@ -22,14 +22,15 @@
           {Array.from({ length: 50 }, (_, i) => <span class:list={["hour", i < 3 && "is-on"]} style={`--h:${i}`} />)}
         </div>
         <p class="fact-text">
-          <strong>About 50 hours together</strong> turns someone you've met
-          into a casual friend.<sup><a href="#ref-hall" id="ref-hall-cite" aria-label="Source">1</a></sup>
-          One good night covers three. The rest comes from showing up again.
+          <strong>It takes 50 hours together</strong> to go from someone you
+          met to a friend.<sup><a href="#ref-hall" id="ref-hall-cite" aria-label="Source">1</a></sup>
+          A night out only gets you about three.
         </p>
       </div>
 
       <p class="answer" style="--n:4">
-        covey is built for the <span>second</span> hangout.
+        meeting someone is the easy part.<br />
+        covey is for <span>every hangout after</span>.
       </p>
       <p id="ref-hall" class="ref">
         <a href="#ref-hall-cite" aria-label="Back to the claim">1.</a>
@@ -128,7 +129,7 @@
     line-height: 1.02;
     letter-spacing: -0.05em;
     text-transform: lowercase;
-    max-width: 18ch;
+    max-width: none;
   }
   .answer span {
     background: var(--grad);

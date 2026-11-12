@@ -30,7 +30,7 @@ import Phone from "../Phone.astro";
 import MeadowGround from "../MeadowGround.astro";
 import Icon from "../Icon.astro";
 import { CATEGORIES, type Category } from "../../lib/categories";
-import { SITE, CITY_SHORT } from "../../config";
+import { SITE } from "../../config";
 
 // x/y: the bubble's centre, s: its diameter, all % of the stage. depth: px
 // of pointer travel. f: fly-in offset (vw/vh). back: sits behind Quinn.
@@ -54,15 +54,15 @@ const arrow = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
   <MeadowGround fadeBottom="var(--ink)" />
   <div class="wrap hero-grid">
     <div class="hero-copy">
-      <p class="kicker hero-kicker" style="--i:0">Small-group plans · {CITY_SHORT}</p>
+      <p class="kicker hero-kicker" style="--i:0">Waitlist open</p>
       <h1 id="hero-title" class="hero-title t-mega">
         <span class="line" style="--i:1"><span>do it</span></span>
         <span class="line" style="--i:2"><span class="accent-word">together.</span></span>
       </h1>
       <p class="hero-lede" style="--i:3">
-        Covey is where you find the people who are down to do the things
-        you're doing. Small plans, a few seats each, and the same faces next
-        time.
+        Your friends aren't into everything you're into, so sometimes you go
+        alone. Covey finds people who want to come with you. And next time,
+        you've already got someone to go with.
       </p>
       <div class="hero-actions" style="--i:4">
         <a href={SITE.waitlistPath} class="cta" data-cta="hero">
@@ -92,7 +92,7 @@ const arrow = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
         ))
       }
       <div class="hero-phone" data-depth style="--depth:6">
-        <Phone screens={["explore"]} sizes="(min-width: 1024px) 260px, 46vw" eager alt="Covey's Explore screen: upcoming small plans nearby, each with its time, distance and seats taken." />
+        <Phone screens={["explore"]} sizes="(min-width: 1024px) 260px, 46vw" eager alt="Covey's Explore screen: upcoming plans nearby, each with its time, distance and who's going." />
       </div>
       <div class="hero-quinn" data-depth style="--depth:10">
         <Quinn views={["front", "front-hello"]} sizes="(min-width: 1024px) 220px, 34vw" eager data-hero-quinn />

@@ -1,7 +1,7 @@
 ---
 /*
- * The mission, said once and shown: find the people you've been missing,
- * for the plans you already have. One short headline, then the picture: a
+ * The mission, said once and shown: make friends doing things you'd do
+ * anyway, without the crowd. One short headline, then the picture: a
  * row of plans (the same activity bubbles that ring Quinn in the hero),
  * each with a few people already going and one open seat. When the row
  * scrolls in, the open seat fills: that's you. No-JS and reduced motion
@@ -13,7 +13,7 @@ import { CATEGORIES, type Category } from "../../lib/categories";
 // going: the people already in, by category colour (abstract avatars).
 const plans: { c: Category; name: string; going: Category[] }[] = [
   { c: "sports", name: "morning run", going: ["food", "outdoors", "arts"] },
-  { c: "food", name: "ramen crawl", going: ["nightlife", "sports", "fashion", "culture"] },
+  { c: "food", name: "taco night", going: ["nightlife", "sports", "fashion", "culture"] },
   { c: "arts", name: "pottery class", going: ["outdoors", "media"] },
   { c: "nightlife", name: "late set", going: ["fashion", "food", "sports"] },
 ];
@@ -23,8 +23,8 @@ const plans: { c: Category; name: string; going: Category[] }[] = [
   <div class="wrap">
     <p class="kicker" data-reveal>Our mission</p>
     <h2 id="mission-title" class="mission-title" data-reveal>
-      <span class="m-lead">find the people you've been missing.</span>
-      <span class="m-rest">they're down for the plans you already have.</span>
+      <span class="m-lead">make friends doing things you'd do anyway.</span>
+      <span class="m-rest">no crowds. no yelling over the music.</span>
     </h2>
 
     <ul class="plans" data-reveal>
@@ -48,11 +48,6 @@ const plans: { c: Category; name: string; going: Category[] }[] = [
         ))
       }
     </ul>
-
-    <p class="mission-lede" data-reveal>
-      Covey puts you in one small group with them, then makes it easy to see
-      each other again.
-    </p>
   </div>
 </section>
 
@@ -85,7 +80,7 @@ const plans: { c: Category; name: string; going: Category[] }[] = [
   /* ---- The plans ---- */
   .plans {
     list-style: none;
-    margin: 0 0 clamp(2.5rem, 5vw, 3.5rem);
+    margin: 0;
     padding: 0;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -194,12 +189,6 @@ const plans: { c: Category; name: string; going: Category[] }[] = [
     }
   }
 
-  .mission-lede {
-    max-width: 36rem;
-    font-size: var(--fs-lede);
-    line-height: 1.6;
-    color: var(--ink-muted);
-  }
 
   /* With motion: the open seat starts empty (dashed), then fills as the row
      comes in, one plan after another. */
