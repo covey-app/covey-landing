@@ -1,6 +1,6 @@
 ---
 /*
- * Home hero — "don't / do it / alone." The mission, then the product.
+ * Home hero — "do it / together." The mission, then the product.
  *
  * The stage: the iOS app's Explore screen in a phone (real Meadow captures,
  * light and dark following the site theme), Quinn standing beside it, and a
@@ -56,16 +56,15 @@ const arrow = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
     <div class="hero-copy">
       <p class="kicker hero-kicker" style="--i:0">Small-group plans · {CITY_SHORT}</p>
       <h1 id="hero-title" class="hero-title t-mega">
-        <span class="line" style="--i:1"><span>don't</span></span>
-        <span class="line" style="--i:2"><span>do it</span></span>
-        <span class="line" style="--i:3"><span class="accent-word">alone.</span></span>
+        <span class="line" style="--i:1"><span>do it</span></span>
+        <span class="line" style="--i:2"><span class="accent-word">together.</span></span>
       </h1>
-      <p class="hero-lede" style="--i:4">
+      <p class="hero-lede" style="--i:3">
         Covey is where you find the people who are down to do the things
         you're doing. Small plans, a few seats each, and the same faces next
         time.
       </p>
-      <div class="hero-actions" style="--i:5">
+      <div class="hero-actions" style="--i:4">
         <a href={SITE.waitlistPath} class="cta" data-cta="hero">
           Join the waitlist
           <span class="cta-arrow" set:html={arrow + arrow} />
@@ -143,7 +142,7 @@ const arrow = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
     align-items: center;
   }
   /* The copy column is the container the headline is sized against, so
-     "strangers" (the longest word, ~4.9em wide) can never outgrow it, whatever
+     "together." (the longest word, ~4.9em wide) can never outgrow it, whatever
      the viewport, zoom level, or fallback font. It also sits above the bubbles,
      which overlaps the column's edge on wide screens. */
   .hero-copy {
@@ -307,7 +306,12 @@ const arrow = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
   }
   @media (min-width: 1024px) {
     .hero {
-      min-height: min(100svh, calc(58rem + var(--header-h)));
+      /* The copy and cast fill the first screen; the frosted seam into the
+         next band (MeadowGround fadeBottom) hangs just below the fold, so
+         the first view is all lawn. */
+      --fade-h: clamp(7rem, 12vw, 11rem);
+      min-height: calc(100svh + var(--fade-h));
+      padding-bottom: calc(var(--fade-h) + clamp(1.5rem, 3vw, 3rem));
       display: grid;
       align-items: center;
       /* Wide screens: the copy is the left column, so the light pools there

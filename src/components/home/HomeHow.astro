@@ -261,6 +261,9 @@ const safety = ["Small by design", "Hosts approve requests", "18+ (21+ for drink
   }
 
   @media (min-width: 900px) {
+    .how {
+      --how-top: 4rem;
+    }
     .how-grid {
       display: grid;
       grid-template-columns: minmax(0, 1fr) minmax(0, 0.85fr);
@@ -269,16 +272,26 @@ const safety = ["Small by design", "Hosts approve requests", "18+ (21+ for drink
     .how-stage-col {
       display: block;
     }
+    /* The sticky box is the viewport under the header, and the panel is
+       centred in it, sized so it always fits on screen. */
     .how-sticky {
       position: sticky;
-      top: calc(50vh - min(22rem, 40vw) / 2 + 1.5rem);
-      width: min(100%, 34rem);
+      top: var(--how-top);
+      height: calc(100vh - var(--how-top));
+      display: grid;
+      align-items: center;
+    }
+    .how-panel {
+      width: min(100%, 34rem, calc((100vh - var(--how-top) - 3rem) * 5 / 6));
     }
     .how-step-frame {
       display: none;
     }
+    /* Each step's text is centred in a 72vh slot; pad the list so the
+       first and last line up with the panel's centre. */
     .how-steps {
       gap: 0;
+      padding-block: calc((100vh - var(--how-top) - 72vh) / 2) calc((100vh + var(--how-top) - 72vh) / 2);
     }
     /* The current step is marked with an accent rule, not by fading the
        others — dimmed text would fail contrast. */

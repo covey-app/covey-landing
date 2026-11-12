@@ -1,17 +1,21 @@
 ---
 /*
- * The mission, said once and big: don't do it alone. A two-tone statement
- * (ink, then the muted follow-on) with the activity bubbles set inline in
- * the words, the same bubbles that ring Quinn in the hero.
+ * The mission, said once and shown: find the people you've been missing,
+ * for the plans you already have. One short headline, then the picture: a
+ * row of plans (the same activity bubbles that ring Quinn in the hero),
+ * each with a few people already going and one open seat. When the row
+ * scrolls in, the open seat fills: that's you. No-JS and reduced motion
+ * show the filled seat.
  */
 import Icon from "../Icon.astro";
 import { CATEGORIES, type Category } from "../../lib/categories";
 
-const inline: { c: Category; word: string }[] = [
-  { c: "sports", word: "run" },
-  { c: "food", word: "ramen crawl" },
-  { c: "arts", word: "pottery class" },
-  { c: "nightlife", word: "late set" },
+// going: the people already in, by category colour (abstract avatars).
+const plans: { c: Category; name: string; going: Category[] }[] = [
+  { c: "sports", name: "morning run", going: ["food", "outdoors", "arts"] },
+  { c: "food", name: "ramen crawl", going: ["nightlife", "sports", "fashion", "culture"] },
+  { c: "arts", name: "pottery class", going: ["outdoors", "media"] },
+  { c: "nightlife", name: "late set", going: ["fashion", "food", "sports"] },
 ];
 ---
 
@@ -20,18 +24,34 @@ const inline: { c: Category; word: string }[] = [
     <p class="kicker" data-reveal>Our mission</p>
     <h2 id="mission-title" class="mission-title" data-reveal>
       <span class="m-lead">find the people you've been missing.</span>
-      <span class="m-rest">
-        the ones who are down for the {inline.map((b, i) => (
-          <>
-            <span class="m-item"><span class="m-bubble" style={`--c:var(--cat-${b.c})`} aria-hidden="true"><Icon name={CATEGORIES[b.c].icon} size={24} stroke={2.25} /></span>{b.word}{i < inline.length - 1 ? "," : ""}</span>{" "}{i === inline.length - 2 ? "the " : ""}
-          </>
-        ))}you were going to do anyway.
-      </span>
+      <span class="m-rest">they're down for the plans you already have.</span>
     </h2>
+
+    <ul class="plans" data-reveal>
+      {
+        plans.map((p, i) => (
+          <li class="plan" style={`--i:${i}`}>
+            <span class="plan-bubble" style={`--c:var(--cat-${p.c})`} aria-hidden="true">
+              <Icon name={CATEGORIES[p.c].icon} size={24} stroke={2.25} />
+            </span>
+            <span class="plan-name">{p.name}</span>
+            <span class="plan-people">
+              <span class="faces" aria-hidden="true">
+                {p.going.map((g) => (
+                  <span class="face" style={`--c:var(--cat-${g})`} />
+                ))}
+                <span class="face face--you">you</span>
+              </span>
+              <span class="sr-only">{p.going.length} going, plus you</span>
+            </span>
+          </li>
+        ))
+      }
+    </ul>
+
     <p class="mission-lede" data-reveal>
-      Plenty of people want more friends and already have plans worth sharing.
-      Covey puts them in the same small group, then makes it easy to see each
-      other again.
+      Covey puts you in one small group with them, then makes it easy to see
+      each other again.
     </p>
   </div>
 </section>
@@ -51,7 +71,7 @@ const inline: { c: Category; word: string }[] = [
     line-height: 1.08;
     letter-spacing: -0.05em;
     text-transform: lowercase;
-    margin-bottom: 2rem;
+    margin-bottom: clamp(2.5rem, 5vw, 4rem);
   }
   .m-lead {
     display: block;
@@ -61,38 +81,140 @@ const inline: { c: Category; word: string }[] = [
     display: block;
     color: color-mix(in oklab, var(--ink) 46%, var(--page-bg));
   }
-  /* A bubble stays with its word across a line break. */
-  .m-item {
-    white-space: nowrap;
+
+  /* ---- The plans ---- */
+  .plans {
+    list-style: none;
+    margin: 0 0 clamp(2.5rem, 5vw, 3.5rem);
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
   }
-  /* A bubble sits in the line like a word: cap-height round, white rim,
-     category colour, nudged onto the baseline. */
-  .m-bubble {
-    display: inline-grid;
+  .plan {
+    display: grid;
+    align-content: start;
+    gap: 0.9rem;
+    padding: 1rem;
+    border-radius: var(--rad-sheet);
+    background: var(--paper-elevated);
+    border: 0.7px solid var(--edge);
+    box-shadow: var(--shadow-paper);
+  }
+  /* The activity bubble: category colour, white glyph, white rim, as in
+     the hero ring. */
+  .plan-bubble {
+    display: grid;
     place-items: center;
-    width: 0.92em;
-    height: 0.92em;
-    margin: 0 0.12em 0 0.04em;
-    vertical-align: -0.12em;
+    width: 3.25rem;
+    height: 3.25rem;
     border-radius: 999px;
     background: var(--c);
     color: #fff;
-    border: 0.06em solid #fff;
-    box-shadow: 0 0.08em 0.2em rgb(18 20 30 / 0.18);
+    border: 3px solid #fff;
+    box-shadow: 0 6px 14px -6px rgb(18 20 30 / 0.4);
   }
-  .m-bubble :global(svg) {
-    width: 50%;
-    height: 50%;
+  .plan-bubble :global(svg) {
+    width: 46%;
+    height: 46%;
   }
-  :global(.dark) .m-bubble {
+  :global(.dark) .plan-bubble {
     color: #14140f;
     border-color: rgb(255 255 255 / 0.88);
-    box-shadow: 0 0.08em 0.2em rgb(0 0 0 / 0.5);
   }
+  .plan-name {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: clamp(1.05rem, 1.6vw, 1.3rem);
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    color: var(--ink);
+  }
+  /* People going: overlapping avatars, then the open seat, which is you. */
+  .faces {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    row-gap: 0.35rem;
+  }
+  .face {
+    --d: 1.6rem;
+    width: var(--d);
+    height: var(--d);
+    flex: none;
+    border-radius: 999px;
+    background: var(--c);
+    border: 2px solid var(--paper-elevated);
+  }
+  .face + .face {
+    margin-left: -0.45rem;
+  }
+  @media (min-width: 480px) {
+    .plan {
+      padding: 1.25rem;
+    }
+    .face {
+      --d: 2rem;
+    }
+    .face + .face {
+      margin-left: -0.55rem;
+    }
+  }
+  .faces .face--you {
+    display: grid;
+    place-items: center;
+    margin-left: 0.3rem;
+    width: auto;
+    min-width: var(--d);
+    padding-inline: 0.55rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    background: var(--ink);
+    color: var(--page-bg);
+    border-color: var(--ink);
+  }
+
+  @media (min-width: 1100px) {
+    .plans {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 1rem;
+    }
+    .plan {
+      padding: 1.5rem;
+      gap: 1.1rem;
+    }
+    .plan-bubble {
+      width: 4rem;
+      height: 4rem;
+    }
+    .face {
+      --d: 2.25rem;
+    }
+  }
+
   .mission-lede {
     max-width: 36rem;
     font-size: var(--fs-lede);
     line-height: 1.6;
     color: var(--ink-muted);
+  }
+
+  /* With motion: the open seat starts empty (dashed), then fills as the row
+     comes in, one plan after another. */
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.js-motion) .plans:not(.is-in) .face--you {
+      background: transparent;
+      color: transparent;
+      border: 2px dashed color-mix(in oklab, var(--ink) 40%, transparent);
+    }
+    .face--you {
+      transition:
+        background-color 0.35s var(--ease-out),
+        color 0.35s var(--ease-out),
+        border-color 0.35s var(--ease-out);
+      transition-delay: calc(0.6s + var(--i, 0) * 0.18s);
+    }
   }
 </style>

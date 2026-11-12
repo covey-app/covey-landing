@@ -12,10 +12,9 @@ test.beforeEach(async ({ page }) => {
   await mockWeather(page);
 });
 
-test("the band, the parade, and the guide by day", async ({ page }) => {
+test("the band and the guide by day", async ({ page }) => {
   await page.goto("/events?today=2026-10-14");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("what's on.");
-  await expect(page.locator(".parade img")).not.toHaveCount(0);
   const days = await page.locator("[data-day]:visible").evaluateAll((els) => els.map((e) => e.getAttribute("data-day")));
   expect(days).toEqual(["2026-10-17", "2026-10-18"]);
   await expect(page.locator("#events-guide").getByText("38th SF Old Car Picnic")).toBeVisible();

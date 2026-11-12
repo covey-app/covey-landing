@@ -2,8 +2,7 @@
 /*
  * /events — the directory of what Covey recommends: the next two weeks
  * of verified listings, by day, filterable by category, neighborhood, and a
- * few quick toggles. The loud room: a full-bleed sky-blue band with
- * every category quail parading across it (drifting with scroll, --p).
+ * few quick toggles, under a full-bleed sky-blue title band.
  *
  * Static and rebuilt weekly; days before today (in San Francisco, in the
  * visitor's browser) hide themselves. Above the list, the weather plan
@@ -13,7 +12,6 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import GuideDays from "../components/guide/GuideDays.astro";
 import WeatherPlans from "../components/guide/WeatherPlans.astro";
-import { CATEGORY_KEYS, CATEGORIES, birdSrc } from "../lib/categories";
 import { groupByDay, mondayOf, publishedActivities, todaySF } from "../lib/guide";
 import { CITY_SHORT } from "../config";
 
@@ -28,7 +26,7 @@ const total = new Set(days.flatMap((d) => d.items.map((i) => i.id))).size;
   description={`Small, social things to do in ${CITY_SHORT} this week and next — after work and on weekends — picked and checked by Covey.`}
   page="events"
 >
-  <section class="band" data-progress aria-labelledby="act-title">
+  <section class="band" aria-labelledby="act-title">
     <div class="wrap band-inner">
       <p class="kicker band-kicker">Events · {CITY_SHORT}</p>
       <h1 id="act-title" class="t-mega band-title">what's on.</h1>
@@ -36,21 +34,6 @@ const total = new Set(days.flatMap((d) => d.items.map((i) => i.id))).size;
         Things worth doing with a few people — or on your own, to meet a few.
         Picked and checked by Covey, linked to every organizer.
       </p>
-    </div>
-    <div class="parade" aria-hidden="true">
-      <div class="parade-track">
-        {
-          [...CATEGORY_KEYS, ...CATEGORY_KEYS].map((c, i) => {
-            const art = birdSrc(c);
-            return (
-              <figure class="marcher" style={`--i:${i}`}>
-                <img src={art.src} srcset={art.srcset} alt="" width="240" height="300" loading={i < 9 ? "eager" : "lazy"} decoding="async" />
-                <figcaption>{CATEGORIES[c].doing}</figcaption>
-              </figure>
-            );
-          })
-        }
-      </div>
     </div>
   </section>
 
@@ -77,9 +60,8 @@ const total = new Set(days.flatMap((d) => d.items.map((i) => i.id))).size;
 
 <style>
   .band {
-    --p: 0.5;
     position: relative;
-    /* Pale SF-sky blue: every category quail (orange, yellow, red included) reads against it. */
+    /* Pale SF-sky blue. */
     background: #d8eaf8;
     color: #10203a;
     overflow: hidden;
@@ -87,7 +69,7 @@ const total = new Set(days.flatMap((d) => d.items.map((i) => i.id))).size;
     --ink-muted: #2c4058;
   }
   .band-inner {
-    padding-block: clamp(2.5rem, 7vw, 5.5rem) clamp(1.5rem, 3vw, 2rem);
+    padding-block: clamp(2.5rem, 7vw, 5.5rem) clamp(2.5rem, 6vw, 4.5rem);
   }
   .band-kicker {
     color: #2c4058;
@@ -104,36 +86,6 @@ const total = new Set(days.flatMap((d) => d.items.map((i) => i.id))).size;
     font-size: var(--fs-lede);
     line-height: 1.55;
     color: #1d3049;
-  }
-  .parade {
-    padding-block: 1.5rem 2rem;
-  }
-  .parade-track {
-    display: flex;
-    gap: clamp(1.5rem, 4vw, 3.5rem);
-    width: max-content;
-    padding-inline: var(--gutter);
-    transform: translateX(calc((var(--p) - 0.5) * -60vw));
-    will-change: transform;
-  }
-  .marcher {
-    display: grid;
-    justify-items: center;
-    gap: 0.5rem;
-    margin: 0;
-  }
-  .marcher img {
-    height: clamp(5.5rem, 12vw, 9rem);
-    width: auto;
-    filter: drop-shadow(0 8px 0 rgb(16 32 58 / 0.12));
-  }
-  .marcher figcaption {
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: #1d3049;
-    white-space: nowrap;
   }
   .list {
     padding-block: clamp(1.5rem, 4vw, 2.5rem) 2rem;
@@ -164,10 +116,5 @@ const total = new Set(days.flatMap((d) => d.items.map((i) => i.id))).size;
   .list-note a {
     text-decoration: underline;
     text-underline-offset: 0.2em;
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .parade-track {
-      transform: none;
-    }
   }
 </style>
