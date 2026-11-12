@@ -1,9 +1,12 @@
 ---
 /*
- * Home — what Covey is, why it exists, and what makes it different, in four
- * movements: the hero (cast + headline), the problem (pinned beats), how it
- * works (sticky storytelling), and this week in SF (the doorway to the
- * events guide).
+ * Home — the mission first, then the product, in five movements: the hero
+ * (don't do it alone, with the app in hand), the problem (pinned beats),
+ * the mission (find the people you've been missing), how it works (the real
+ * iOS app, step by step), and inside the app (a bento of its screens).
+ *
+ * Every screen is a capture of the iOS app in the Meadow theme with demo
+ * data (docs/app-screens.md), and follows the site's light/dark toggle.
  *
  * Prominent waitlist CTAs: two — the header and the hero. Every product claim
  * traces to shipped behavior in covey-ios (docs/landing-audit-2026-09-26.md
@@ -13,18 +16,20 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import HomeHero from "../components/home/HomeHero.astro";
 import HomeProblem from "../components/home/HomeProblem.astro";
+import HomeMission from "../components/home/HomeMission.astro";
 import HomeHow from "../components/home/HomeHow.astro";
-import HomeThisWeek from "../components/home/HomeThisWeek.astro";
+import HomeApp from "../components/home/HomeApp.astro";
 import { CITY_SHORT } from "../config";
 ---
 
 <BaseLayout
-  title="Make friends through small-group plans"
-  description={`Covey turns strangers into friends through small-group plans and repeat hangouts in ${CITY_SHORT}. Join the waitlist.`}
+  title="Don't do it alone"
+  description={`Covey is where you find the people who are down to do the things you're doing: small-group plans and repeat hangouts in ${CITY_SHORT}. Join the waitlist.`}
   page="home"
 >
   <HomeHero />
   <HomeProblem />
+  <HomeMission />
   <HomeHow />
-  <HomeThisWeek />
+  <HomeApp />
 </BaseLayout>

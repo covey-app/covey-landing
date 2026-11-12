@@ -1,0 +1,164 @@
+---
+/*
+ * Phone — the iOS app in an iPhone 17 Pro, drawn in CSS (no device artwork
+ * is shipped). The screen is a real capture of the iOS app in the Meadow
+ * theme, run in demo mode on the simulator with fictional people and plans
+ * (docs/app-screens.md says how they were made).
+ *
+ * Every screen exists in light and dark, and the pair follows the site's
+ * theme toggle (.dark), not the system setting, so the app always matches
+ * the page around it.
+ *
+ * `screens` takes several names for a phone whose screen changes (HomeHow):
+ * set data-screen on the .phone to the one showing; the rest fade out.
+ */
+import { APP_SCREENS, type AppScreen } from "../lib/app-screens";
+
+interface Props {
+  screens: AppScreen[];
+  /** The one showing first. */
+  active?: AppScreen;
+  /** The rendered width, for srcset. */
+  sizes: string;
+  eager?: boolean;
+  class?: string;
+  /** Screen-reader text for the screen; empty when the words around it say it. */
+  alt?: string;
+}
+
+const { screens, active = screens[0], sizes, eager = false, class: className, alt = "" } = Astro.props;
+const src = (s: AppScreen, mode: "light" | "dark", w: number) => `/brand/app/${s}-${mode}-${w}.webp`;
+const srcset = (s: AppScreen, mode: "light" | "dark") => `${src(s, mode, 420)} 420w, ${src(s, mode, 840)} 840w`;
+---
+
+<div class:list={["phone", className]} data-screen={active} role={alt ? "img" : undefined} aria-label={alt || undefined} aria-hidden={alt ? undefined : "true"}>
+  <div class="phone-body">
+  <div class="phone-screen">
+    {
+      screens.map((s) => (
+        <div class="phone-shot" data-shot={s}>
+          <img class="shot-light" src={src(s, "light", 420)} srcset={srcset(s, "light")} sizes={sizes} width="1206" height="2622" alt="" loading={eager ? "eager" : "lazy"} decoding="async" draggable="false" />
+          <img class="shot-dark" src={src(s, "dark", 420)} srcset={srcset(s, "dark")} sizes={sizes} width="1206" height="2622" alt="" loading="lazy" decoding="async" draggable="false" />
+        </div>
+      ))
+    }
+    <i class="phone-island"></i>
+  </div>
+  </div>
+</div>
+
+<style>
+  /* Sized by its width (the container); everything inside is in cqi of it,
+     so the bezel, corners and island stay true at any size. Proportions
+     follow the iPhone 17 Pro (402 × 874 pt screen, ~55 pt corners). */
+  .phone {
+    container-type: inline-size;
+    width: 100%;
+  }
+  .phone-body {
+    --bezel: 3.6cqi;
+    --screen-r: 12.6cqi;
+    position: relative;
+    padding: var(--bezel);
+    border-radius: calc(var(--screen-r) + var(--bezel));
+    background: #0d0d0f;
+    /* The titanium band is the one gradient here: a lit edge on a metal
+       frame, not decoration. */
+    box-shadow:
+      inset 0 0 0 0.55cqi #2a2b2e,
+      0 0 0 0.75cqi #8d9096,
+      0 0 0 0.95cqi #4b4d52,
+      0 44px 70px -30px rgb(18 40 6 / 0.55),
+      0 14px 24px -12px rgb(18 40 6 / 0.35);
+  }
+  :global(.dark) .phone-body {
+    box-shadow:
+      inset 0 0 0 0.55cqi #2a2b2e,
+      0 0 0 0.75cqi #6f7277,
+      0 0 0 0.95cqi #3a3c40,
+      0 44px 70px -30px rgb(0 0 0 / 0.75),
+      0 14px 24px -12px rgb(0 0 0 / 0.5);
+  }
+  /* Side buttons: action + volume on the left, power on the right. */
+  .phone-body::before,
+  .phone-body::after {
+    content: "";
+    position: absolute;
+    width: 1.1cqi;
+    border-radius: 1cqi;
+    background: #6f7277;
+  }
+  /* Action button, with the two volume keys drawn as its shadows. */
+  .phone-body::before {
+    left: -1.75cqi;
+    top: 18%;
+    height: 7cqi;
+    box-shadow:
+      0 13cqi 0 0 #6f7277,
+      0 29cqi 0 0 #6f7277;
+  }
+  .phone-body::after {
+    right: -1.75cqi;
+    top: 27%;
+    height: 22cqi;
+  }
+  .phone-screen {
+    position: relative;
+    aspect-ratio: 1206 / 2622;
+    border-radius: var(--screen-r);
+    overflow: hidden;
+    background: #61822d;
+    isolation: isolate;
+  }
+  :global(.dark) .phone-screen {
+    background: #1f2c17;
+  }
+  .phone-shot {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.45s var(--ease-out);
+  }
+  .phone-shot img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    user-select: none;
+  }
+  .shot-dark {
+    display: none !important;
+  }
+  :global(.dark) .shot-light {
+    display: none !important;
+  }
+  :global(.dark) .shot-dark {
+    display: block !important;
+  }
+  .phone-island {
+    position: absolute;
+    z-index: 2;
+    top: 2.5cqi;
+    left: 50%;
+    width: 28.5cqi;
+    height: 8.4cqi;
+    margin-left: -14.25cqi;
+    border-radius: 99px;
+    background: #000;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .phone-shot {
+      transition: none;
+    }
+  }
+</style>
+
+<style is:global>
+  /* The showing screen. Global so a parent can switch it by data-screen. */
+  .phone[data-screen="explore"] [data-shot="explore"],
+  .phone[data-screen="plan"] [data-shot="plan"],
+  .phone[data-screen="chat"] [data-shot="chat"],
+  .phone[data-screen="myplans"] [data-shot="myplans"] {
+    opacity: 1;
+  }
+</style>

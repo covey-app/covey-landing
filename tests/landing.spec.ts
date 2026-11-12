@@ -71,14 +71,16 @@ test.describe("home page (acceptance criteria)", () => {
     await page.goto("/");
     await expect(page.locator("main img[src*='app-icon']")).toHaveCount(0);
     await expect(page.locator("main .tile")).toHaveCount(0);
-    await expect(page.locator("[data-hero] img[src*='/brand/quails/']")).not.toHaveCount(0);
+    await expect(page.locator("[data-hero] [data-bubble]")).toHaveCount(9);
     await expect(page.locator("[data-hero] [data-quinn]")).toHaveCount(1);
     expect(await page.locator("header img[src*='app-icon'], footer img[src*='app-icon']").count()).toBe(2);
   });
 
-  test("contextual actions lead to events, not more waitlist buttons", async ({ page }) => {
+  test("the hero's second action shows how it works, not another waitlist button", async ({ page }) => {
     await page.goto("/");
-    await expect(page.locator("main a[href='/events']")).not.toHaveCount(0);
+    const how = page.locator("[data-hero] a[href='#how']");
+    await expect(how).toBeVisible();
+    await expect(page.locator("main section#how")).toHaveCount(1);
   });
 
   test("group size claims match the product", async ({ page }) => {

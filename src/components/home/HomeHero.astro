@@ -1,62 +1,77 @@
 ---
 /*
- * Home hero — "strangers / into / friends."
+ * Home hero — "don't / do it / alone." The mission, then the product.
  *
- * The cast: Quinn (full body) and the nine category quails, each doing the
- * thing its category is about. Choreography (once per session, ~2s, CSS):
+ * The stage: the iOS app's Explore screen in a phone (real Meadow captures,
+ * light and dark following the site theme), Quinn standing beside it, and a
+ * ring of activity bubbles, one per plan category: the app's category
+ * colour and glyph (a CategoryStopBead) with a white rim. Choreography
+ * (once per session, ~2s, CSS):
  *   0.00  headline words rise out of their masks
- *   0.15  Quinn pops up
- *   0.35  the quails fly in from the edges, staggered
+ *   0.15  the phone rises, Quinn pops up
+ *   0.35  the bubbles float in from the edges, staggered
  *   1.25  Quinn says hello (open beak)
  * Quinn is the 3D model (src/lib/quinn3d/), loaded after the page is idle;
  * the front illustration is the poster until then and the fallback without
  * WebGL. Once it's in, Quinn turns a full circle to greet first-time
  * visitors, looks toward the pointer, can be dragged round, and flaps when
- * tapped. The quails drift with pointer depth, and scrolling the hero away
+ * tapped. The bubbles drift with pointer depth, and scrolling the hero away
  * gathers them in around Quinn. No-JS, reduced motion, and repeat
  * visits in a session get the final frame.
+ *
+ * The ground is Meadow (styles/meadow.css): Quinn stands on a sunlit lawn
+ * seen from above, which runs up under the frosted header and dissolves into
+ * the ink band below through frosted glass. The words sit in a lift of the
+ * lawn's own light, never on a panel. Quinn is lit by the lawn (green bounce
+ * light, a shade-coloured shadow) and toned down a touch so he sits in it.
  */
 import Quinn from "../Quinn.astro";
-import { birdSrc, type Category } from "../../lib/categories";
+import Phone from "../Phone.astro";
+import MeadowGround from "../MeadowGround.astro";
+import Icon from "../Icon.astro";
+import { CATEGORIES, type Category } from "../../lib/categories";
 import { SITE, CITY_SHORT } from "../../config";
 
-// x/y/w: % of the stage. depth: px of pointer travel. f: fly-in offset (vw/vh).
-// g: gather vector toward Quinn (% of own size). back: sits behind Quinn.
-const quails: { c: Category; x: number; y: number; w: number; depth: number; rot: number; fx: number; fy: number; back?: boolean; mobile?: boolean }[] = [
-  { c: "outdoors", x: 2, y: 14, w: 19, depth: 28, rot: -5, fx: -60, fy: -10, mobile: true },
-  { c: "nightlife", x: 26, y: -2, w: 14, depth: 16, rot: 3, fx: -10, fy: -60, back: true },
-  { c: "arts", x: 66, y: 0, w: 20, depth: 24, rot: 4, fx: 40, fy: -60, mobile: true },
-  { c: "culture", x: 84, y: 26, w: 22, depth: 18, rot: 0, fx: 60, fy: -20, back: true },
-  { c: "food", x: 74, y: 52, w: 19, depth: 34, rot: 5, fx: 60, fy: 20, mobile: true },
-  { c: "media", x: 62, y: 78, w: 27, depth: 40, rot: 0, fx: 40, fy: 60, mobile: true },
-  { c: "sports", x: -4, y: 58, w: 25, depth: 30, rot: -4, fx: -60, fy: 30, mobile: true },
-  { c: "fashion", x: 18, y: 82, w: 14, depth: 20, rot: -3, fx: -30, fy: 60 },
-  { c: "professional", x: 50, y: 6, w: 13, depth: 12, rot: 2, fx: 10, fy: -60, back: true },
+// x/y: the bubble's centre, s: its diameter, all % of the stage. depth: px
+// of pointer travel. f: fly-in offset (vw/vh). back: sits behind Quinn.
+// mobile: also shown on phones (the stage is shorter there).
+const bubbles: { c: Category; x: number; y: number; s: number; depth: number; rot: number; fx: number; fy: number; back?: boolean; mobile?: boolean }[] = [
+  { c: "outdoors", x: 9, y: 20, s: 13, depth: 28, rot: -6, fx: -60, fy: -10, mobile: true },
+  { c: "nightlife", x: 27, y: 7, s: 10, depth: 16, rot: 4, fx: -10, fy: -60, back: true },
+  { c: "professional", x: 40, y: 2, s: 8, depth: 12, rot: -3, fx: 10, fy: -60, back: true },
+  { c: "arts", x: 91, y: 12, s: 12, depth: 24, rot: 5, fx: 40, fy: -60, mobile: true },
+  { c: "culture", x: 95, y: 38, s: 9, depth: 18, rot: 0, fx: 60, fy: -20 },
+  { c: "food", x: 91, y: 64, s: 13, depth: 34, rot: 6, fx: 60, fy: 20, mobile: true },
+  { c: "media", x: 88, y: 90, s: 10, depth: 40, rot: -4, fx: 40, fy: 60 },
+  { c: "sports", x: 6, y: 50, s: 11, depth: 30, rot: -5, fx: -60, fy: 30, mobile: true },
+  { c: "fashion", x: 5, y: 78, s: 9, depth: 20, rot: 3, fx: -30, fy: 60 },
 ];
 
 const arrow = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>`;
 ---
 
-<section class="hero" data-hero data-pointer data-progress aria-labelledby="hero-title">
+<section class="hero meadow" data-hero data-pointer data-progress aria-labelledby="hero-title">
+  <MeadowGround fadeBottom="var(--ink)" />
   <div class="wrap hero-grid">
     <div class="hero-copy">
       <p class="kicker hero-kicker" style="--i:0">Small-group plans · {CITY_SHORT}</p>
       <h1 id="hero-title" class="hero-title t-mega">
-        <span class="line" style="--i:1"><span>strangers</span></span>
-        <span class="line" style="--i:2"><span>into</span></span>
-        <span class="line" style="--i:3"><span class="accent-word">friends.</span></span>
+        <span class="line" style="--i:1"><span>don't</span></span>
+        <span class="line" style="--i:2"><span>do it</span></span>
+        <span class="line" style="--i:3"><span class="accent-word">alone.</span></span>
       </h1>
       <p class="hero-lede" style="--i:4">
-        Make real plans, meet in groups of a few, and keep seeing the people
-        you click with. Covey turns one good night into a habit.
+        Covey is where you find the people who are down to do the things
+        you're doing. Small plans, a few seats each, and the same faces next
+        time.
       </p>
       <div class="hero-actions" style="--i:5">
         <a href={SITE.waitlistPath} class="cta" data-cta="hero">
           Join the waitlist
           <span class="cta-arrow" set:html={arrow + arrow} />
         </a>
-        <a href="/events" class="arrow-link">
-          See what's on this week
+        <a href="#how" class="arrow-link">
+          See how it works
           <span set:html={arrow} />
         </a>
       </div>
@@ -64,22 +79,24 @@ const arrow = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
 
     <div class="stage" data-stage>
       {
-        quails.map((b, i) => {
-          const art = birdSrc(b.c);
-          return (
-            <div
-              class:list={["bird", b.back && "is-back", !b.mobile && "desktop-only"]}
-              style={`--x:${b.x};--y:${b.y};--w:${b.w};--rot:${b.rot}deg;--fx:${b.fx};--fy:${b.fy};--i:${i};--gx:${(36 - b.x) * 0.9};--gy:${(52 - b.y) * 0.9}`}
-            >
-              <div class="bird-depth" data-depth style={`--depth:${b.depth}`}>
-                <img class="bird-art" src={art.src} srcset={art.srcset} alt="" width="240" height="300" loading="eager" decoding="async" draggable="false"/>
-              </div>
+        bubbles.map((b, i) => (
+          <div
+            class:list={["spot", b.back && "is-back", !b.mobile && "desktop-only"]}
+            style={`--x:${b.x};--y:${b.y};--s:${b.s};--rot:${b.rot}deg;--fx:${b.fx};--fy:${b.fy};--i:${i};--gx:${(50 - b.x) * 2.2};--gy:${(56 - b.y) * 2.2}`}
+          >
+            <div class="spot-depth" data-depth style={`--depth:${b.depth}`}>
+              <span class="bubble" data-bubble={b.c} style={`--c:var(--cat-${b.c})`} title={CATEGORIES[b.c].label}>
+                <Icon name={CATEGORIES[b.c].icon} size={24} stroke={2.25} />
+              </span>
             </div>
-          );
-        })
+          </div>
+        ))
       }
-      <div class="hero-quinn" data-depth style="--depth:8">
-        <Quinn views={["front", "front-hello"]} sizes="(min-width: 1024px) 280px, 38vw" eager data-hero-quinn />
+      <div class="hero-phone" data-depth style="--depth:6">
+        <Phone screens={["explore"]} sizes="(min-width: 1024px) 260px, 46vw" eager alt="Covey's Explore screen: upcoming small plans nearby, each with its time, distance and seats taken." />
+      </div>
+      <div class="hero-quinn" data-depth style="--depth:10">
+        <Quinn views={["front", "front-hello"]} sizes="(min-width: 1024px) 220px, 34vw" eager data-hero-quinn />
       </div>
       <div class="ground" aria-hidden="true"></div>
     </div>
@@ -101,9 +118,21 @@ const arrow = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
 
 <style>
   .hero {
+    --header-h: calc(4rem + env(safe-area-inset-top, 0px));
     position: relative;
     overflow-x: clip;
-    padding-block: clamp(1.5rem, 4vw, 3.5rem) clamp(3rem, 6vw, 5rem);
+    /* Run the lawn up under the sticky, frosted header. */
+    margin-top: calc(var(--header-h) * -1);
+    padding-block: calc(var(--header-h) + clamp(1.5rem, 4vw, 3.5rem)) clamp(3rem, 6vw, 5rem);
+    /* Phones: the copy is on top, so the lift is a top lift that fades out
+       above the cast. */
+    --lift: linear-gradient(
+      180deg,
+      rgb(var(--meadow-sun) / 0.8) 0%,
+      rgb(var(--meadow-sun) / 0.74) 45%,
+      rgb(var(--meadow-sun) / 0.5) 60%,
+      rgb(var(--meadow-sun) / 0) 80%
+    );
     --p: 0.4;
     /* Gather: 0 while the hero is on screen, → 1 as it scrolls away. */
     --g: clamp(0, calc((var(--p) - 0.5) * 2.6), 1);
@@ -115,7 +144,7 @@ const arrow = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
   }
   /* The copy column is the container the headline is sized against, so
      "strangers" (the longest word, ~4.9em wide) can never outgrow it, whatever
-     the viewport, zoom level, or fallback font. It also sits above the quails,
+     the viewport, zoom level, or fallback font. It also sits above the bubbles,
      which overlaps the column's edge on wide screens. */
   .hero-copy {
     position: relative;
@@ -164,30 +193,65 @@ const arrow = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
     aspect-ratio: 1 / 1;
     margin-inline: auto;
   }
-  .bird {
+  .spot {
     position: absolute;
-    left: calc(var(--x) * 1%);
-    top: calc(var(--y) * 1%);
-    width: calc(var(--w) * 1%);
+    left: calc((var(--x) - var(--s) / 2) * 1%);
+    top: calc((var(--y) - var(--s) / 2) * 1%);
+    width: calc(var(--s) * 1%);
     z-index: 3;
     transform: translate(calc(var(--gx) * var(--g) * 1%), calc(var(--gy) * var(--g) * 1%)) scale(calc(1 - var(--g) * 0.3));
   }
-  .bird.is-back {
+  .spot.is-back {
     z-index: 1;
   }
-  .bird-art {
-    display: block;
+  /* An activity bubble: the category colour and white glyph of the app's
+     stop bead, ringed in white, casting a shadow in the lawn's own shade. */
+  .bubble {
+    display: grid;
+    place-items: center;
     width: 100%;
-    height: auto;
+    aspect-ratio: 1;
+    border-radius: 999px;
+    background: var(--c);
+    color: #fff;
+    border: clamp(2px, 0.5vw, 3.5px) solid #fff;
     rotate: var(--rot);
-    filter: drop-shadow(0 10px 14px rgb(18 20 30 / 0.12));
+    box-shadow:
+      0 12px 20px -8px rgb(18 40 6 / 0.5),
+      0 2px 5px rgb(18 40 6 / 0.22);
+  }
+  .bubble :global(svg) {
+    width: 46%;
+    height: 46%;
+  }
+  /* Dark mode's category colours are the lifted ones, so the glyph goes
+     dark (as on every .orb); the rim stays white, softened for the night. */
+  :global(.dark) .bubble {
+    color: #14140f;
+    border-color: rgb(255 255 255 / 0.88);
+    box-shadow:
+      0 12px 22px -8px rgb(0 0 0 / 0.6),
+      0 2px 5px rgb(0 0 0 / 0.35);
+  }
+  .hero-phone {
+    position: absolute;
+    z-index: 2;
+    left: 42%;
+    top: 1%;
+    width: 40%;
   }
   .hero-quinn {
     position: absolute;
-    z-index: 2;
-    left: 31%;
+    z-index: 3;
+    left: 13%;
     bottom: 3%;
-    width: 38%;
+    width: 31%;
+    /* Sits him in the lawn rather than on top of it: a touch less saturated
+       and bright (the 3D model is also lit with the lawn's bounce light). */
+    filter: saturate(0.9) brightness(0.97);
+  }
+  :global(.dark) .hero-quinn {
+    filter: saturate(0.8) brightness(0.82);
   }
   .hero-quinn :global([data-quinn]) {
     width: 100%;
@@ -196,12 +260,15 @@ const arrow = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
   .ground {
     position: absolute;
     z-index: 0;
-    left: 18%;
-    right: 18%;
-    bottom: 2%;
-    height: 7%;
+    left: 10%;
+    right: 14%;
+    bottom: 0;
+    height: 9%;
     border-radius: 50%;
-    background: radial-gradient(closest-side, color-mix(in oklab, var(--ink) 14%, transparent), transparent);
+    background: radial-gradient(closest-side, rgb(18 40 6 / 0.45), rgb(18 40 6 / 0.18) 60%, transparent);
+  }
+  :global(.dark) .ground {
+    background: radial-gradient(closest-side, rgb(0 0 0 / 0.55), rgb(0 0 0 / 0.2) 60%, transparent);
   }
   .desktop-only {
     display: none;
@@ -222,11 +289,15 @@ const arrow = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
     }
     .stage {
       width: 100%;
-      aspect-ratio: 5 / 4;
+      aspect-ratio: 1 / 1;
+    }
+    .hero-phone {
+      left: 44%;
+      width: 42%;
     }
     .hero-quinn {
-      left: 32%;
-      width: 36%;
+      left: 12%;
+      width: 33%;
     }
   }
   @media (min-width: 640px) {
@@ -236,9 +307,20 @@ const arrow = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
   }
   @media (min-width: 1024px) {
     .hero {
-      min-height: min(calc(100svh - 4rem), 58rem);
+      min-height: min(100svh, calc(58rem + var(--header-h)));
       display: grid;
       align-items: center;
+      /* Wide screens: the copy is the left column, so the light pools there
+         (and along the top, under the header) and the cast stands on open
+         lawn to the right. */
+      --lift:
+        radial-gradient(
+          62% 78% at 22% 52%,
+          rgb(var(--meadow-sun) / 0.8) 0%,
+          rgb(var(--meadow-sun) / 0.7) 48%,
+          rgb(var(--meadow-sun) / 0) 100%
+        ),
+        linear-gradient(180deg, rgb(var(--meadow-sun) / 0.6) 0, rgb(var(--meadow-sun) / 0) 9rem);
     }
     .hero-grid {
       grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
@@ -250,7 +332,7 @@ const arrow = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
     .stage {
       width: 100%;
       max-width: 40rem;
-      margin-left: -4rem;
+      margin-left: 0;
     }
   }
 
@@ -266,12 +348,15 @@ const arrow = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
       animation: fade-up 0.7s var(--ease-out) both;
       animation-delay: calc(0.25s + var(--i) * 70ms);
     }
-    .is-intro .bird-art {
-      animation: fly-in 0.9s cubic-bezier(0.18, 0.9, 0.24, 1.08) both;
+    .is-intro .bubble {
+      animation: fly-in 0.9s cubic-bezier(0.18, 0.9, 0.24, 1) both;
       animation-delay: calc(0.35s + var(--i) * 55ms);
     }
     .is-intro .hero-quinn {
-      animation: quinn-in 0.7s var(--ease-out) 0.15s both;
+      animation: quinn-in 0.7s var(--ease-out) 0.25s both;
+    }
+    .is-intro .hero-phone {
+      animation: quinn-in 0.8s var(--ease-out) 0.1s both;
     }
     .is-intro .ground {
       animation: fade-up 0.6s var(--ease-out) 0.15s both;
@@ -331,12 +416,12 @@ const arrow = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
 
     // Swap in the 3D model once the page has settled.
     const load3D = async () => {
-      const q = await loadQuinn3D(stand);
+      const q = await loadQuinn3D(stand, { light: "meadow" });
       if (!q) return;
       if (gone) return q.destroy();
       q3 = q;
       setView(quinn, "front");
-      // First visit: a full turn to say hi, after the quails have landed (not if it'd come out of nowhere).
+      // First visit: a full turn to say hi, after the bubbles have landed (not if it'd come out of nowhere).
       const since = performance.now() - started;
       if (intro && since < 6000) window.setTimeout(() => q.greet(), Math.max(400, 1600 - since));
     };

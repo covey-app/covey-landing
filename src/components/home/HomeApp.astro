@@ -1,0 +1,188 @@
+---
+/*
+ * Inside the app — a bento of liquid-glass tiles on the Meadow lawn, the way
+ * the app's own cards sit on it. Three tiles carry a real screen (cropped,
+ * light/dark with the site), two carry a fact. Every fact is in the 1.0
+ * build (covey-marketing claims table): six seats by default, a reminder on
+ * every plan to meet somewhere public, report and block from anywhere.
+ */
+import Phone from "../Phone.astro";
+import MeadowGround from "../MeadowGround.astro";
+import Icon from "../Icon.astro";
+---
+
+<section class="app meadow" aria-labelledby="app-title">
+  <MeadowGround fadeTop="var(--page-bg)" fadeBottom="var(--page-bg)" />
+  <div class="wrap">
+    <div class="app-head" data-reveal>
+      <p class="kicker">Inside the app</p>
+      <h2 id="app-title" class="app-title">
+        <span>everything the plan needs.</span>
+        <span class="app-title-rest">in one place, so showing up is the easy part.</span>
+      </h2>
+    </div>
+
+    <div class="bento">
+      <article class="bento-tile liquid-glass bento-tile--tall" data-reveal>
+        <div class="tile-text">
+          <h3 class="tile-title">Your week, planned</h3>
+          <p class="tile-copy">Everything you're hosting or going to, in one list or on a calendar.</p>
+        </div>
+        <div class="tile-shot"><Phone screens={["myplans"]} sizes="(min-width: 900px) 300px, 70vw" /></div>
+      </article>
+
+      <article class="bento-tile liquid-glass" data-reveal style="--d:1">
+        <div class="tile-text">
+          <h3 class="tile-title">The itinerary is the plan</h3>
+          <p class="tile-copy">Where, when, every stop, and who's hosting, before you say yes.</p>
+        </div>
+        <div class="tile-shot"><Phone screens={["plan"]} sizes="(min-width: 900px) 260px, 70vw" /></div>
+      </article>
+
+      <article class="bento-tile liquid-glass" data-reveal style="--d:2">
+        <div class="tile-text">
+          <h3 class="tile-title">A chat for every plan</h3>
+          <p class="tile-copy">Sort out the details before you meet, and keep talking after.</p>
+        </div>
+        <div class="tile-shot"><Phone screens={["chat"]} sizes="(min-width: 900px) 260px, 70vw" /></div>
+      </article>
+
+      <article class="bento-tile liquid-glass bento-tile--fact" data-reveal style="--d:3">
+        <p class="fact-big" aria-hidden="true">6</p>
+        <div class="tile-text">
+          <h3 class="tile-title">Six seats by default</h3>
+          <p class="tile-copy">Hosts set the headcount, so everyone actually talks.</p>
+        </div>
+      </article>
+
+      <article class="bento-tile liquid-glass bento-tile--fact" data-reveal style="--d:4">
+        <p class="fact-icon" aria-hidden="true"><Icon name="shield-check" size={28} /></p>
+        <div class="tile-text">
+          <h3 class="tile-title">Meet somewhere public</h3>
+          <p class="tile-copy">Every plan reminds you to, and you can report or block from anywhere.</p>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<style>
+  .app {
+    padding-block: clamp(6rem, 12vw, 10rem);
+    --lift: linear-gradient(
+      180deg,
+      rgb(var(--meadow-sun) / 0) 0,
+      rgb(var(--meadow-sun) / 0.78) 6rem,
+      rgb(var(--meadow-sun) / 0.72) 22rem,
+      rgb(var(--meadow-sun) / 0) 34rem
+    );
+  }
+  .app-head {
+    margin-bottom: clamp(2rem, 5vw, 3.5rem);
+  }
+  .app-head .kicker {
+    margin-bottom: 1rem;
+  }
+  .app-title {
+    display: grid;
+    max-width: 24ch;
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: var(--fs-title);
+    line-height: 1.02;
+    letter-spacing: -0.045em;
+    text-transform: lowercase;
+    color: var(--ink);
+  }
+  .app-title-rest {
+    color: color-mix(in oklab, var(--ink) 62%, rgb(var(--meadow-sun)));
+  }
+  :global(.dark) .app-title-rest {
+    color: color-mix(in oklab, var(--ink) 66%, var(--meadow-ground));
+  }
+
+  .bento {
+    display: grid;
+    gap: 1.25rem;
+  }
+  .bento-tile {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: var(--rad-sheet);
+    min-height: 26rem;
+  }
+  .tile-text {
+    position: relative;
+    z-index: 1;
+    padding: 1.5rem 1.6rem 0;
+  }
+  .tile-title {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 1.2rem;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    margin-bottom: 0.4rem;
+  }
+  .tile-copy {
+    font-size: 0.975rem;
+    line-height: 1.5;
+    /* Full ink: glass over the lawn's darker lower half left muted ink at
+       4.7:1, too close to the line. */
+    color: var(--ink);
+    max-width: 26rem;
+  }
+  /* The phone rises from the tile's bottom edge and runs off it. */
+  .tile-shot {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 1.75rem;
+    margin-bottom: -40%;
+  }
+  .tile-shot :global(.phone) {
+    width: min(64%, 17rem);
+  }
+  .bento-tile--fact {
+    min-height: 0;
+    justify-content: space-between;
+    padding-bottom: 1.6rem;
+  }
+  .fact-big {
+    padding: 1.4rem 1.6rem 0;
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: clamp(4.5rem, 8vw, 6.5rem);
+    line-height: 0.9;
+    letter-spacing: -0.06em;
+    color: var(--ink);
+  }
+  .fact-icon {
+    padding: 1.6rem 1.6rem 0;
+    color: var(--ink);
+  }
+
+  @media (min-width: 720px) {
+    .bento {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .bento-tile--tall {
+      grid-row: span 2;
+    }
+  }
+  @media (min-width: 1080px) {
+    .bento {
+      grid-template-columns: 1.15fr 1fr 1fr;
+      grid-template-rows: 28rem auto;
+    }
+    .bento-tile--tall {
+      grid-row: 1 / span 2;
+    }
+    .bento-tile--tall .tile-shot :global(.phone) {
+      width: min(62%, 19rem);
+    }
+  }
+</style>

@@ -20,7 +20,9 @@
   --fs-title: clamp(2rem, 3.9vw, 3.6rem);
   --gutter: clamp(1.25rem, 4vw, 3rem);
   --wide: 86rem;
-  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  /* Named for where it came from; it no longer overshoots (no bounce
+     anywhere, owner rule 2026-11). Critically damped feel. */
+  --ease-spring: cubic-bezier(0.2, 0.9, 0.3, 1);
   --ease-glide: cubic-bezier(0.65, 0, 0.35, 1);
 
   --page-bg: var(--background);

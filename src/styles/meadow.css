@@ -1,0 +1,210 @@
+/*
+ * Meadow — the app's canvas theme (it replaced Porcelain, 2026-11), brought
+ * to the site as its ground. Source of truth: covey-web's Meadow build and its
+ * handoff (SPEC.md / DECISIONS.md in covey-web docs/design/meadow/handoff).
+ * Most values here were reached by the owner rejecting the alternatives, so
+ * change them only with that history in hand:
+ *
+ *   - A top-down lawn in realistic olive greens. Never pastel, never a side
+ *     view with swaying blades.
+ *   - Glass is clear, Apple-style: a light wash, ~1.5px blur, an edge lens
+ *     (Chromium), and rims made of light. No white outline, no grain, no
+ *     sheen gradient.
+ *   - Text on the lawn stays legible through a lift in the lawn's own sunlit
+ *     green and darker secondary ink. Never a box behind a heading.
+ *   - Motion is "draw once, move an image": the lawn drifts at 0.35× scroll
+ *     and the shade bands at 1.3× that. Nothing redraws; nothing idles.
+ *
+ * Pieces:
+ *   .meadow            a section on the lawn: scopes the Meadow ink.
+ *   MeadowGround.astro the art layers (lawn, shade bands, lift) behind it.
+ *   .liquid-glass      a glass card. Components with scoped styles use the
+ *                      --glass-* variables instead.
+ */
+
+:root {
+  --meadow-ground: #61822d;
+  --meadow-lawn: url("/brand/meadow/meadow-light-sharp.webp");
+  --meadow-bands: url("/brand/meadow/meadow-light-bands.webp");
+  /* The lift is the lawn's own sunlit green (SPEC §5). */
+  --meadow-sun: 232 240 206;
+
+  /* Liquid glass (SPEC §4), light. */
+  --glass-wash: rgba(255, 255, 255, 0.4);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-backdrop: blur(2px) saturate(1.35) brightness(1.2);
+  --glass-backdrop-lens: blur(1.5px) saturate(1.35) brightness(1.2) url(#covey-liquid-glass);
+  --glass-filter: var(--glass-backdrop);
+  --glass-rim:
+    inset 2px 2px 5px -2px rgba(255, 255, 255, 0.6),
+    inset -2px -2px 6px -2px rgba(18, 40, 6, 0.28),
+    inset 0 22px 30px -26px rgba(255, 255, 255, 0.55),
+    inset 0 -20px 28px -24px rgba(18, 40, 6, 0.3),
+    0 16px 36px -18px rgba(18, 40, 6, 0.5),
+    0 2px 6px rgba(18, 40, 6, 0.12);
+  --glass-rim-hover:
+    inset 2px 2px 5px -2px rgba(255, 255, 255, 0.6),
+    inset -2px -2px 6px -2px rgba(18, 40, 6, 0.28),
+    inset 0 22px 30px -26px rgba(255, 255, 255, 0.55),
+    inset 0 -20px 28px -24px rgba(18, 40, 6, 0.3),
+    0 24px 44px -18px rgba(18, 40, 6, 0.58),
+    0 3px 8px rgba(18, 40, 6, 0.14);
+}
+
+.dark {
+  --meadow-ground: #1f2c17;
+  --meadow-lawn: url("/brand/meadow/meadow-dark-sharp.webp");
+  --meadow-bands: url("/brand/meadow/meadow-dark-bands.webp");
+
+  --glass-wash: rgba(14, 18, 12, 0.3);
+  --glass-border: rgba(255, 255, 255, 0.05);
+  --glass-backdrop: blur(2px) saturate(1.3) brightness(0.8);
+  --glass-backdrop-lens: blur(1.5px) saturate(1.3) brightness(0.8) url(#covey-liquid-glass);
+  --glass-rim:
+    inset 2px 2px 5px -2px rgba(255, 255, 255, 0.18),
+    inset -2px -2px 6px -2px rgba(0, 0, 0, 0.45),
+    inset 0 22px 30px -26px rgba(255, 255, 255, 0.12),
+    inset 0 -20px 28px -24px rgba(0, 0, 0, 0.45),
+    0 16px 36px -18px rgba(0, 0, 0, 0.65),
+    0 2px 6px rgba(0, 0, 0, 0.3);
+  --glass-rim-hover:
+    inset 2px 2px 5px -2px rgba(255, 255, 255, 0.18),
+    inset -2px -2px 6px -2px rgba(0, 0, 0, 0.45),
+    inset 0 22px 30px -26px rgba(255, 255, 255, 0.12),
+    inset 0 -20px 28px -24px rgba(0, 0, 0, 0.45),
+    0 24px 44px -18px rgba(0, 0, 0, 0.72),
+    0 3px 8px rgba(0, 0, 0, 0.34);
+}
+
+/* Edge refraction needs SVG filters inside backdrop-filter: Chromium only.
+   BaseLayout sets the attribute; blur comes before the url() so the blur
+   doesn't smear the bend away. */
+html[data-liquid-glass] {
+  --glass-filter: var(--glass-backdrop-lens);
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  :root,
+  .dark {
+    --glass-wash: var(--paper-elevated);
+    --glass-filter: none;
+  }
+  html[data-liquid-glass] {
+    --glass-filter: none;
+  }
+}
+
+/* ---------------- A section on the lawn ---------------- */
+
+.meadow {
+  position: relative;
+  isolation: isolate;
+  /* No background of its own: MeadowGround paints the ground, and a colour
+     here is what contrast checkers would wrongly read as the backdrop. */
+  color: var(--ink);
+  /* Secondary ink darkens on the lawn (SPEC §5): mid-grey can't sit on a
+     mid-toned olive. Light mode only; dark keeps its palette. */
+  --ink-muted: #2e2e33;
+  --ink-subtle: #2e2e33;
+  --accent-ink: #3a2718;
+}
+.dark .meadow {
+  --ink-muted: #c4c7bd;
+  --ink-subtle: #a3a89b;
+  --accent-ink: #d8b796;
+}
+
+.meadow-ground {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  /* Hit-testable on purpose (it sits under the content, so it never takes a
+     click from it): contrast checkers find the backdrop by hit-testing, and
+     with pointer-events: none they'd measure text against the flat ground
+     colour instead of the lift. Contrast here is measured on real pixels. */
+  background-color: var(--meadow-ground);
+}
+/* Each art layer is one tile taller than the section and slides by a
+   transform (compositor only) within one tile period, so it never repaints. */
+.meadow-lawn,
+.meadow-bands {
+  position: absolute;
+  inset: -1080px 0 0 0;
+  background-repeat: repeat;
+  background-size: 1800px 1080px;
+  background-position: 50% 0;
+  will-change: transform;
+}
+.meadow-lawn {
+  background-image: var(--meadow-lawn);
+  transform: translate3d(0, calc(var(--lawn-y, 0) * 1px), 0);
+}
+.meadow-bands {
+  background-image: var(--meadow-bands);
+  transform: translate3d(0, calc(var(--bands-y, 0) * 1px), 0);
+}
+/* The lift: each section sets --lift (a gradient of rgb(var(--meadow-sun) / a)
+   stops) for where its words sit. Light mode only. */
+.meadow-lift {
+  position: absolute;
+  inset: 0;
+  background: var(--lift, none);
+}
+.dark .meadow-lift {
+  display: none;
+}
+/* Seams into solid neighbours (MeadowGround fadeTop / fadeBottom): a frosted
+   pane whose blur fades in first and whose colour lands on the neighbour's
+   ground exactly at the edge. One blurred strip per seam, never more. */
+.meadow-fade {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: var(--fade-h, clamp(7rem, 16vw, 13rem));
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  backdrop-filter: blur(16px) saturate(1.2);
+}
+.meadow-fade--top {
+  top: 0;
+  background: linear-gradient(0deg, transparent 0%, color-mix(in oklab, var(--fade) 45%, transparent) 55%, var(--fade) 100%);
+  -webkit-mask-image: linear-gradient(0deg, transparent 0%, #000 55%);
+  mask-image: linear-gradient(0deg, transparent 0%, #000 55%);
+}
+.meadow-fade--bottom {
+  bottom: 0;
+  background: linear-gradient(180deg, transparent 0%, color-mix(in oklab, var(--fade) 45%, transparent) 55%, var(--fade) 100%);
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 55%);
+  mask-image: linear-gradient(180deg, transparent 0%, #000 55%);
+}
+@media (prefers-reduced-transparency: reduce) {
+  .meadow-fade {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+/* Glass never sits under a fading ancestor: a backdrop-filter sees nothing
+   behind a parent below full opacity, and Chrome can leave the blur stale
+   after the fade lands. On the lawn, reveals rise without fading. */
+.js-motion .meadow [data-reveal]:not(.is-in) {
+  opacity: 1;
+}
+
+/* ---------------- Liquid glass card ---------------- */
+
+.liquid-glass {
+  background-color: var(--glass-wash);
+  -webkit-backdrop-filter: var(--glass-filter);
+  backdrop-filter: var(--glass-filter);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-rim);
+  border-radius: var(--radius-lg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .meadow-lawn,
+  .meadow-bands {
+    transform: none;
+  }
+}
