@@ -43,7 +43,7 @@ const BEACH: Idea = { title: "beach day at Baker Beach", line: "Bridge views, co
 export const IDEAS: Record<Mood, Idea[]> = {
   wet: [
     SOUP,
-    { title: "board games at someone's place", line: "Pick a host, pick a game nobody's played, order dumplings.", icon: "dices" },
+    { title: "board games at someone's place", line: "Pick a host, pick a game nobody's played, order takeout.", icon: "dices" },
     { title: "a museum, while everyone stays home", line: "Rainy days are the quiet days at the de Young and SFMOMA. Go with two friends and split up at the good rooms.", icon: "landmark" },
     { title: "a matinee double feature", line: "Two films at a neighborhood theater, a vote on snacks, and dinner to argue about them after.", icon: "popcorn" },
   ],
