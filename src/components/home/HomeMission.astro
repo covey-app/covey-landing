@@ -1,21 +1,27 @@
 ---
 /*
  * The mission, said once and shown: make friends doing things you'd do
- * anyway, without the crowd. One short headline, then the picture: a
- * row of plans (the same activity bubbles that ring Quinn in the hero),
- * each with a few people already going and one open seat. When the row
- * scrolls in, the open seat fills: that's you. No-JS and reduced motion
- * show the filled seat.
+ * anyway, without the crowd. One short headline, then the picture: six
+ * plans, each a photograph of the thing itself with its activity
+ * bubble (the same bubbles that ring Quinn in the hero), a few people
+ * already going and one open seat. When the rows scroll in, the open seat
+ * fills: that's you. No-JS and reduced motion show the filled seat.
+ *
+ * The photographs are mood (src/lib/photos.ts): the plan names are kinds of
+ * plan, never a real listing, and nothing labels anyone in them.
  */
 import Icon from "../Icon.astro";
 import { CATEGORIES, type Category } from "../../lib/categories";
+import { PHOTOS, photoSrc, type PhotoId } from "../../lib/photos";
 
 // going: the people already in, by category colour (abstract avatars).
-const plans: { c: Category; name: string; going: Category[] }[] = [
-  { c: "sports", name: "morning run", going: ["food", "outdoors", "arts"] },
-  { c: "food", name: "taco night", going: ["nightlife", "sports", "fashion", "culture"] },
-  { c: "arts", name: "pottery class", going: ["outdoors", "media"] },
-  { c: "nightlife", name: "late set", going: ["fashion", "food", "sports"] },
+const plans: { c: Category; name: string; photo: PhotoId; going: Category[] }[] = [
+  { c: "outdoors", name: "sunset hike", photo: "sunset-hike", going: ["food", "sports", "arts"] },
+  { c: "sports", name: "pickup frisbee", photo: "pickup-frisbee", going: ["outdoors", "media", "nightlife", "food"] },
+  { c: "food", name: "taco truck run", photo: "taco-truck", going: ["nightlife", "sports", "fashion"] },
+  { c: "fashion", name: "record digging", photo: "record-store", going: ["media", "arts"] },
+  { c: "media", name: "puzzle night", photo: "puzzle-night", going: ["culture", "food", "outdoors", "arts"] },
+  { c: "arts", name: "homemade pizza", photo: "pizza-night", going: ["food", "sports", "culture", "media"] },
 ];
 ---
 
@@ -31,6 +37,16 @@ const plans: { c: Category; name: string; going: Category[] }[] = [
       {
         plans.map((p, i) => (
           <li class="plan" style={`--i:${i}`}>
+            <div class="plan-photo">
+              <img
+                {...photoSrc(p.photo)}
+                sizes="(min-width: 1100px) 28rem, (min-width: 640px) 45vw, 50vw"
+                alt={PHOTOS[p.photo].alt}
+                style={PHOTOS[p.photo].focus && `object-position:${PHOTOS[p.photo].focus}`}
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
             <span class="plan-bubble" style={`--c:var(--cat-${p.c})`} aria-hidden="true">
               <Icon name={CATEGORIES[p.c].icon} size={24} stroke={2.25} />
             </span>
@@ -86,27 +102,57 @@ const plans: { c: Category; name: string; going: Category[] }[] = [
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0.75rem;
   }
+  /* Phones: compact cards, landscape crops and a smaller bubble, so six
+     plans fit in about one screen. Tablets and up get the roomy card. */
   .plan {
+    --pad: 0.75rem;
+    --gap: 0.55rem;
     display: grid;
     align-content: start;
-    gap: 0.9rem;
-    padding: 1rem;
-    border-radius: var(--rad-sheet);
+    gap: var(--gap);
+    padding: var(--pad);
+    border-radius: var(--rad-large);
     background: var(--paper-elevated);
     border: 0.7px solid var(--edge);
     box-shadow: var(--shadow-paper);
+    overflow: hidden;
+  }
+  /* The photo runs to the card's edges; the bubble sits on its lower edge,
+     half on the picture, half on the card, like a stop bead on a route. */
+  .plan-photo {
+    margin: calc(var(--pad) * -1) calc(var(--pad) * -1) 0;
+    aspect-ratio: 4 / 3;
+    background: var(--edge);
+    overflow: hidden;
+  }
+  .plan-photo img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .plan-photo + .plan-bubble {
+    margin-top: calc(var(--gap) * -1 - var(--bubble) / 2);
+    position: relative;
+  }
+  /* The photos never fade in: the row rises only as a whole, and only
+     the "you" seat waits for it. */
+  :global(.js-motion) .plans[data-reveal]:not(.is-in) {
+    opacity: 1;
+    transform: none;
   }
   /* The activity bubble: category colour, white glyph, white rim, as in
      the hero ring. */
   .plan-bubble {
+    --bubble: 2.5rem;
     display: grid;
     place-items: center;
-    width: 3.25rem;
-    height: 3.25rem;
+    width: var(--bubble);
+    height: var(--bubble);
     border-radius: 999px;
     background: var(--c);
     color: #fff;
-    border: 3px solid #fff;
+    border: 2.5px solid #fff;
     box-shadow: 0 6px 14px -6px rgb(18 20 30 / 0.4);
   }
   .plan-bubble :global(svg) {
@@ -120,7 +166,7 @@ const plans: { c: Category; name: string; going: Category[] }[] = [
   .plan-name {
     font-family: var(--font-mono);
     font-weight: 600;
-    font-size: clamp(1.05rem, 1.6vw, 1.3rem);
+    font-size: clamp(0.95rem, 1.6vw, 1.3rem);
     letter-spacing: -0.03em;
     line-height: 1.15;
     color: var(--ink);
@@ -133,7 +179,7 @@ const plans: { c: Category; name: string; going: Category[] }[] = [
     row-gap: 0.35rem;
   }
   .face {
-    --d: 1.6rem;
+    --d: 1.4rem;
     width: var(--d);
     height: var(--d);
     flex: none;
@@ -144,9 +190,15 @@ const plans: { c: Category; name: string; going: Category[] }[] = [
   .face + .face {
     margin-left: -0.45rem;
   }
-  @media (min-width: 480px) {
+  @media (min-width: 640px) {
     .plan {
-      padding: 1.25rem;
+      --pad: 1.25rem;
+      --gap: 0.9rem;
+      border-radius: var(--rad-sheet);
+    }
+    .plan-bubble {
+      --bubble: 3.25rem;
+      border-width: 3px;
     }
     .face {
       --d: 2rem;
@@ -173,16 +225,15 @@ const plans: { c: Category; name: string; going: Category[] }[] = [
 
   @media (min-width: 1100px) {
     .plans {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 1rem;
     }
     .plan {
-      padding: 1.5rem;
-      gap: 1.1rem;
+      --pad: 1.5rem;
+      --gap: 1.1rem;
     }
     .plan-bubble {
-      width: 4rem;
-      height: 4rem;
+      --bubble: 4rem;
     }
     .face {
       --d: 2.25rem;

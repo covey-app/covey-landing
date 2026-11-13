@@ -1,9 +1,10 @@
 ---
 /*
- * Home — the mission first, then the product, in five movements: the hero
+ * Home — the mission first, then the product, in six movements: the hero
  * (do it together, with the app in hand), the problem (pinned beats),
- * the mission (make friends doing things you'd do anyway), how it works (the real
- * iOS app, step by step), and inside the app (a bento of its screens).
+ * the mission (make friends doing things you'd do anyway, in photos), how it
+ * works (the real iOS app, step by step), inside the app (a bento of its
+ * screens), and the close (the fifty hours adding up, a wall of photos).
  *
  * Every screen is a capture of the iOS app in the Meadow theme with demo
  * data (docs/app-screens.md), and follows the site's light/dark toggle.
@@ -19,6 +20,7 @@ import HomeProblem from "../components/home/HomeProblem.astro";
 import HomeMission from "../components/home/HomeMission.astro";
 import HomeHow from "../components/home/HomeHow.astro";
 import HomeApp from "../components/home/HomeApp.astro";
+import HomeAfter from "../components/home/HomeAfter.astro";
 ---
 
 <BaseLayout
@@ -31,4 +33,5 @@ import HomeApp from "../components/home/HomeApp.astro";
   <HomeMission />
   <HomeHow />
   <HomeApp />
+  <HomeAfter />
 </BaseLayout>

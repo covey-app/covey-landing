@@ -23,7 +23,7 @@ import Icon from "../Icon.astro";
     </div>
 
     <div class="bento">
-      <article class="bento-tile liquid-glass bento-tile--tall" data-reveal>
+      <article class="bento-tile liquid-glass bento-tile--tall" data-reveal style="--area:plans">
         <div class="tile-text">
           <h3 class="tile-title">Your plans</h3>
           <p class="tile-copy">Everything you're hosting or going to, as a list or a calendar.</p>
@@ -31,7 +31,7 @@ import Icon from "../Icon.astro";
         <div class="tile-shot"><Phone screens={["myplans"]} sizes="(min-width: 900px) 300px, 70vw" /></div>
       </article>
 
-      <article class="bento-tile liquid-glass" data-reveal style="--d:1">
+      <article class="bento-tile liquid-glass" data-reveal style="--d:1;--area:plan">
         <div class="tile-text">
           <h3 class="tile-title">See the whole plan first</h3>
           <p class="tile-copy">Where, when, every stop, and who's hosting.</p>
@@ -39,7 +39,7 @@ import Icon from "../Icon.astro";
         <div class="tile-shot"><Phone screens={["plan"]} sizes="(min-width: 900px) 260px, 70vw" /></div>
       </article>
 
-      <article class="bento-tile liquid-glass" data-reveal style="--d:2">
+      <article class="bento-tile liquid-glass" data-reveal style="--d:2;--area:chat">
         <div class="tile-text">
           <h3 class="tile-title">A chat for every plan</h3>
           <p class="tile-copy">Sort out the details before you meet, and keep talking after.</p>
@@ -47,7 +47,7 @@ import Icon from "../Icon.astro";
         <div class="tile-shot"><Phone screens={["chat"]} sizes="(min-width: 900px) 260px, 70vw" /></div>
       </article>
 
-      <article class="bento-tile liquid-glass bento-tile--fact" data-reveal style="--d:3">
+      <article class="bento-tile liquid-glass bento-tile--fact" data-reveal style="--d:3;--area:keep">
         <p class="cadence" aria-hidden="true">
           <span>weekly</span>
           <span class="is-on"><Icon name="repeat" size={15} stroke={2.25} />every 2 weeks</span>
@@ -59,7 +59,7 @@ import Icon from "../Icon.astro";
         </div>
       </article>
 
-      <article class="bento-tile liquid-glass bento-tile--fact" data-reveal style="--d:4">
+      <article class="bento-tile liquid-glass bento-tile--fact" data-reveal style="--d:4;--area:safety">
         <p class="fact-icon" aria-hidden="true"><Icon name="shield-check" size={28} /></p>
         <div class="tile-text">
           <h3 class="tile-title">Safety in every plan</h3>
@@ -179,14 +179,24 @@ import Icon from "../Icon.astro";
     color: var(--ink);
   }
 
-  @media (min-width: 720px) {
+  /* Two columns: the phone tiles pair up (Your plans + the plan), then the
+     chat sits beside both facts stacked, whose heights add up to about its
+     own. No tile spans two phone tiles here: that outgrew its phone and
+     left a band of empty lawn under it. */
+  @media (min-width: 720px) and (max-width: 1079px) {
     .bento {
       grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-areas:
+        "plans plan"
+        "chat keep"
+        "chat safety";
     }
-    .bento-tile--tall {
-      grid-row: span 2;
+    .bento-tile {
+      grid-area: var(--area);
     }
   }
+  /* Three columns: "Your plans" spans both rows, so its phone is sized to
+     always reach past the tile's bottom edge. */
   @media (min-width: 1080px) {
     .bento {
       grid-template-columns: 1.15fr 1fr 1fr;
@@ -196,7 +206,7 @@ import Icon from "../Icon.astro";
       grid-row: 1 / span 2;
     }
     .bento-tile--tall .tile-shot :global(.phone) {
-      width: min(62%, 19rem);
+      width: min(90%, 19rem);
     }
   }
 </style>

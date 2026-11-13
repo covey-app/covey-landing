@@ -1,0 +1,171 @@
+---
+/*
+ * The close: your people are out there. A headline about the city being
+ * full of people you'd get on with, one line on how Covey brings you
+ * together, then a wall of photographs
+ * of friends just hanging out: the "after" to the mission's activities.
+ * No waitlist button: the home page keeps two (header and hero), and the
+ * header's stays on screen (tests/landing.spec.ts).
+ *
+ * The wall is a 4-column grid on tablets and up (one big frame, one tall,
+ * six small) and a tighter 3-column one on phones (the big frame 2 × 2,
+ * the tall one beside it, then two rows of three), so it stays about half
+ * a screen there. Photographs are mood
+ * (src/lib/photos.ts): no captions, no names, nothing that reads as a
+ * member or a real event. They don't link, so they don't move on hover,
+ * and they never fade in: they're there from the first paint.
+ */
+import { PHOTOS, photoSrc, type PhotoId } from "../../lib/photos";
+
+const wall: { id: PhotoId; shape?: "big" | "tall"; sizes: string }[] = [
+  { id: "rooftop", shape: "big", sizes: "(min-width: 768px) 50vw, 66vw" },
+  { id: "card-night", sizes: "(min-width: 768px) 25vw, 33vw" },
+  { id: "beach-bonfire", shape: "tall", sizes: "(min-width: 768px) 25vw, 33vw" },
+  { id: "living-room", sizes: "(min-width: 768px) 25vw, 33vw" },
+  { id: "movie-night", sizes: "(min-width: 768px) 25vw, 33vw" },
+  { id: "cafe", sizes: "(min-width: 768px) 25vw, 33vw" },
+  { id: "couch", sizes: "(min-width: 768px) 25vw, 33vw" },
+  { id: "patio", sizes: "(min-width: 768px) 25vw, 33vw" },
+];
+---
+
+<section class="after" aria-labelledby="after-title">
+  <div class="wrap">
+    <div class="after-head">
+      <div data-reveal>
+        <p class="kicker">Out there</p>
+        <h2 id="after-title" class="after-title">
+          <span class="a-lead">the city's full of people.</span>
+          <span class="a-turn">some of them are your people.</span>
+        </h2>
+      </div>
+      <div data-reveal style="--d:1">
+        <p class="after-lede">
+          They like what you like, and they're free on Saturday. You just
+          haven't met yet. Covey puts you in the same plan.
+        </p>
+      </div>
+    </div>
+
+    <ul class="wall">
+      {
+        wall.map((w) => (
+          <li class:list={["shot", w.shape && `shot--${w.shape}`]}>
+            <img
+              {...photoSrc(w.id)}
+              sizes={w.sizes}
+              alt={PHOTOS[w.id].alt}
+              style={PHOTOS[w.id].focus && `object-position:${PHOTOS[w.id].focus}`}
+              loading="lazy"
+              decoding="async"
+            />
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .after {
+    padding-block: clamp(4.5rem, 10vw, 8rem);
+  }
+  .after-head {
+    display: grid;
+    gap: 1.5rem;
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+  }
+  .after .kicker {
+    margin-bottom: 1.25rem;
+  }
+  .after-title {
+    max-width: 18ch;
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: clamp(2.1rem, 4.6vw, 4.4rem);
+    line-height: 1.04;
+    letter-spacing: -0.05em;
+    text-transform: lowercase;
+    color: var(--ink);
+  }
+  .a-lead,
+  .a-turn {
+    display: block;
+    text-wrap: balance;
+  }
+  .a-lead {
+    color: color-mix(in oklab, var(--ink) 46%, var(--page-bg));
+  }
+  .after-lede {
+    max-width: 30rem;
+    font-size: var(--fs-lede);
+    line-height: 1.55;
+    color: var(--ink-muted);
+    text-wrap: pretty;
+  }
+
+  /* ---- The wall ---- */
+  .wall {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-auto-flow: dense;
+    gap: 0.375rem;
+  }
+  .shot {
+    position: relative;
+    aspect-ratio: 1;
+    border-radius: var(--rad-small);
+    overflow: hidden;
+    background: var(--edge);
+  }
+  .shot img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  /* Phones: big and tall go first and share the top two rows; the big
+     frame's square sets their height. */
+  .shot--big {
+    grid-column: span 2;
+    grid-row: span 2;
+    order: -2;
+  }
+  .shot--tall {
+    grid-row: span 2;
+    aspect-ratio: auto;
+    order: -1;
+  }
+
+  @media (min-width: 768px) {
+    .wall {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0.75rem;
+    }
+    .shot {
+      aspect-ratio: 4 / 3;
+      border-radius: var(--rad-image);
+      order: 0;
+    }
+    /* Big and tall take their height from the small frames beside them. */
+    .shot--big,
+    .shot--tall {
+      aspect-ratio: auto;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .after-head {
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+      align-items: end;
+      gap: 3rem;
+    }
+    .wall {
+      gap: 1rem;
+    }
+  }
+</style>
