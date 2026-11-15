@@ -21,9 +21,17 @@
  *
  * The ground is Meadow (styles/meadow.css): Quinn stands on a sunlit lawn
  * seen from above, which runs up under the frosted header and dissolves into
- * the ink band below through frosted glass. The words sit in a lift of the
- * lawn's own light, never on a panel. Quinn is lit by the lawn (green bounce
- * light, a shade-coloured shadow) and toned down a touch so he sits in it.
+ * the ink band below through frosted glass. The words sit on the lawn itself,
+ * never on a panel. Quinn is lit by the lawn (green bounce light, a
+ * shade-coloured shadow) and toned down a touch so he sits in it.
+ *
+ * Light mode reads like the night (owner, 2026-11-15): no white lift pooled
+ * behind the words. Instead the whole lawn takes an even, light shade of its
+ * own green (--lift, below) and the words go light, as they are in dark
+ * mode. Measured on the rendered lawn behind each line, 320–1440px (median /
+ * brightest 1% of pixels): title 9.3 / 6.8:1, kicker 8.4 / 6.6:1, lede
+ * 7.2 / 4.3:1, "together." 6.5 / 4.6:1. The small text also carries a faint
+ * shade-green shadow, so the flower specks never thin a glyph.
  */
 import Quinn from "../Quinn.astro";
 import Phone from "../Phone.astro";
@@ -123,18 +131,34 @@ const arrow = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
     /* Run the lawn up under the sticky, frosted header. */
     margin-top: calc(var(--header-h) * -1);
     padding-block: calc(var(--header-h) + clamp(1.5rem, 4vw, 3.5rem)) clamp(3rem, 6vw, 5rem);
-    /* Phones: the copy is on top, so the lift is a top lift that fades out
-       above the cast. */
-    --lift: linear-gradient(
-      180deg,
-      rgb(var(--meadow-sun) / 0.8) 0%,
-      rgb(var(--meadow-sun) / 0.74) 45%,
-      rgb(var(--meadow-sun) / 0.5) 60%,
-      rgb(var(--meadow-sun) / 0) 80%
-    );
+    /* Light mode's shade: one even layer of the lawn's own shade green over
+       the whole hero, so light words hold their contrast anywhere on it.
+       (meadow.css hides the lift layer in dark mode, where the lawn is
+       already dark.) */
+    --lift: linear-gradient(rgb(18 40 6 / 0.46), rgb(18 40 6 / 0.46));
     --p: 0.4;
     /* Gather: 0 while the hero is on screen, → 1 as it scrolls away. */
     --g: clamp(0, calc((var(--p) - 0.5) * 2.6), 1);
+  }
+  /* Light mode: light words on the shaded lawn, as in dark mode. The CTA
+     turns over with them (a light pill, dark label). --accent-ink is the
+     coffee of "together.", lifted to a warm sand. */
+  :global(html:not(.dark)) .hero {
+    --hero-ink: #f7f6ee;
+    --ink-muted: #f2f3eb;
+    --accent-ink: #ebcfae;
+    color: var(--hero-ink);
+  }
+  :global(html:not(.dark)) .hero-title,
+  :global(html:not(.dark)) .hero .arrow-link {
+    color: var(--hero-ink);
+  }
+  :global(html:not(.dark)) .hero .cta {
+    --cta-bg: var(--hero-ink);
+    --cta-fg: #1c1c1e;
+  }
+  :global(html:not(.dark)) .hero :is(.hero-kicker, .hero-lede, .arrow-link) {
+    text-shadow: 0 1px 3px rgb(18 40 6 / 0.45);
   }
   .hero-grid {
     display: grid;
@@ -314,17 +338,6 @@ const arrow = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
       padding-bottom: calc(var(--fade-h) + clamp(1.5rem, 3vw, 3rem));
       display: grid;
       align-items: center;
-      /* Wide screens: the copy is the left column, so the light pools there
-         (and along the top, under the header) and the cast stands on open
-         lawn to the right. */
-      --lift:
-        radial-gradient(
-          62% 78% at 22% 52%,
-          rgb(var(--meadow-sun) / 0.8) 0%,
-          rgb(var(--meadow-sun) / 0.7) 48%,
-          rgb(var(--meadow-sun) / 0) 100%
-        ),
-        linear-gradient(180deg, rgb(var(--meadow-sun) / 0.6) 0, rgb(var(--meadow-sun) / 0) 9rem);
     }
     .hero-grid {
       grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);

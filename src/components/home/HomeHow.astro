@@ -4,6 +4,10 @@
  * phone stands on a panel of Meadow lawn, pinned while the steps scroll
  * past, and the step in the middle of the viewport picks its screen. On
  * phones each step is a swipe card carrying its own screen, cropped.
+ *
+ * On wide screens the steps are stops on a route: a dashed line joins them,
+ * and each step's stop is an open ring that fills when it's the step on
+ * screen. Titles are Instrument Sans; the numbers stay mono.
  */
 import Phone from "../Phone.astro";
 import MeadowGround from "../MeadowGround.astro";
@@ -141,17 +145,18 @@ const safety = ["18+ only", "21+ for drink plans", "Hosts can approve who joins"
   .how-n {
     display: block;
     font-family: var(--font-mono);
-    font-weight: 600;
-    font-size: 0.875rem;
+    font-weight: 500;
+    font-size: 0.8125rem;
+    letter-spacing: 0.08em;
     color: var(--accent-ink);
     margin-bottom: 0.6rem;
   }
   .how-t {
-    font-family: var(--font-mono);
+    font-family: var(--font-sans);
     font-weight: 600;
-    font-size: clamp(1.6rem, 3vw, 2.5rem);
-    line-height: 1.02;
-    letter-spacing: -0.045em;
+    font-size: clamp(1.6rem, 2.8vw, 2.4rem);
+    line-height: 1.04;
+    letter-spacing: -0.035em;
     color: var(--ink);
     margin-bottom: 0.9rem;
     max-width: 16ch;
@@ -179,6 +184,11 @@ const safety = ["18+ only", "21+ for drink plans", "Hosts can approve who joins"
     display: inline-flex;
     align-items: center;
     gap: 0.45rem;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .how-step::before {
+      transition: none;
+    }
   }
   .how-safety :global(svg) {
     color: var(--accent-ink);
@@ -293,7 +303,7 @@ const safety = ["18+ only", "21+ for drink plans", "Hosts can approve who joins"
       gap: 0;
       padding-block: calc((100vh - var(--how-top) - 72vh) / 2) calc((100vh + var(--how-top) - 72vh) / 2);
     }
-    /* The current step is marked with an accent rule, not by fading the
+    /* The current step is marked by its stop filling, not by fading the
        others — dimmed text would fail contrast. */
     .how-step {
       position: relative;
@@ -301,22 +311,40 @@ const safety = ["18+ only", "21+ for drink plans", "Hosts can approve who joins"
       display: flex;
       flex-direction: column;
       justify-content: center;
-      padding-left: 1.5rem;
+      padding-left: 2.5rem;
     }
+    /* The stop: an open ring, filled when it's the step on screen. */
     .how-step::before {
       content: "";
       position: absolute;
+      z-index: 1;
       left: 0;
       top: 50%;
-      width: 3px;
-      height: 0;
-      border-radius: 3px;
-      background: var(--accent-ink);
+      width: 13px;
+      height: 13px;
+      border-radius: 50%;
+      background: var(--page-bg);
+      border: 2px solid var(--accent-ink);
       transform: translateY(-50%);
-      transition: height 0.5s var(--ease-spring);
+      transition: background-color 0.3s ease;
     }
     .how-step.is-current::before {
-      height: 9rem;
+      background: var(--accent-ink);
+    }
+    /* The route, joining the stops from the first to the last. */
+    .how-step::after {
+      content: "";
+      position: absolute;
+      left: 5.5px;
+      top: 0;
+      bottom: 0;
+      border-left: 2px dashed color-mix(in oklab, var(--accent-ink) 55%, transparent);
+    }
+    .how-step:first-child::after {
+      top: 50%;
+    }
+    .how-step:last-child::after {
+      bottom: 50%;
     }
   }
 </style>

@@ -4,6 +4,10 @@
  * light mode, paper in dark) pinned while you scroll through it; each beat
  * lights up in turn from --p (src/lib/motion.ts, data-progress="pin").
  * Phones and reduced motion: no pin, every beat fully visible.
+ *
+ * The beats are set like field notes: Instrument Sans, each numbered 01–03
+ * in mono (a CSS counter, hidden from screen readers since the list is
+ * already ordered) and ruled off with a hairline.
  */
 ---
 
@@ -70,13 +74,29 @@
     margin: 0 0 3rem;
     padding: 0;
     display: grid;
-    gap: 0.4em;
-    font-family: var(--font-mono);
+    counter-reset: beat;
+    font-family: var(--font-sans);
     font-weight: 600;
-    font-size: clamp(2.1rem, 6.2vw, 5.6rem);
-    line-height: 0.98;
-    letter-spacing: -0.055em;
+    font-size: clamp(2rem, 5.4vw, 4.6rem);
+    line-height: 1.02;
+    letter-spacing: -0.04em;
     text-transform: lowercase;
+  }
+  .beat {
+    counter-increment: beat;
+    display: grid;
+    grid-template-columns: clamp(2.5rem, 6vw, 5rem) minmax(0, 1fr);
+    align-items: baseline;
+    padding-block: 0.22em;
+    border-bottom: 1px solid color-mix(in oklab, var(--ink-inverse) 18%, transparent);
+  }
+  .beat::before {
+    content: counter(beat, decimal-leading-zero) / "";
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    color: var(--muted);
   }
   .beat.is-turn {
     color: var(--turn);
@@ -96,7 +116,7 @@
   .hour {
     aspect-ratio: 1;
     border-radius: 99px;
-    border: 1.3px solid color-mix(in oklab, var(--ink-inverse) 35%, transparent);
+    border: 1px solid color-mix(in oklab, var(--ink-inverse) 35%, transparent);
   }
   .hour.is-on {
     border-color: transparent;
@@ -123,11 +143,11 @@
     padding: 0 0.15em;
   }
   .answer {
-    font-family: var(--font-mono);
+    font-family: var(--font-sans);
     font-weight: 600;
     font-size: clamp(1.75rem, 4vw, 3.4rem);
-    line-height: 1.02;
-    letter-spacing: -0.05em;
+    line-height: 1.04;
+    letter-spacing: -0.04em;
     text-transform: lowercase;
     max-width: none;
   }

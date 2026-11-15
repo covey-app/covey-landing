@@ -356,8 +356,3 @@ body[data-page="about"] {
     animation: none !important;
   }
 }
-
-/* The paper "bloom" (global.css body::before) belongs to paper grounds. */
-body[data-page="waitlist"]::before {
-  display: none;
-}

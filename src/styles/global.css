@@ -265,20 +265,10 @@
   }
 
   /*
-   * Paper surface treatment, ported from PaperBackground.swift:
-   * a faint top-left white "bloom" plus a low-opacity print grain. Both are
-   * light-mode only (the app skips the bloom/sheen in dark mode).
+   * Paper surface treatment, ported from PaperBackground.swift: a
+   * low-opacity print grain. (The app's top-left white "bloom" was dropped
+   * here, owner 2026-11-15: light mode reads cleaner without the wash.)
    */
-  body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    background:
-      radial-gradient(60% 55% at 12% 0%, rgba(255, 255, 255, 0.75), transparent 70%);
-  }
-
   body::after {
     content: "";
     position: fixed;
@@ -289,9 +279,6 @@
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 
-  .dark body::before {
-    display: none;
-  }
   .dark body::after {
     opacity: 0.03;
   }
