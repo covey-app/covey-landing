@@ -199,6 +199,26 @@ used only for eligibility, so this redraft has to be published before the App
 Store launch. Confirm no separate notice is owed to TestFlight members who
 accepted the earlier wording.
 
+### 3.8 App Store audit edits (2026-11-19), version unchanged
+
+Edited in place from the App Store audit of 2026-11-19 (Guidelines 5.1.1(i) and
+5.1.2(i)). The Version (2026-10-15) and Effective Date (9 November 2026) were
+deliberately **not** changed, because the iOS app keys re-acceptance to
+`LegalPolicy.currentVersion` = `2026-10-15` and a new version forces every
+member to re-accept. Decide for each edit below whether it is a clarification
+(same version) or a material change under Section 20 (new version, new
+Effective Date, re-acceptance).
+
+| § | Edit | Question |
+|---|---|---|
+| 9.1 | Adds "Each Service Provider is contractually required to provide the same or equal protection of Personal Information as stated in this Policy." (Apple 5.1.1(i)). | Only true once a DPA is confirmed with every provider in section 4 below; most are "Not confirmed". Confirm before publishing. |
+| Header, 8.7 | Gemini no longer described as scanning conversation messages (the worker never claims message rows; `supabase/deferred/content_scan_messages_enable.sql` is unapplied). Chat photographs stay in. Adds "automated keyword filtering of chat messages to block slurs and severe abuse", not Gemini. | The keyword filter is true only once the covey backend PR (`fix/chat-content-filter-2026-11-19`) is deployed. Do not publish this text before it is. Narrowing a disclosure is probably a clarification; confirm. Terms § 8.5 still lists "messages" among content checked by "automated systems, including Google's Gemini service"; that stays accurate once the keyword filter ships, but consider rewording. |
+| Header, 4.17, 7.1.3, Annex A | Third location exception: Explore near-you sends a point rounded to 0.01° (~1 km) with a radius, not stored; the map sends its viewport with edges snapped outward to 0.01°. | Adds a collection the earlier text said did not happen ("two exceptions"). Likely a material change for location; decide. |
+| Header, 4.7, 7.1, Annex A | A new Covey Group's "based in" city is suggested from the device's city; the kept city (name, region, country, city-centre coordinate) is stored and shown. | Same question. |
+| 11.1.1 | Leaders boards: rank, counts of Plans hosted and attended and recaps, badges; per-category boards can reveal weekly category participation even for non-public Plans; audience setting Everyone / Friends only. | Disclosure to other Users that was not described before. Is "Friends only" (not a full opt-out) enough? |
+| 11.7 | Anyone who joins a public Covey Group can read its chat history. | Clarification or material? |
+| 15.6, Annex C | Deleting an Account deletes the Covey Groups it owns, with their memberships and conversations, including other members' messages. | Affects other members' data; confirm the wording and whether those members are owed notice. |
+
 ## 4. Service Providers: DPA checklist
 
 | Provider | Entity in Annex B | DPA confirmed? |

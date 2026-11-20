@@ -23,12 +23,18 @@
 > **LOCATION.** With your permission, the Covey application reads your
 > device's location only while you are using it. Your exact position stays on
 > your device. Covey receives an approximate area of about one kilometre only
-> where you turn on plan suggestions or use the plan co-pilot. See Section 7.1.
+> where you turn on plan suggestions, use the plan co-pilot, or look for Plans
+> near you in Explore or on the map. The area sent from Explore or the map is
+> used to answer that request and is not stored. When you create a Covey Group,
+> the city it is based in is suggested from the city your device is in. See
+> Section 7.1.
 >
 > **ARTIFICIAL INTELLIGENCE.** Covey's optional AI features send limited data
 > to Google's Gemini service, and only after you agree. Covey also uses Gemini
-> to check text and images posted on Covey, including messages, for safety.
-> See Section 8.
+> to check text and images posted on Covey for safety, including photographs
+> sent in conversations. The text of conversation messages is not sent to
+> Gemini; it is subject to automated keyword filtering of chat messages to
+> block slurs and severe abuse. See Section 8.
 >
 > Covey collects Sensitive Personal Information, comprising: your account
 > log-in credentials; information concerning sexual orientation and gender
@@ -224,7 +230,9 @@ Dating Features, and records that consent on its servers.
 
 **4.7 User Content.** Plans and their particulars, including the name, address,
 and coordinates of each location added to a Plan; invitations, attendance, and
-join requests; Covey Groups and their names and descriptions; posts and recaps
+join requests; Covey Groups and their names, descriptions, and the city each is
+based in (its name, region, and country, and the coordinate of the centre of that
+city or county, never a device's position); posts and recaps
 and their captions; photographs uploaded to profiles, Plans, Covey Groups, posts,
 recaps, and conversations; messages in Plan conversations, group conversations,
 and direct messages; bookmarks and saved places; and comments.
@@ -300,8 +308,10 @@ substance-use information, in a separate statement linked to this Policy, before
 you first add them, and records that consent on its servers.
 
 **4.17 Location information.** The Approximate Area described in Section 7.1,
-where you turn on plan suggestions, and the Approximate Area and place name sent
-with a plan co-pilot request.
+where you turn on plan suggestions; the Approximate Area and place name sent
+with a plan co-pilot request; and the Approximate Area or rounded map area sent
+when you look for Plans near you, which is used only to answer that request and
+is not stored (Section 7.1.3).
 
 **4.18 Contact telephone numbers.** Where you choose "Find friends from your
 contacts", the telephone numbers stored in your device's contacts, as described
@@ -392,8 +402,8 @@ and to AI features through the application's settings.
 > Plans near you, to show how far away they are, and to find places for your
 > itineraries. When you use the map, the application requests the Plans within
 > the area shown on your screen. **Your device's position stays on your device,
-> with two exceptions, each of which sends only an Approximate Area (about one
-> kilometre) and never your exact position:**
+> with three exceptions, each of which sends only a location rounded to about
+> one kilometre and never your exact position:**
 >
 > 7.1.1 **Plan suggestions.** If you turn on plan suggestions, Covey stores an
 > Approximate Area in order to tell you about Plans near it. Covey deletes it
@@ -403,6 +413,19 @@ and to AI features through the application's settings.
 > Approximate Area and the name of your town or neighbourhood to Google's Gemini
 > service with your request, so that it can suggest real places nearby
 > (Section 8). Covey does not store them.
+>
+> 7.1.3 **Plans near you.** When Explore shows Plans near you, the application
+> sends an Approximate Area and a distance with the request, so that Covey can
+> return Plans within that distance. When you use the map, the application sends
+> the edges of the area shown on your screen, each rounded outward to two
+> decimal places; when the map first opens, that area is centred near your
+> position. Covey uses them only to answer the request and does not store them.
+>
+> When you create a Covey Group, the application suggests the city it is based
+> in from the city your device is in. You may change or remove it. Only the city
+> you keep is sent to Covey: its name, region, and country, and the coordinate
+> of the centre of that city or county, never your position. It is shown to
+> other Users with the Covey Group (Section 4.7).
 >
 > If you decline permission, the Service shows Plans by your home city instead.
 > You may withdraw permission at any time in your device's settings.
@@ -494,13 +517,16 @@ requests, other than briefly in memory to answer repeated identical requests.
 safe, Covey sends the following User Content to Google's Gemini service for
 automated classification against Covey's content rules: profile biographies;
 Plan titles and descriptions and the text of Plan stops; Covey Group names and
-descriptions; recap captions; messages in direct, Plan, and group conversations;
-and images, including profile photographs, other profile photographs, Plan and
-Covey Group cover photographs, photographs sent in conversations, and recap
-photographs. Covey sends the content to be checked, not your name, email address,
-or profile. These checks are part of operating the Service safely and are not
-subject to the consent in Section 8.2; they are described in the Terms of
-Service. Section 8.5 applies to them.
+descriptions; recap captions; and images, including profile photographs, other
+profile photographs, Plan and Covey Group cover photographs, photographs sent in
+conversations, and recap photographs. Covey sends the content to be checked, not
+your name, email address, or profile. These checks are part of operating the
+Service safely and are not subject to the consent in Section 8.2; they are
+described in the Terms of Service. Section 8.5 applies to them. Covey does not
+send the text of messages in direct, Plan, or Covey Group conversations to
+Gemini. Instead, Covey applies automated keyword filtering of chat messages to
+block slurs and severe abuse. That filtering runs within Covey's own systems and
+does not involve Gemini, and a message it blocks is not delivered.
 
 8.8 **Effect of a safety check.** Content that a check classifies as high risk
 is hidden automatically and placed in a queue for review by a person, who decides
@@ -516,6 +542,8 @@ may ask for it to be reviewed under Section 12.5 of the Terms of Service.
 Providers listed in **Annex B**, each of which Processes it solely on Covey's
 documented instructions, under written contract containing the terms required by
 Cal. Civ. Code § 1798.100(d) and, where applicable, Article 28 of the GDPR.
+Each Service Provider is contractually required to provide the same or equal
+protection of Personal Information as stated in this Policy.
 
 9.2 **Other Users.** Covey discloses Personal Information to other Users as
 described in Section 11.
@@ -572,6 +600,18 @@ subject to the discovery visibility setting you select. Each optional profile
 detail under Section 4.16 is visible to other Users only if you have added it and
 have not hidden it.
 
+&nbsp;&nbsp;&nbsp;&nbsp;11.1.1 **Leaders boards.** The Service ranks Users on
+Leaders boards by the Plans they have hosted and attended and the recaps they
+have posted. A board shows other Users your display name, username, profile
+photograph, rank, and those counts, and your profile shows the badges you have
+earned. Boards are kept overall, for hosts, and for each activity category, so a
+category board may show that you hosted or attended a Plan in that category in
+a given week, even where the Plan itself was not public; no Plan's name, date,
+or place is shown. By default you appear on the boards of every User other than
+those you have blocked or who have blocked you. You may limit this to your
+friends in the application's privacy settings ("Show me on leaderboards").
+You always see your own standing.
+
 11.2 **Plans.** A Plan is visible to the audience to which it is published. A
 public Plan is visible to Users browsing the Service, and a limited preview of it
 may be shown to visitors who are not signed in; a friends-only or invitation-only
@@ -595,7 +635,9 @@ User who has your number in their contacts and uses contact matching may be show
 your profile (Section 7.2.3).
 
 11.7 **Communications.** Messages are disclosed to the participants in the
-relevant conversation. Covey may access the content of communications where
+relevant conversation. The conversations of a Covey Group are disclosed to its
+members, including members who join after a message was sent: anyone who joins
+a public Covey Group can read its chat history. Covey may access the content of communications where
 necessary to investigate a report, where an automated safety check (Section 8.7)
 places it for human review, or where required by Applicable Law.
 
@@ -747,7 +789,9 @@ your dating information, your optional profile details, your verified telephone
 number, your Approximate Area, the Plans you host, your attendance at other
 Plans, your posts and recaps, your bookmarks, your notification tokens, your
 consent records, your feedback submissions, and every message you sent, which is
-removed from the conversations of the other participants as well. In addition:
+removed from the conversations of the other participants as well. Covey also
+deletes the Covey Groups you own, together with their memberships and their
+conversations, including the messages other members sent in them. In addition:
 
 &nbsp;&nbsp;&nbsp;&nbsp;15.6.1 photographs and other files you uploaded are
 removed from storage within twenty-four (24) hours;
@@ -956,7 +1000,7 @@ Annex B. No category has been Sold or Shared.
 | Commercial information | Plans hosted and joined, places bookmarked, Covey Groups joined | Provision of the Service | No | No |
 | Biometric information | Not collected by Covey. Where identity verification is offered and used, Stripe processes facial geometry from a Selfie and an identity document photograph on Covey's behalf (Section 4.5) | Identity verification; prevention of fraud and impersonation | No | No |
 | Internet or other electronic network activity | Application events, Plans opened and joined, session identifiers, application version, device model, operating-system version, crash, error, and performance data | Operation, security, diagnosis, improvement, ordering of Plans | No | No |
-| Geolocation data | Approximate Area (about one kilometre) where you turn on plan suggestions or use the plan co-pilot; addresses and coordinates of places entered into a Plan; approximate region derived from IP address. Not precise device geolocation | Plans near you; plan suggestions; plan co-pilot; display of Plans on a map | No | No |
+| Geolocation data | Approximate Area (about one kilometre) where you turn on plan suggestions or use the plan co-pilot; Approximate Area, or map area rounded to about one kilometre, sent when Explore or the map shows Plans near you (used for that request and not stored); the city a Covey Group is based in; addresses and coordinates of places entered into a Plan; approximate region derived from IP address. Not precise device geolocation | Plans near you in Explore; plan suggestions; plan co-pilot; display of Plans on a map; Covey Group location | No | No |
 | Audio, electronic, visual, or similar information | Profile photographs, Plan and Covey Group covers, post and recap photographs, conversation photographs, message contents | Provision of the Service; safety checks | No | No |
 | Professional or employment-related information | Occupation, where you add it | Profile display | No | No |
 | Education information | School, where you add it. Not education records within the meaning of the Family Educational Rights and Privacy Act | Profile display | No | No |
@@ -995,7 +1039,7 @@ Adding a Service Provider requires an amendment to this Annex under Section 20.
 | Account, profile, preference, and optional profile information | Until you delete it or your Account; deleted immediately on Account deletion | Necessary for provision of the Service |
 | Date of birth and age range | Until Account deletion | Enforcement of minimum ages |
 | Dating information | Until you turn off Dating Features or delete your Account | Consent |
-| User Content: Plans you host, posts, recaps, messages you sent | Until deleted by you or on Account deletion, whichever is earlier; messages you sent are removed from every conversation on Account deletion | Necessary for provision of the Service |
+| User Content: Plans you host, Covey Groups you own, posts, recaps, messages you sent | Until deleted by you or on Account deletion, whichever is earlier; messages you sent are removed from every conversation on Account deletion, and Covey Groups you own are deleted with their conversations | Necessary for provision of the Service |
 | Photographs and other uploaded files | Until deleted by you; removed from storage within twenty-four (24) hours of Account deletion | Necessary for provision of the Service |
 | Verified telephone number | Until you remove it or delete your Account. Twilio retains its own records of the verification messages it sent under its retention schedule as Covey's Service Provider | Fraud prevention; contact matching |
 | Contact telephone numbers | Not retained; held in memory only for the duration of a matching request | Contact matching |

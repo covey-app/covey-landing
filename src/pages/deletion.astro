@@ -3,13 +3,15 @@
  * Must match what the 1.0 app does on deletion (privacy policy §15.6 and
  * Annex C): delete_my_account runs immediately; storage objects are purged
  * within 24 hours; the Sign in with Apple grant is revoked; a Stripe Identity
- * session, if any, is redacted. The in-app path is covey-ios SettingsCatalog
+ * session, if any, is redacted. Coveys the member owns cascade away with
+ * their chats (covey_groups.owner_id and dm_threads.covey_group_id are
+ * ON DELETE CASCADE). The in-app path is covey-ios SettingsCatalog
  * (Account → "Delete account").
  */
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { SITE } from "../config";
 
-const lastUpdated = "October 15, 2026";
+const lastUpdated = "November 19, 2026";
 ---
 
 <BaseLayout
@@ -54,6 +56,7 @@ const lastUpdated = "October 15, 2026";
           <li>your account, sign-in details, profile, preferences and date of birth;</li>
           <li>the plans you host, your place in other people's plans, your recaps and your bookmarks;</li>
           <li>every message you sent, including from other people's chats;</li>
+          <li>the Coveys you own, with their members and their chats, including messages other members sent there;</li>
           <li>your verified phone number, your plan-suggestion area, and your consent settings.</li>
         </ul>
         <p class="mt-4">
